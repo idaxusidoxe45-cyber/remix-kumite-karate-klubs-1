@@ -2,6 +2,8 @@ backend:
   name: github
   repo: idaxusidoxe45-cyber/remix-kumite-karate-klubs-1
   branch: main
+  base_url: https://decap-oauth.vercel.app
+  auth_endpoint: api/auth
 
 local_backend: true
 
