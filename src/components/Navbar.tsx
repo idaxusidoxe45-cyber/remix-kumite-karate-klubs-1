@@ -167,7 +167,7 @@ export default function Navbar({ currentTab, setCurrentTab, openTrialModal }: Na
             </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-1.5 sm:p-2 rounded-lg text-white bg-[#1e293b] hover:bg-[#dc2626] border border-slate-700/80 focus:outline-none transition-all active:scale-95 shadow-sm flex-shrink-0"
+              className="p-1.5 sm:p-2 rounded-lg text-white bg-[#1e293b] hover:bg-[#dc2626] border border-slate-700/80 focus:outline-none transition-colors duration-150 active:scale-95 shadow-sm flex-shrink-0"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
@@ -180,9 +180,10 @@ export default function Navbar({ currentTab, setCurrentTab, openTrialModal }: Na
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
             className="xl:hidden bg-[#0a0a0c] border-b border-[#1e293b] px-4 pt-2 pb-6 space-y-2 shadow-2xl max-h-[85vh] overflow-y-auto"
           >
             <button

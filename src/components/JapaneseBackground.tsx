@@ -3,8 +3,14 @@ import { motion } from 'motion/react';
 
 export default function JapaneseBackground() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
+    const isFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    setIsDesktop(isFinePointer);
+
+    if (!isFinePointer) return;
+
     const handleMouseMove = (e: MouseEvent) => {
       const { innerWidth, innerHeight } = window;
       setMousePosition({
@@ -12,9 +18,19 @@ export default function JapaneseBackground() {
         y: (e.clientY / innerHeight - 0.5) * 20,
       });
     };
+
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
+
+  if (!isDesktop) {
+    return (
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-20">
+        <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-red-600/10 blur-2xl" />
+        <div className="absolute top-1/3 right-10 w-96 h-96 rounded-full bg-[#3a2520]/10 blur-2xl" />
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-30">

@@ -10,26 +10,32 @@ interface InteractiveRepelCardProps {
   maxRotate?: number;
 }
 
-export default function InteractiveRepelCard({
-  children,
-  className = '',
-  onClick,
-  maxShift = 14,
-  maxRotate = 6,
-}: InteractiveRepelCardProps) {
-  const [isDesktopHover, setIsDesktopHover] = useState(false);
+function useIsDesktopHover() {
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  });
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const mq = window.matchMedia('(hover: hover) and (pointer: fine)');
-    setIsDesktopHover(mq.matches);
-
-    const handler = (e: MediaQueryListEvent) => setIsDesktopHover(e.matches);
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
     if (mq.addEventListener) {
       mq.addEventListener('change', handler);
       return () => mq.removeEventListener('change', handler);
     }
   }, []);
 
+  return isDesktop;
+}
+
+function DesktopRepelCard({
+  children,
+  className = '',
+  onClick,
+  maxShift = 14,
+  maxRotate = 6,
+}: InteractiveRepelCardProps) {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -41,7 +47,6 @@ export default function InteractiveRepelCard({
   const rotateY = useTransform(x, [-maxShift, maxShift], [-maxRotate, maxRotate]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDesktopHover) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
@@ -54,28 +59,16 @@ export default function InteractiveRepelCard({
   };
 
   const handleMouseLeave = () => {
-    if (!isDesktopHover) return;
     mouseX.set(0);
     mouseY.set(0);
   };
-
-  if (!isDesktopHover) {
-    return (
-      <div
-        onClick={onClick}
-        className={`${onClick ? 'cursor-pointer' : ''} ${className}`}
-      >
-        {children}
-      </div>
-    );
-  }
 
   return (
     <motion.div
       onClick={onClick}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      whileHover={{ scale: 1.03, y: -5 }}
+      whileHover={{ scale: 1.02, y: -3 }}
       transition={{ type: 'spring', stiffness: 350, damping: 25 }}
       style={{
         x,
@@ -91,3 +84,21 @@ export default function InteractiveRepelCard({
     </motion.div>
   );
 }
+
+export default function InteractiveRepelCard(props: InteractiveRepelCardProps) {
+  const isDesktop = useIsDesktopHover();
+
+  if (!isDesktop) {
+    return (
+      <div
+        onClick={props.onClick}
+        className={`${props.onClick ? 'cursor-pointer' : ''} ${props.className || ''}`}
+      >
+        {props.children}
+      </div>
+    );
+  }
+
+  return <DesktopRepelCard {...props} />;
+}
+

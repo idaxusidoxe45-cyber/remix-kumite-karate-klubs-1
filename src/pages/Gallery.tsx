@@ -128,14 +128,14 @@ export default function Gallery({ openTrialModal }: GalleryProps) {
       <section className="py-24 bg-[#ffffff]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Filter Tabs */}
-          <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-10 sm:mb-12">
             {categories.map((cat) => (
               <button
                 key={cat.key}
                 onClick={() => setActiveCategory(cat.key)}
-                className={`font-heading text-lg uppercase tracking-wider px-6 py-2.5 rounded-full font-bold transition-all transform hover:scale-105 active:scale-95 ${
+                className={`font-heading text-base sm:text-lg uppercase tracking-wider px-5 py-2 sm:px-6 sm:py-2.5 rounded-full font-bold transition-colors duration-200 ${
                   activeCategory === cat.key
-                    ? 'bg-[#dc2626] text-white shadow-lg border-2 border-white'
+                    ? 'bg-[#dc2626] text-white shadow-md border-2 border-white'
                     : 'bg-white text-[#0a0a0c] hover:bg-slate-100 border border-slate-300'
                 }`}
               >
@@ -147,9 +147,9 @@ export default function Gallery({ openTrialModal }: GalleryProps) {
           {/* Grid */}
           <motion.div
             key={activeCategory}
-            initial={{ opacity: 0.4, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
             className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4"
           >
             {filteredItems.map((item, idx) => (
@@ -166,9 +166,9 @@ export default function Gallery({ openTrialModal }: GalleryProps) {
                     alt={item.title}
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end p-4">
                     <div>
                       <p className="text-white font-semibold text-base">{item.title}</p>
                       <p className="text-xs text-slate-300 font-sans">{item.caption}</p>
