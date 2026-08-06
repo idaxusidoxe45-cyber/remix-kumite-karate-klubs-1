@@ -8,9 +8,62 @@
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
-  <!-- Decap CMS App -->
+  <!-- Decap CMS Manual Initialization -->
+  <script>
+    window.CMS_MANUAL_INIT = true;
+  </script>
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
   <script>
+    if (window.CMS) {
+      window.CMS.init({
+        config: {
+          backend: {
+            name: 'github',
+            repo: 'idaxusidoxe45-cyber/remix-kumite-karate-klubs-1',
+            branch: 'main'
+          },
+          local_backend: true,
+          media_folder: 'public/assets_gallery',
+          public_folder: '/assets_gallery',
+          collections: [
+            {
+              name: 'gallery',
+              label: 'Galerija (Gallery)',
+              folder: 'public/assets_gallery',
+              path: '{{category}}/{{slug}}',
+              media_folder: 'public/assets_gallery/{{category}}',
+              public_folder: '/assets_gallery/{{category}}',
+              create: true,
+              slug: '{{title}}',
+              fields: [
+                { label: 'Virsraksts (Title)', name: 'title', widget: 'string' },
+                { label: 'Kategorija (Category)', name: 'category', widget: 'select', options: ['eksameni', 'nometnes', 'pasakumi', 'sacensibas', 'trenini', 'zale'] },
+                { label: 'Apraksts (Caption)', name: 'caption', widget: 'string' },
+                { label: 'Attēls (Image)', name: 'image', widget: 'image' },
+                { label: 'Pilns attēls (Full Image)', name: 'fullImage', widget: 'image', required: false }
+              ]
+            },
+            {
+              name: 'reviews',
+              label: 'Отзывы (Reviews)',
+              folder: 'public/content/reviews',
+              create: true,
+              slug: '{{year}}-{{month}}-{{day}}-{{slug}}',
+              extension: 'json',
+              format: 'json',
+              fields: [
+                { label: 'Имя (Author)', name: 'author', widget: 'string' },
+                { label: 'Роль (Role)', name: 'role', widget: 'string', required: false },
+                { label: 'Текст отзыва (Text)', name: 'text', widget: 'text' },
+                { label: 'Оценка (Rating 1-5)', name: 'rating', widget: 'number', default: 5, value_type: 'int', min: 1, max: 5 },
+                { label: 'Статус (Status)', name: 'status', widget: 'select', options: ['published', 'draft', 'rejected'], default: 'draft' }
+              ]
+            }
+          ]
+        }
+      });
+    }
+
     if (window.netlifyIdentity) {
       window.netlifyIdentity.on("init", function(user) {
         if (!user) {
