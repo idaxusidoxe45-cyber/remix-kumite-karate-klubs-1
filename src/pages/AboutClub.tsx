@@ -95,8 +95,8 @@ export default function AboutClub({ setCurrentTab, openTrialModal, openReviewMod
       {/* Coach Intro Teaser */}
       <section className="py-24 bg-[#0a0a0c] text-white border-y-4 border-[#dc2626]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <InteractiveRepelCard maxShift={14} maxRotate={6}>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center p-8 bg-[#111827] rounded-2xl border-2 border-slate-800">
+          <InteractiveRepelCard maxShift={14} maxRotate={6} onClick={() => setCurrentTab('coaches')}>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center p-8 bg-[#111827] rounded-2xl border-2 border-slate-800 cursor-pointer">
               <div className="lg:col-span-2 space-y-6">
                 <h3 className="font-heading text-white text-2xl sm:text-4xl uppercase font-bold tracking-wide">
                   “Karatē ir mācība uz visu mūžu.” (Kenwa Mabuni)
@@ -106,8 +106,12 @@ export default function AboutClub({ setCurrentTab, openTrialModal, openReviewMod
                 </p>
                 <div>
                   <button
-                    onClick={() => setCurrentTab('coaches')}
-                    className="bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-lg border-2 border-white"
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentTab('coaches');
+                    }}
+                    className="bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-lg border-2 border-white cursor-pointer relative z-20"
                   >
                     Vairāk par treneri
                   </button>

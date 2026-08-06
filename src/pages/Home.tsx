@@ -126,7 +126,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
               { age: '7 – 9 gadi', title: 'Vidējā grupa', desc: 'Tehnikas pamati, disciplīna, fiziskā sagatavotība un pirmie sasniegumi uz tatami.' },
               { age: '10+ gadi', title: 'Vecākā grupa', desc: 'Padziļināta karatē tehnika, kumite sparingi un sagatavošanās sacensībām.' }
             ].map((group, idx) => (
-              <InteractiveRepelCard key={idx} maxShift={14} maxRotate={6}>
+              <InteractiveRepelCard key={idx} maxShift={14} maxRotate={6} onClick={() => setCurrentTab('schedule')}>
                 <motion.div 
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
