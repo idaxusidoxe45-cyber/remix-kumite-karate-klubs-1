@@ -13,12 +13,11 @@ public_folder: "/assets_gallery"
 collections:
   - name: "gallery"
     label: "Galerija (Gallery)"
-    folder: "public/assets_gallery"
-    path: "{{category}}/{{slug}}"
-    media_folder: "public/assets_gallery/{{category}}"
-    public_folder: "/assets_gallery/{{category}}"
+    folder: "public/content/gallery"
     create: true
-    slug: "{{title}}"
+    slug: "item-{{slug}}"
+    extension: "json"
+    format: "json"
     fields:
       - { label: "Virsraksts (Title)", name: "title", widget: "string" }
       - { label: "Kategorija (Category)", name: "category", widget: "select", options: ["eksameni", "nometnes", "pasakumi", "sacensibas", "trenini", "zale"] }
