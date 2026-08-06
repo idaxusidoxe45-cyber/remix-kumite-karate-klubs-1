@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PageTab } from '../types';
-import { TESTIMONIALS, GALLERY_ITEMS } from '../data';
+import { getDynamicTestimonials, getDynamicGalleryItems } from '../data';
 import { CheckCircle, ArrowRight, Play, Star, MapPin, Phone, Mail } from 'lucide-react';
 import { motion } from 'motion/react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
@@ -47,7 +47,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
     }, 3000);
   };
 
-  const previewGallery = GALLERY_ITEMS.slice(0, 3);
+  const previewGallery = getDynamicGalleryItems().slice(0, 3);
 
   return (
     <div className="bg-[#ffffff] text-[#0f172a]">
@@ -359,7 +359,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {TESTIMONIALS.filter(t => t.status === 'published').slice(0, 3).map((t, idx) => (
+            {getDynamicTestimonials().filter(t => t.status === 'published').slice(0, 3).map((t, idx) => (
               <InteractiveRepelCard key={t.id} maxShift={12} maxRotate={6}>
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}

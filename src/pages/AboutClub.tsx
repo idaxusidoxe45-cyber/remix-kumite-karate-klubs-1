@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PageTab } from '../types';
-import { BELT_SYSTEM, JAPANESE_NUMBERS, STRIKE_LEVELS, FAQ_ITEMS, TESTIMONIALS } from '../data';
+import { BELT_SYSTEM, JAPANESE_NUMBERS, STRIKE_LEVELS, FAQ_ITEMS, getDynamicTestimonials } from '../data';
 import { Star } from 'lucide-react';
 import { motion } from 'motion/react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
@@ -250,7 +250,7 @@ export default function AboutClub({ setCurrentTab, openTrialModal, openReviewMod
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {TESTIMONIALS.filter(t => t.status === 'published').map((t) => (
+            {getDynamicTestimonials().filter(t => t.status === 'published').map((t) => (
               <InteractiveRepelCard key={t.id} maxShift={12} maxRotate={6}>
                 <div className="bg-white rounded-xl p-8 border border-slate-200 shadow-md flex flex-col justify-between h-full hover:border-[#dc2626] transition-colors">
                   <div className="space-y-4">

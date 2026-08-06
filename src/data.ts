@@ -1123,3 +1123,86 @@ export const STRIKE_LEVELS = [
   { level: 'Vidējais līmenis – CHUDAN', desc: '(krūtis, vēders, mugura, sāni)' },
   { level: 'Apakšējais līmenis – GEDAN', desc: '(kājas, ceļi)' }
 ];
+
+export function getDynamicGalleryItems(): GalleryItem[] {
+  const staticItems = GALLERY_ITEMS;
+  const staticImagePaths = new Set(staticItems.map((item) => item.image));
+
+  const globGallery = import.meta.glob<string>(
+    '/public/assets_gallery/**/*.{webp,jpg,jpeg,png,svg,gif,WEBP,JPG,JPEG,PNG,GIF}',
+    { eager: true, query: '?url', import: 'default' }
+  );
+
+  const dynamicItems: GalleryItem[] = [];
+  let nextId = 10000;
+
+  for (const path in globGallery) {
+    const publicUrl = path.replace(/^\/public/, '');
+    if (staticImagePaths.has(publicUrl)) continue;
+
+    const parts = path.split('/');
+    const categoryRaw = parts[3];
+    const validCategories = ['trenini', 'eksameni', 'sacensibas', 'nometnes', 'pasakumi', 'zale'] as const;
+    const category = validCategories.includes(categoryRaw as any)
+      ? (categoryRaw as typeof validCategories[number])
+      : 'trenini';
+
+    const filename = parts[parts.length - 1];
+    const cleanName = filename.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+    const title = cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
+
+    dynamicItems.push({
+      id: nextId++,
+      category,
+      title: title || 'Galerijas attēls',
+      caption: title || 'Galerijas fotogrāfija',
+      image: publicUrl,
+      fullImage: publicUrl,
+    });
+  }
+
+  return [...staticItems, ...dynamicItems];
+}
+
+export function getDynamicTestimonials(): Testimonial[] {
+  const staticReviews = TESTIMONIALS;
+
+  const globReviews = import.meta.glob<{
+    author?: string;
+    role?: string;
+    text?: string;
+    rating?: number;
+    status?: 'published' | 'draft' | 'rejected';
+  }>([
+    '/public/content/reviews/*.json',
+    '/src/content/reviews/*.json',
+  ], { eager: true, import: 'default' });
+
+  const cmsReviews: Testimonial[] = [];
+  let nextId = 20000;
+
+  for (const path in globReviews) {
+    const data = globReviews[path];
+    if (data && data.author && data.text) {
+      cmsReviews.push({
+        id: nextId++,
+        author: data.author,
+        role: data.role,
+        text: data.text,
+        rating: data.rating || 5,
+        status: data.status || 'draft',
+      });
+    }
+  }
+
+  let localReviews: Testimonial[] = [];
+  if (typeof window !== 'undefined') {
+    try {
+      localReviews = JSON.parse(localStorage.getItem('user_submitted_reviews') || '[]');
+    } catch {
+      // ignore
+    }
+  }
+
+  return [...staticReviews, ...cmsReviews, ...localReviews];
+}

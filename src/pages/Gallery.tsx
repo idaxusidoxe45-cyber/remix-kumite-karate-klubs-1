@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { GalleryItem } from '../types';
-import { GALLERY_ITEMS } from '../data';
+import { getDynamicGalleryItems } from '../data';
 import LightboxModal from '../components/LightboxModal';
 import { ZoomIn, CheckCircle } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -29,9 +29,10 @@ export default function Gallery({ openTrialModal }: GalleryProps) {
     { key: 'zale', label: 'Zāle' }
   ];
 
+  const allGalleryItems = getDynamicGalleryItems();
   const filteredItems = activeCategory === 'all'
-    ? GALLERY_ITEMS
-    : GALLERY_ITEMS.filter(item => item.category === activeCategory);
+    ? allGalleryItems
+    : allGalleryItems.filter(item => item.category === activeCategory);
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
