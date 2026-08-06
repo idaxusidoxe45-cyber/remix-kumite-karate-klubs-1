@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #ffffff;
+    color: #0f172a;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    line-height: 1.6;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;
+  }
+}
+
+/* Crisp, Modern Heading Font */
+.font-heading {
+  font-family: 'Montserrat', 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.font-sans {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.font-serif-jp {
+  font-family: 'Noto Serif JP', serif;
+}
+
+.font-cinzel {
+  font-family: 'Cinzel', serif;
+}
+
+/* Hero Display Heading (bold, crisp, clean) */
+.heading-poster {
+  font-family: 'Montserrat', 'Plus Jakarta Sans', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+/* Background texture overlays in Red, Black, White theme with subtle blue accent */
+.bg-parchment {
+  background-color: #f8fafc;
+  background-image: radial-gradient(rgba(220, 38, 38, 0.08) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+.bg-sumi-dark {
+  background-color: #0a0a0c;
+  background-image: radial-gradient(rgba(220, 38, 38, 0.12) 1px, transparent 0);
+  background-size: 32px 32px;
+}
+
+/* Custom animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.03); }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 8s ease-in-out infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0c;
+}
+::-webkit-scrollbar-thumb {
+  background: #dc2626;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b91c1c;
+}

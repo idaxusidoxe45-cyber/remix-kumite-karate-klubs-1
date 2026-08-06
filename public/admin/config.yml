@@ -1,0 +1,30 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "public/assets_gallery"
+public_folder: "/assets_gallery"
+
+collections:
+  - name: "gallery"
+    label: "Galerija (Gallery)"
+    folder: "public/assets_gallery"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Virsraksts (Title)", name: "title", widget: "string" }
+      - { label: "Kategorija (Category)", name: "category", widget: "select", options: ["eksameni", "nometnes", "pasakumi", "sacensibas", "trenini", "zale"] }
+      - { label: "Apraksts (Caption)", name: "caption", widget: "string" }
+      - { label: "Attēls (Image)", name: "image", widget: "image" }
+
+  - name: "reviews"
+    label: "Отзывы (Reviews)"
+    folder: "src/content/reviews"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Имя (Author)", name: "author", widget: "string" }
+      - { label: "Роль (Role)", name: "role", widget: "string", required: false }
+      - { label: "Текст отзыва (Text)", name: "text", widget: "text" }
+      - { label: "Оценка (Rating 1-5)", name: "rating", widget: "number", default: 5, value_type: "int", min: 1, max: 5 }
+      - { label: "Статус (Status)", name: "status", widget: "select", options: ["published", "draft"], default: "published" }

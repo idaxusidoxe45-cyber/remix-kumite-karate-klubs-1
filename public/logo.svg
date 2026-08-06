@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <defs>
+    <path id="topArc" d="M 32,150 A 118,118 0 0,1 268,150" fill="none" />
+    <path id="bottomArc" d="M 268,150 A 118,118 0 0,1 32,150" fill="none" />
+  </defs>
+
+  <circle cx="150" cy="150" r="142" fill="#ffffff" stroke="#000000" stroke-width="7" />
+
+  <text font-family="Times New Roman, Georgia, serif" font-weight="bold" font-size="34" fill="#000000" text-anchor="middle" letter-spacing="8">
+    <textPath href="#topArc" startOffset="50%">KUMITE</textPath>
+  </text>
+
+  <text font-family="Times New Roman, Georgia, serif" font-weight="bold" font-size="24" fill="#000000" text-anchor="middle" letter-spacing="4">
+    <textPath href="#bottomArc" startOffset="50%">KARATE KLUBS</textPath>
+  </text>
+
+  <g fill="#d92027">
+    <path d="M 125,92 L 18,132 L 105,110 Z" />
+    <path d="M 120,115 L 26,168 L 108,128 Z" />
+    <path d="M 110,84 C 122,80 134,84 140,92 C 145,98 143,108 136,114 C 130,119 116,120 108,114 C 102,110 102,94 110,84 Z" />
+    <path d="M 128,88 C 135,88 142,94 141,100 C 140,105 133,108 126,106 C 120,104 118,97 122,92 C 124,90 126,88 128,88 Z" fill="#b01217" />
+  </g>
+
+  <g fill="#1e3a8a">
+    <path d="M 175,92 L 282,132 L 195,110 Z" />
+    <path d="M 180,115 L 274,168 L 192,128 Z" />
+    <path d="M 190,84 C 178,80 166,84 160,92 C 155,98 157,108 164,114 C 170,119 184,120 192,114 C 198,110 198,94 190,84 Z" />
+    <path d="M 172,88 C 165,88 158,94 159,100 C 160,105 167,108 174,106 C 180,104 182,92 178,92 Z" fill="#172554" />
+  </g>
+
+  <text x="150" y="196" font-family="serif" font-weight="bold" font-size="38" fill="#000000" text-anchor="middle" letter-spacing="8">&#x7A7A;&#x624B;&#x9053;</text>
+</svg>
