@@ -3,6 +3,7 @@ import { PageTab } from './types';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import TrialModal from './components/TrialModal';
+import ReviewModal from './components/ReviewModal';
 import CookieBanner from './components/CookieBanner';
 import JapaneseBackground from './components/JapaneseBackground';
 
@@ -22,6 +23,7 @@ const PageLoader = () => (
 export default function App() {
   const [currentTab, setCurrentTab] = useState<PageTab>('home');
   const [trialModalOpen, setTrialModalOpen] = useState(false);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -30,9 +32,21 @@ export default function App() {
   const renderPage = () => {
     switch (currentTab) {
       case 'home':
-        return <Home setCurrentTab={setCurrentTab} openTrialModal={() => setTrialModalOpen(true)} />;
+        return (
+          <Home
+            setCurrentTab={setCurrentTab}
+            openTrialModal={() => setTrialModalOpen(true)}
+            openReviewModal={() => setReviewModalOpen(true)}
+          />
+        );
       case 'about':
-        return <AboutClub setCurrentTab={setCurrentTab} openTrialModal={() => setTrialModalOpen(true)} />;
+        return (
+          <AboutClub
+            setCurrentTab={setCurrentTab}
+            openTrialModal={() => setTrialModalOpen(true)}
+            openReviewModal={() => setReviewModalOpen(true)}
+          />
+        );
       case 'coaches':
         return <Coaches openTrialModal={() => setTrialModalOpen(true)} />;
       case 'schedule':
@@ -42,7 +56,13 @@ export default function App() {
       case 'contacts':
         return <Contacts openTrialModal={() => setTrialModalOpen(true)} />;
       default:
-        return <Home setCurrentTab={setCurrentTab} openTrialModal={() => setTrialModalOpen(true)} />;
+        return (
+          <Home
+            setCurrentTab={setCurrentTab}
+            openTrialModal={() => setTrialModalOpen(true)}
+            openReviewModal={() => setReviewModalOpen(true)}
+          />
+        );
     }
   };
 
@@ -66,6 +86,11 @@ export default function App() {
       <TrialModal
         isOpen={trialModalOpen}
         onClose={() => setTrialModalOpen(false)}
+      />
+
+      <ReviewModal
+        isOpen={reviewModalOpen}
+        onClose={() => setReviewModalOpen(false)}
       />
 
       <CookieBanner />

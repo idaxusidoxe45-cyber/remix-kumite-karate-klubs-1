@@ -1,6 +1,9 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: idaxusidoxe45-cyber/remix-kumite-karate-klubs-1
   branch: main
+
+local_backend: true
 
 media_folder: "public/assets_gallery"
 public_folder: "/assets_gallery"
@@ -9,22 +12,28 @@ collections:
   - name: "gallery"
     label: "Galerija (Gallery)"
     folder: "public/assets_gallery"
+    path: "{{category}}/{{slug}}"
+    media_folder: "public/assets_gallery/{{category}}"
+    public_folder: "/assets_gallery/{{category}}"
     create: true
-    slug: "{{slug}}"
+    slug: "{{title}}"
     fields:
       - { label: "Virsraksts (Title)", name: "title", widget: "string" }
       - { label: "Kategorija (Category)", name: "category", widget: "select", options: ["eksameni", "nometnes", "pasakumi", "sacensibas", "trenini", "zale"] }
       - { label: "Apraksts (Caption)", name: "caption", widget: "string" }
       - { label: "Attēls (Image)", name: "image", widget: "image" }
+      - { label: "Pilns attēls (Full Image)", name: "fullImage", widget: "image", required: false }
 
   - name: "reviews"
     label: "Отзывы (Reviews)"
-    folder: "src/content/reviews"
+    folder: "public/content/reviews"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    extension: "json"
+    format: "json"
     fields:
       - { label: "Имя (Author)", name: "author", widget: "string" }
       - { label: "Роль (Role)", name: "role", widget: "string", required: false }
       - { label: "Текст отзыва (Text)", name: "text", widget: "text" }
       - { label: "Оценка (Rating 1-5)", name: "rating", widget: "number", default: 5, value_type: "int", min: 1, max: 5 }
-      - { label: "Статус (Status)", name: "status", widget: "select", options: ["published", "draft"], default: "published" }
+      - { label: "Статус (Status)", name: "status", widget: "select", options: ["published", "draft", "rejected"], default: "draft" }

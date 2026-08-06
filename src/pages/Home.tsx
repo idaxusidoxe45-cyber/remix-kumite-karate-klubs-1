@@ -9,9 +9,10 @@ import { Logo } from '../components/Logo';
 interface HomeProps {
   setCurrentTab: (tab: PageTab) => void;
   openTrialModal: () => void;
+  openReviewModal?: () => void;
 }
 
-export default function Home({ setCurrentTab, openTrialModal }: HomeProps) {
+export default function Home({ setCurrentTab, openTrialModal, openReviewModal }: HomeProps) {
   const [formName, setFormName] = useState('');
   const [formPhone, setFormPhone] = useState('');
   const [formMessage, setFormMessage] = useState('');
@@ -358,7 +359,7 @@ export default function Home({ setCurrentTab, openTrialModal }: HomeProps) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {TESTIMONIALS.filter(t => t.status !== 'draft').slice(0, 3).map((t, idx) => (
+            {TESTIMONIALS.filter(t => t.status === 'published').slice(0, 3).map((t, idx) => (
               <InteractiveRepelCard key={t.id} maxShift={12} maxRotate={6}>
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}
@@ -369,21 +370,22 @@ export default function Home({ setCurrentTab, openTrialModal }: HomeProps) {
                 >
                   <div className="space-y-4">
                     <div className="flex text-amber-500 space-x-1">
-                      {[...Array(5)].map((_, i) => (
+                      {[...Array(t.rating || 5)].map((_, i) => (
                         <Star key={i} className="w-5 h-5 fill-current" />
                       ))}
                     </div>
                     <p className="text-slate-600 italic text-sm leading-relaxed font-sans whitespace-pre-line">{t.text}</p>
                   </div>
-                  <div className="mt-6 pt-4 border-t border-slate-100">
+                  <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
                     <h4 className="font-heading uppercase tracking-wider text-[#0a0a0c] text-lg font-bold">{t.author}</h4>
+                    {t.role && <span className="text-xs text-slate-400 font-sans">{t.role}</span>}
                   </div>
                 </motion.div>
               </InteractiveRepelCard>
             ))}
           </div>
           
-          <div className="text-center mt-12">
+          <div className="flex flex-wrap items-center justify-center gap-4 mt-12">
             <button
               onClick={() => {
                 setCurrentTab('about');
@@ -398,6 +400,14 @@ export default function Home({ setCurrentTab, openTrialModal }: HomeProps) {
             >
               Lasīt visas atsauksmes
             </button>
+            {openReviewModal && (
+              <button
+                onClick={openReviewModal}
+                className="inline-block bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-md border-2 border-white"
+              >
+                Atstāt atsauksmi
+              </button>
+            )}
           </div>
         </div>
       </section>

@@ -1,7 +1,7 @@
 export type PageTab = 'home' | 'about' | 'coaches' | 'schedule' | 'gallery' | 'contacts';
 
 export interface ScheduleGroup {
-  id: number;
+  id: number | string;
   title: string;
   image: string;
   schedule: string[];
@@ -9,7 +9,7 @@ export interface ScheduleGroup {
 }
 
 export interface GalleryItem {
-  id: number;
+  id: number | string;
   title: string;
   category: 'trenini' | 'eksameni' | 'sacensibas' | 'nometnes' | 'pasakumi' | 'zale';
   image: string;
@@ -18,12 +18,12 @@ export interface GalleryItem {
 }
 
 export interface Testimonial {
-  id: number;
+  id: number | string;
   author: string;
   text: string;
   role?: string;
   rating?: number;
-  status?: 'published' | 'draft';
+  status?: 'published' | 'draft' | 'rejected';
 }
 
 export interface FaqItem {
