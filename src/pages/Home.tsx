@@ -56,7 +56,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
         {/* Subtle Red & Accent Glow Background */}
         <div className="absolute right-10 top-1/2 -translate-y-1/2 w-96 h-96 lg:w-[500px] lg:h-[500px] rounded-full bg-gradient-to-tr from-[#dc2626]/40 via-[#2563eb]/20 to-transparent opacity-60 blur-3xl pointer-events-none animate-pulse-slow"></div>
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-25 mix-blend-luminosity filter contrast-125 pointer-events-none"
+          className="absolute inset-0 bg-cover bg-center opacity-45 mix-blend-luminosity filter contrast-125 pointer-events-none"
           style={{ backgroundImage: "url('/assets_gallery/trenini/karate-web-17.webp')" }}
         ></div>
 

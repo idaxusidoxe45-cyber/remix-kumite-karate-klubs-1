@@ -60,7 +60,7 @@ export default function Gallery({ openTrialModal }: GalleryProps) {
     <div className="bg-[#ffffff] text-[#0f172a]">
       {/* Hero Header */}
       <section className="relative bg-[#0a0a0c] text-white py-20 lg:py-28 overflow-hidden border-b-8 border-[#dc2626]">
-        <div className="absolute inset-0 bg-cover bg-center opacity-25 filter grayscale" style={{ backgroundImage: "url('/assets_gallery/trenini/karate-web-17.webp')" }}></div>
+        <div className="absolute inset-0 bg-cover bg-center opacity-45 filter grayscale" style={{ backgroundImage: "url('/assets_gallery/trenini/karate-web-17.webp')" }}></div>
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <span className="text-xs sm:text-sm uppercase tracking-widest text-[#dc2626] font-heading font-bold block mb-2">Kumite Karate Klubs</span>
