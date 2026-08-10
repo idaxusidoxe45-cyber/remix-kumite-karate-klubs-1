@@ -254,21 +254,30 @@ export default function AboutClub({ setCurrentTab, openTrialModal, openReviewMod
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {getDynamicTestimonials().filter(t => t.status === 'published').map((t) => (
-              <div key={t.id} className="bg-white rounded-xl p-8 border border-slate-200 shadow-md flex flex-col justify-between h-full select-text cursor-default">
-                <div className="space-y-4">
-                  <div className="flex text-amber-500 space-x-1">
-                    {[...Array(t.rating || 5)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 fill-current" />
-                    ))}
+            {getDynamicTestimonials().filter(t => t.status === 'published').map((t, idx) => (
+              <InteractiveRepelCard key={t.id} maxShift={14} maxRotate={6}>
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  whileHover={{ y: -6, scale: 1.02 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: idx * 0.08 }}
+                  className="bg-white rounded-xl p-8 border border-slate-200 shadow-md flex flex-col justify-between h-full hover:shadow-xl hover:border-[#dc2626] transition-all"
+                >
+                  <div className="space-y-4">
+                    <div className="flex text-amber-500 space-x-1">
+                      {[...Array(t.rating || 5)].map((_, i) => (
+                        <Star key={i} className="w-5 h-5 fill-current" />
+                      ))}
+                    </div>
+                    <p className="text-slate-600 italic text-sm leading-relaxed font-sans whitespace-pre-line">{t.text}</p>
                   </div>
-                  <p className="text-slate-600 italic text-sm leading-relaxed font-sans whitespace-pre-line">{t.text}</p>
-                </div>
-                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-                  <h4 className="font-heading uppercase tracking-wider text-[#0a0a0c] text-lg font-bold">{t.author}</h4>
-                  {t.role && <span className="text-xs text-slate-400 font-sans">{t.role}</span>}
-                </div>
-              </div>
+                  <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                    <h4 className="font-heading uppercase tracking-wider text-[#0a0a0c] text-lg font-bold">{t.author}</h4>
+                    {t.role && <span className="text-xs text-slate-400 font-sans">{t.role}</span>}
+                  </div>
+                </motion.div>
+              </InteractiveRepelCard>
             ))}
           </div>
 

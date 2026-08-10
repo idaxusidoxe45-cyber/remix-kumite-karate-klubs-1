@@ -300,14 +300,13 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
               </div>
             </motion.div>
 
-            <InteractiveRepelCard maxShift={16} maxRotate={8} className="w-full">
+            <div className="w-full">
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ scale: 1.025, y: -4 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.3 }}
-                className="rounded-2xl overflow-hidden shadow-2xl bg-black aspect-video flex items-center justify-center relative border-4 border-slate-900 hover:border-[#dc2626] transition-all duration-300 hover:shadow-red-600/30"
+                className="rounded-2xl overflow-hidden shadow-2xl bg-black aspect-video flex items-center justify-center relative border-4 border-slate-900 border-[#dc2626]"
               >
                 <iframe
                   title="UZ STARTA LĪNIJAS #19 | KARATE"
@@ -317,7 +316,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                   allowFullScreen
                 ></iframe>
               </motion.div>
-            </InteractiveRepelCard>
+            </div>
           </div>
         </div>
       </section>
@@ -377,27 +376,29 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {getDynamicTestimonials().filter(t => t.status === 'published').slice(0, 3).map((t, idx) => (
-              <motion.div 
-                key={t.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className="bg-white rounded-2xl p-8 border border-slate-200 shadow-md flex flex-col justify-between h-full select-text cursor-default"
-              >
-                <div className="space-y-4">
-                  <div className="flex text-amber-500 space-x-1">
-                    {[...Array(t.rating || 5)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 fill-current" />
-                    ))}
+              <InteractiveRepelCard key={t.id} maxShift={14} maxRotate={6}>
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  whileHover={{ y: -6, scale: 1.02 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: idx * 0.1 }}
+                  className="bg-white rounded-2xl p-8 border border-slate-200 shadow-md flex flex-col justify-between h-full hover:shadow-xl hover:border-[#dc2626] transition-all"
+                >
+                  <div className="space-y-4">
+                    <div className="flex text-amber-500 space-x-1">
+                      {[...Array(t.rating || 5)].map((_, i) => (
+                        <Star key={i} className="w-5 h-5 fill-current" />
+                      ))}
+                    </div>
+                    <p className="text-slate-600 italic text-sm leading-relaxed font-sans whitespace-pre-line">{t.text}</p>
                   </div>
-                  <p className="text-slate-600 italic text-sm leading-relaxed font-sans whitespace-pre-line">{t.text}</p>
-                </div>
-                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-                  <h4 className="font-heading uppercase tracking-wider text-[#0a0a0c] text-lg font-bold">{t.author}</h4>
-                  {t.role && <span className="text-xs text-slate-400 font-sans">{t.role}</span>}
-                </div>
-              </motion.div>
+                  <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                    <h4 className="font-heading uppercase tracking-wider text-[#0a0a0c] text-lg font-bold">{t.author}</h4>
+                    {t.role && <span className="text-xs text-slate-400 font-sans">{t.role}</span>}
+                  </div>
+                </motion.div>
+              </InteractiveRepelCard>
             ))}
           </div>
           
