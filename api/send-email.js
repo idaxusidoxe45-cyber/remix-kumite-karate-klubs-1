@@ -10,7 +10,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'Name is required' });
     }
 
-    const recipient = targetEmail || process.env.NOTIFICATION_EMAIL || 'info@kumitekarate.lv';
+    const recipient = targetEmail || process.env.NOTIFICATION_EMAIL || 'u2086344644@gmail.com';
 
     console.log(`[FORM SUBMISSION] Type: ${type}, Name: ${name}, Phone: ${phone}, Email: ${email}, Message: ${message} -> Sending to: ${recipient}`);
 

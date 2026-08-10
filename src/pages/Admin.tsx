@@ -48,7 +48,10 @@ export default function Admin() {
   const [submissions, setSubmissions] = useState<FormSubmission[]>([]);
   const [reviews, setReviews] = useState<Testimonial[]>([]);
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
-  const [targetEmail, setTargetEmail] = useState('info@kumitekarate.lv');
+  const [targetEmail, setTargetEmail] = useState(() => {
+    if (typeof window === 'undefined') return 'u2086344644@gmail.com';
+    return localStorage.getItem('kumite_target_email') || 'u2086344644@gmail.com';
+  });
   
   // New review form modal
   const [showAddReviewModal, setShowAddReviewModal] = useState(false);
@@ -496,11 +499,43 @@ export default function Admin() {
         {activeTab === 'settings' && (
           <div className="max-w-2xl space-y-6">
             <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+              <h3 className="text-xl font-heading font-bold uppercase tracking-wide text-[#0a0a0c]">Paziņojumu e-pasta adrese</h3>
+              <p className="text-xs text-slate-500 font-sans">Uz šo e-pasta adresi tiks nosūtīti visi pieteikumi no mājaslapas</p>
+
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                localStorage.setItem('kumite_target_email', targetEmail);
+                setPassSaveSuccess(true);
+                setTimeout(() => setPassSaveSuccess(false), 3000);
+              }} className="space-y-4">
+                <div>
+                  <label className="block text-xs uppercase font-heading font-bold text-slate-700 mb-1">E-pasta adrese pieteikumu saņemšanai</label>
+                  <input
+                    type="email"
+                    required
+                    value={targetEmail}
+                    onChange={(e) => setTargetEmail(e.target.value)}
+                    placeholder="u2086344644@gmail.com"
+                    className="w-full border border-slate-300 rounded-lg px-4 py-3 text-slate-900 text-sm focus:outline-none focus:border-[#dc2626]"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="bg-[#0a0a0c] hover:bg-[#1e293b] text-white font-heading text-sm uppercase tracking-wider px-6 py-3 rounded-lg font-bold shadow transition-colors flex items-center space-x-2"
+                >
+                  <Save className="w-4 h-4 text-[#dc2626]" />
+                  <span>Saglabāt E-pastu</span>
+                </button>
+              </form>
+            </div>
+
+            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
               <h3 className="text-xl font-heading font-bold uppercase tracking-wide text-[#0a0a0c]">Paroles maiņa</h3>
               
               {passSaveSuccess && (
                 <div className="p-3 bg-emerald-100 border border-emerald-400 text-emerald-800 rounded-lg text-sm">
-                  Parole veiksmīgi atjaunināta!
+                  Iestatījumi veiksmīgi saglabāti!
                 </div>
               )}
 

@@ -10,7 +10,12 @@ export interface FormSubmission {
 }
 
 const STORAGE_KEY = 'kumite_form_submissions';
-const DEFAULT_TARGET_EMAIL = 'info@kumitekarate.lv';
+export const DEFAULT_TARGET_EMAIL = 'u2086344644@gmail.com';
+
+export function getTargetEmail(): string {
+  if (typeof window === 'undefined') return DEFAULT_TARGET_EMAIL;
+  return localStorage.getItem('kumite_target_email') || DEFAULT_TARGET_EMAIL;
+}
 
 export function getStoredSubmissions(): FormSubmission[] {
   if (typeof window === 'undefined') return [];
@@ -75,6 +80,8 @@ export async function sendFormToEmail(data: {
   email?: string;
   message?: string;
 }): Promise<boolean> {
+  const targetEmail = getTargetEmail();
+
   // 1. Save to local storage log for Admin Panel
   saveSubmission(data);
 
@@ -85,7 +92,7 @@ export async function sendFormToEmail(data: {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         ...data,
-        targetEmail: DEFAULT_TARGET_EMAIL
+        targetEmail
       })
     });
     if (apiRes.ok) return true;
@@ -99,10 +106,10 @@ export async function sendFormToEmail(data: {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        access_key: '6b63c7b3-85f0-4c3e-bfa1-e631d87e0766', // Public fallback key or configurable
-        subject: `Jauns pieteikums no mājaslapas: ${data.name}`,
+        access_key: '6b63c7b3-85f0-4c3e-bfa1-e631d87e0766', // Web3Forms key
+        subject: `Jauns pieteikums (${data.type === 'trial' ? 'Bezmaksas treniņš' : 'Kontaktforma'}): ${data.name}`,
         from_name: 'Kumite Karate Klubs Mājaslapa',
-        to_email: DEFAULT_TARGET_EMAIL,
+        to_email: targetEmail,
         name: data.name,
         phone: data.phone || 'Nav norādīts',
         email: data.email || 'Nav norādīts',
