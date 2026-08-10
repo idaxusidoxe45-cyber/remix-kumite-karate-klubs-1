@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PageTab } from '../types';
 import { BELT_SYSTEM, JAPANESE_NUMBERS, STRIKE_LEVELS, FAQ_ITEMS, getDynamicTestimonials } from '../data';
 import { Star } from 'lucide-react';
@@ -15,6 +15,18 @@ interface AboutClubProps {
 export default function AboutClub({ setCurrentTab, openTrialModal, openReviewModal }: AboutClubProps) {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [openToggle, setOpenToggle] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (window.location.hash === '#atsauksmes') {
+      const timer = setTimeout(() => {
+        const el = document.getElementById('atsauksmes');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   const toggleFaq = (idx: number) => {
     setOpenFaq(openFaq === idx ? null : idx);

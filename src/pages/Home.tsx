@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { PageTab } from '../types';
 import { getDynamicTestimonials, getDynamicGalleryItems } from '../data';
 import { CheckCircle, ArrowRight, Play, Star, MapPin, Phone, Mail } from 'lucide-react';
@@ -14,6 +15,7 @@ interface HomeProps {
 }
 
 export default function Home({ setCurrentTab, openTrialModal, openReviewModal }: HomeProps) {
+  const navigate = useNavigate();
   const [formName, setFormName] = useState('');
   const [formPhone, setFormPhone] = useState('');
   const [formMessage, setFormMessage] = useState('');
@@ -405,15 +407,9 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
           <div className="flex flex-wrap items-center justify-center gap-4 mt-12">
             <button
               onClick={() => {
-                setCurrentTab('about');
-                setTimeout(() => {
-                  const el = document.getElementById('atsauksmes');
-                  if (el) {
-                    el.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }, 100);
+                navigate('/about#atsauksmes');
               }}
-              className="inline-block bg-[#0a0a0c] hover:bg-[#dc2626] text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-md"
+              className="inline-block bg-[#0a0a0c] hover:bg-[#dc2626] text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-md cursor-pointer"
             >
               Lasīt visas atsauksmes
             </button>
