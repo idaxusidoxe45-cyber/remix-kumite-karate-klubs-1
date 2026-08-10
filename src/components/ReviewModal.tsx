@@ -50,7 +50,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
 
     // Attempt to post to server API if available
     try {
-      fetch('/api/submit-review', {
+      fetch('/api/reviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newReview),

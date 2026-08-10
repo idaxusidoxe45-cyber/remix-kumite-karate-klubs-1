@@ -5,6 +5,7 @@ import { CheckCircle, ArrowRight, Play, Star, MapPin, Phone, Mail } from 'lucide
 import { motion } from 'motion/react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
 import { Logo } from '../components/Logo';
+import { sendFormToEmail } from '../services/emailService';
 
 interface HomeProps {
   setCurrentTab: (tab: PageTab) => void;
@@ -26,6 +27,14 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
   const handleTrialSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formName || !formPhone) return;
+
+    sendFormToEmail({
+      type: 'trial',
+      name: formName.trim(),
+      phone: formPhone.trim(),
+      message: formMessage.trim() || undefined
+    });
+
     setFormSubmitted(true);
     setTimeout(() => {
       setFormSubmitted(false);
@@ -38,6 +47,14 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
   const handleContactFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!contactName || !contactEmail) return;
+
+    sendFormToEmail({
+      type: 'contact',
+      name: contactName.trim(),
+      email: contactEmail.trim(),
+      message: contactMessage.trim() || undefined
+    });
+
     setContactSubmitted(true);
     setTimeout(() => {
       setContactSubmitted(false);

@@ -5,6 +5,7 @@ import LightboxModal from '../components/LightboxModal';
 import { ZoomIn, CheckCircle } from 'lucide-react';
 import { motion } from 'motion/react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
+import { sendFormToEmail } from '../services/emailService';
 
 interface GalleryProps {
   openTrialModal: () => void;
@@ -42,6 +43,14 @@ export default function Gallery({ openTrialModal }: GalleryProps) {
       return;
     }
     if (!formName || !formPhone) return;
+
+    sendFormToEmail({
+      type: 'trial',
+      name: formName.trim(),
+      phone: formPhone.trim(),
+      message: formMessage.trim() || undefined
+    });
+
     setFormSubmitted(true);
     setTimeout(() => {
       setFormSubmitted(false);
