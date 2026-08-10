@@ -17,6 +17,7 @@ export default function Gallery({ openTrialModal }: GalleryProps) {
   const [formName, setFormName] = useState('');
   const [formPhone, setFormPhone] = useState('');
   const [formMessage, setFormMessage] = useState('');
+  const [formHoneypot, setFormHoneypot] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   const categories = [
@@ -36,6 +37,10 @@ export default function Gallery({ openTrialModal }: GalleryProps) {
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (formHoneypot) {
+      setFormSubmitted(true);
+      return;
+    }
     if (!formName || !formPhone) return;
     setFormSubmitted(true);
     setTimeout(() => {
@@ -43,6 +48,7 @@ export default function Gallery({ openTrialModal }: GalleryProps) {
       setFormName('');
       setFormPhone('');
       setFormMessage('');
+      setFormHoneypot('');
     }, 3000);
   };
 
@@ -85,6 +91,15 @@ export default function Gallery({ openTrialModal }: GalleryProps) {
                 </div>
               ) : (
                 <form onSubmit={handleFormSubmit} className="space-y-4">
+                  <input
+                    type="text"
+                    name="website"
+                    className="hidden"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={formHoneypot}
+                    onChange={(e) => setFormHoneypot(e.target.value)}
+                  />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <input
                       type="text"

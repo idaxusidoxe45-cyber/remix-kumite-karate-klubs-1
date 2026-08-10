@@ -13,13 +13,20 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [websiteHoneypot, setWebsiteHoneypot] = useState('');
+  const [gdprConsent, setGdprConsent] = useState(true);
   const [submitted, setSubmitted] = useState(false);
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !phone) return;
+    if (websiteHoneypot) {
+      // Honeypot triggered by spam bot
+      setSubmitted(true);
+      return;
+    }
+    if (!name || !phone || !gdprConsent) return;
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);
@@ -27,6 +34,7 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
       setPhone('');
       setEmail('');
       setMessage('');
+      setWebsiteHoneypot('');
       onClose();
     }, 2500);
   };
@@ -64,6 +72,17 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Honeypot field for bot protection */}
+              <input
+                type="text"
+                name="website"
+                className="hidden"
+                tabIndex={-1}
+                autoComplete="off"
+                value={websiteHoneypot}
+                onChange={(e) => setWebsiteHoneypot(e.target.value)}
+              />
+
               <div>
                 <label className="block text-sm uppercase font-heading tracking-wider text-slate-200 mb-1 font-bold">Jūsu vārds *</label>
                 <input
@@ -111,10 +130,26 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
                 ></textarea>
               </div>
 
+              {/* GDPR Consent */}
+              <div className="flex items-start space-x-2 pt-1">
+                <input
+                  type="checkbox"
+                  id="trial-gdpr"
+                  required
+                  checked={gdprConsent}
+                  onChange={(e) => setGdprConsent(e.target.checked)}
+                  className="mt-1 accent-[#dc2626] w-4 h-4 rounded"
+                />
+                <label htmlFor="trial-gdpr" className="text-xs text-slate-300 leading-snug cursor-pointer">
+                  Piekrītu personas datu apstrādei, lai Kumite Karate Klubs varētu ar mani sazināties.
+                </label>
+              </div>
+
               <div className="flex justify-end pt-2">
                 <button
                   type="submit"
-                  className="w-full bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-xl uppercase tracking-widest px-6 py-4 rounded-lg font-bold flex items-center justify-center space-x-2 transition-all transform hover:scale-105 active:scale-95 shadow-xl border-2 border-white"
+                  disabled={!gdprConsent}
+                  className="w-full bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white font-heading text-xl uppercase tracking-widest px-6 py-4 rounded-lg font-bold flex items-center justify-center space-x-2 transition-all transform hover:scale-105 active:scale-95 shadow-xl border-2 border-white"
                 >
                   <span>Nosūtīt pieteikumu</span>
                   <Send className="w-5 h-5" />

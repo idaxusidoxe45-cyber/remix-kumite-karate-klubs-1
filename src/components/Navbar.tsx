@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { PageTab } from '../types';
 import { Menu, X, Facebook, Instagram, Youtube, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -14,12 +15,12 @@ export default function Navbar({ currentTab, setCurrentTab, openTrialModal }: Na
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
 
-  const navItems: { tab: PageTab; label: string; hasSub?: boolean }[] = [
-    { tab: 'home', label: 'SĀKUMS' },
-    { tab: 'about', label: 'PAR KLUBU', hasSub: true },
-    { tab: 'schedule', label: 'NODARBĪBU GRAFIKS' },
-    { tab: 'gallery', label: 'GALERIJA' },
-    { tab: 'contacts', label: 'SAZINIES AR MUMS' }
+  const navItems: { tab: PageTab; path: string; label: string; hasSub?: boolean }[] = [
+    { tab: 'home', path: '/', label: 'SĀKUMS' },
+    { tab: 'about', path: '/about', label: 'PAR KLUBU', hasSub: true },
+    { tab: 'schedule', path: '/schedule', label: 'NODARBĪBU GRAFIKS' },
+    { tab: 'gallery', path: '/gallery', label: 'GALERIJA' },
+    { tab: 'contacts', path: '/contacts', label: 'SAZINIES AR MUMS' }
   ];
 
   return (
@@ -32,9 +33,9 @@ export default function Navbar({ currentTab, setCurrentTab, openTrialModal }: Na
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between min-h-[4rem] sm:min-h-[5rem] py-2 gap-1.5 sm:gap-4">
           {/* Logo */}
-          <div 
-            className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group py-1 flex-shrink-0" 
-            onClick={() => setCurrentTab('home')}
+          <Link 
+            to="/" 
+            className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group py-1 flex-shrink-0"
           >
             <Logo variant="dark" className="w-8 h-8 xs:w-9 xs:h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 group-hover:scale-105 transition-transform shadow-lg flex-shrink-0" />
             <div className="flex flex-col justify-center flex-shrink-0">
@@ -43,7 +44,7 @@ export default function Navbar({ currentTab, setCurrentTab, openTrialModal }: Na
               </span>
               <span className="hidden sm:block text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-wider text-[#94a3b8] font-semibold leading-tight whitespace-nowrap">Rīga • Bērnu un Jauniešu Karatē</span>
             </div>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden xl:flex items-center space-x-4 2xl:space-x-8 flex-shrink-0">
@@ -56,15 +57,15 @@ export default function Navbar({ currentTab, setCurrentTab, openTrialModal }: Na
                     onMouseEnter={() => setAboutDropdownOpen(true)}
                     onMouseLeave={() => setAboutDropdownOpen(false)}
                   >
-                    <button
-                      onClick={() => setCurrentTab(item.tab)}
+                    <Link
+                      to="/about"
                       className={`flex items-center space-x-1 font-heading tracking-wider text-sm xl:text-base font-medium transition-colors whitespace-nowrap ${
                         currentTab === 'about' || currentTab === 'coaches' ? 'text-[#dc2626]' : 'text-slate-200 hover:text-[#dc2626]'
                       }`}
                     >
                       <span>{item.label}</span>
                       <ChevronDown className="w-4 h-4" />
-                    </button>
+                    </Link>
 
                     {aboutDropdownOpen && (
                       <motion.div 
@@ -73,24 +74,20 @@ export default function Navbar({ currentTab, setCurrentTab, openTrialModal }: Na
                         exit={{ opacity: 0, y: 10 }}
                         className="absolute top-full left-0 w-48 bg-[#0a0a0c] shadow-xl rounded-b-lg border-t-2 border-[#dc2626] border-x border-b border-[#1e293b] py-2"
                       >
-                        <button
-                          onClick={() => {
-                            setCurrentTab('about');
-                            setAboutDropdownOpen(false);
-                          }}
-                          className="w-full text-left px-4 py-2.5 text-sm font-heading tracking-wider hover:bg-[#1e293b] text-slate-200 hover:text-[#dc2626] transition-colors"
+                        <Link
+                          to="/about"
+                          onClick={() => setAboutDropdownOpen(false)}
+                          className="block w-full text-left px-4 py-2.5 text-sm font-heading tracking-wider hover:bg-[#1e293b] text-slate-200 hover:text-[#dc2626] transition-colors"
                         >
                           PAR KLUBU
-                        </button>
-                        <button
-                          onClick={() => {
-                            setCurrentTab('coaches');
-                            setAboutDropdownOpen(false);
-                          }}
-                          className="w-full text-left px-4 py-2.5 text-sm font-heading tracking-wider hover:bg-[#1e293b] text-slate-200 hover:text-[#dc2626] transition-colors"
+                        </Link>
+                        <Link
+                          to="/coaches"
+                          onClick={() => setAboutDropdownOpen(false)}
+                          className="block w-full text-left px-4 py-2.5 text-sm font-heading tracking-wider hover:bg-[#1e293b] text-slate-200 hover:text-[#dc2626] transition-colors"
                         >
                           TRENERI
-                        </button>
+                        </Link>
                       </motion.div>
                     )}
                   </div>
@@ -98,9 +95,9 @@ export default function Navbar({ currentTab, setCurrentTab, openTrialModal }: Na
               }
 
               return (
-                <button
+                <Link
                   key={item.tab}
-                  onClick={() => setCurrentTab(item.tab)}
+                  to={item.path}
                   className={`font-heading tracking-wider text-sm xl:text-base font-medium transition-colors relative py-2 whitespace-nowrap ${
                     currentTab === item.tab ? 'text-[#dc2626]' : 'text-slate-200 hover:text-[#dc2626]'
                   }`}
@@ -112,7 +109,7 @@ export default function Navbar({ currentTab, setCurrentTab, openTrialModal }: Na
                       className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#dc2626]" 
                     />
                   )}
-                </button>
+                </Link>
               );
             })}
           </nav>
@@ -186,60 +183,48 @@ export default function Navbar({ currentTab, setCurrentTab, openTrialModal }: Na
             transition={{ duration: 0.18, ease: 'easeOut' }}
             className="xl:hidden bg-[#0a0a0c] border-b border-[#1e293b] px-4 pt-2 pb-6 space-y-2 shadow-2xl max-h-[85vh] overflow-y-auto"
           >
-            <button
-              onClick={() => {
-                setCurrentTab('home');
-                setMobileMenuOpen(false);
-              }}
+            <Link
+              to="/"
+              onClick={() => setMobileMenuOpen(false)}
               className="block w-full text-left px-3 py-2.5 rounded-md font-heading text-xl font-medium text-slate-100 hover:bg-[#1e293b] hover:text-[#dc2626]"
             >
               SĀKUMS
-            </button>
-            <button
-              onClick={() => {
-                setCurrentTab('about');
-                setMobileMenuOpen(false);
-              }}
+            </Link>
+            <Link
+              to="/about"
+              onClick={() => setMobileMenuOpen(false)}
               className="block w-full text-left px-3 py-2.5 rounded-md font-heading text-xl font-medium text-slate-100 hover:bg-[#1e293b] hover:text-[#dc2626]"
             >
               PAR KLUBU
-            </button>
-            <button
-              onClick={() => {
-                setCurrentTab('coaches');
-                setMobileMenuOpen(false);
-              }}
+            </Link>
+            <Link
+              to="/coaches"
+              onClick={() => setMobileMenuOpen(false)}
               className="block w-full text-left px-6 py-2 rounded-md font-heading text-lg text-slate-400 hover:bg-[#1e293b] hover:text-[#dc2626]"
             >
               — Treneri
-            </button>
-            <button
-              onClick={() => {
-                setCurrentTab('schedule');
-                setMobileMenuOpen(false);
-              }}
+            </Link>
+            <Link
+              to="/schedule"
+              onClick={() => setMobileMenuOpen(false)}
               className="block w-full text-left px-3 py-2.5 rounded-md font-heading text-xl font-medium text-slate-100 hover:bg-[#1e293b] hover:text-[#dc2626]"
             >
               NODARBĪBU GRAFIKS
-            </button>
-            <button
-              onClick={() => {
-                setCurrentTab('gallery');
-                setMobileMenuOpen(false);
-              }}
+            </Link>
+            <Link
+              to="/gallery"
+              onClick={() => setMobileMenuOpen(false)}
               className="block w-full text-left px-3 py-2.5 rounded-md font-heading text-xl font-medium text-slate-100 hover:bg-[#1e293b] hover:text-[#dc2626]"
             >
               GALERIJA
-            </button>
-            <button
-              onClick={() => {
-                setCurrentTab('contacts');
-                setMobileMenuOpen(false);
-              }}
+            </Link>
+            <Link
+              to="/contacts"
+              onClick={() => setMobileMenuOpen(false)}
               className="block w-full text-left px-3 py-2.5 rounded-md font-heading text-xl font-medium text-slate-100 hover:bg-[#1e293b] hover:text-[#dc2626]"
             >
               SAZINIES AR MUMS
-            </button>
+            </Link>
 
             <div className="pt-4 flex items-center justify-center space-x-4 border-t border-[#1e293b]">
               <a href="https://www.facebook.com/kumitekarateklubs" target="_blank" rel="noopener noreferrer" className="p-2.5 bg-[#1e293b] hover:bg-[#1877F2] hover:text-white rounded text-slate-200 transition-all transform hover:scale-110 active:scale-90">

@@ -13,12 +13,18 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
   const [role, setRole] = useState('');
   const [rating, setRating] = useState(5);
   const [text, setText] = useState('');
+  const [websiteHoneypot, setWebsiteHoneypot] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (websiteHoneypot) {
+      // Spam bot trap
+      setSubmitted(true);
+      return;
+    }
     if (!author.trim() || !text.trim()) return;
 
     const newReview: Testimonial = {
@@ -34,12 +40,23 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
       onSubmitReview(newReview);
     }
 
-    // Save locally as draft for persistence demonstration
+    // Save locally as draft for instant display & admin moderation review
     try {
       const existing = JSON.parse(localStorage.getItem('user_submitted_reviews') || '[]');
       localStorage.setItem('user_submitted_reviews', JSON.stringify([...existing, newReview]));
     } catch {
       // Ignore storage errors
+    }
+
+    // Attempt to post to server API if available
+    try {
+      fetch('/api/submit-review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newReview),
+      }).catch(() => {});
+    } catch {
+      // Ignore network errors
     }
 
     setSubmitted(true);
@@ -49,6 +66,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
       setRole('');
       setRating(5);
       setText('');
+      setWebsiteHoneypot('');
       onClose();
     }, 3000);
   };
@@ -76,6 +94,17 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Honeypot field for bot protection */}
+            <input
+              type="text"
+              name="website"
+              className="hidden"
+              tabIndex={-1}
+              autoComplete="off"
+              value={websiteHoneypot}
+              onChange={(e) => setWebsiteHoneypot(e.target.value)}
+            />
+
             <h3 className="text-2xl font-heading font-bold uppercase tracking-wide text-white mb-1">
               Atstāt atsauksmi
             </h3>

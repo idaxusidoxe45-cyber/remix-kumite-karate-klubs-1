@@ -1124,7 +1124,11 @@ export const STRIKE_LEVELS = [
   { level: 'Apakšējais līmenis – GEDAN', desc: '(kājas, ceļi)' }
 ];
 
+// Memoized dynamic gallery items
+let cachedGalleryItems: GalleryItem[] | null = null;
 export function getDynamicGalleryItems(): GalleryItem[] {
+  if (cachedGalleryItems) return cachedGalleryItems;
+
   const globGalleryJson = import.meta.glob<{
     id?: number | string;
     title: string;
@@ -1154,38 +1158,43 @@ export function getDynamicGalleryItems(): GalleryItem[] {
     }
   }
 
-  return cmsItems.length > 0 ? cmsItems : GALLERY_ITEMS;
+  cachedGalleryItems = cmsItems.length > 0 ? cmsItems : GALLERY_ITEMS;
+  return cachedGalleryItems;
 }
 
+// Memoized dynamic testimonials loader
+let cachedCmsTestimonials: Testimonial[] | null = null;
 export function getDynamicTestimonials(): Testimonial[] {
-  const staticReviews = TESTIMONIALS;
+  if (!cachedCmsTestimonials) {
+    const globReviews = import.meta.glob<{
+      author?: string;
+      role?: string;
+      text?: string;
+      rating?: number;
+      status?: 'published' | 'draft' | 'rejected';
+    }>([
+      '/public/content/reviews/*.json',
+      '/src/content/reviews/*.json',
+    ], { eager: true, import: 'default' });
 
-  const globReviews = import.meta.glob<{
-    author?: string;
-    role?: string;
-    text?: string;
-    rating?: number;
-    status?: 'published' | 'draft' | 'rejected';
-  }>([
-    '/public/content/reviews/*.json',
-    '/src/content/reviews/*.json',
-  ], { eager: true, import: 'default' });
+    const cmsReviews: Testimonial[] = [];
+    let nextId = 20000;
 
-  const cmsReviews: Testimonial[] = [];
-  let nextId = 20000;
-
-  for (const path in globReviews) {
-    const data = globReviews[path];
-    if (data && data.author && data.text) {
-      cmsReviews.push({
-        id: nextId++,
-        author: data.author,
-        role: data.role,
-        text: data.text,
-        rating: data.rating || 5,
-        status: data.status || 'draft',
-      });
+    for (const path in globReviews) {
+      const data = globReviews[path];
+      if (data && data.author && data.text) {
+        cmsReviews.push({
+          id: nextId++,
+          author: data.author,
+          role: data.role,
+          text: data.text,
+          rating: data.rating || 5,
+          status: data.status || 'published',
+        });
+      }
     }
+
+    cachedCmsTestimonials = cmsReviews.length > 0 ? cmsReviews : TESTIMONIALS;
   }
 
   let localReviews: Testimonial[] = [];
@@ -1197,5 +1206,5 @@ export function getDynamicTestimonials(): Testimonial[] {
     }
   }
 
-  return [...staticReviews, ...cmsReviews, ...localReviews];
+  return [...cachedCmsTestimonials, ...localReviews];
 }

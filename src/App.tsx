@@ -1,4 +1,5 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
+import { Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { PageTab } from './types';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -20,54 +21,47 @@ const PageLoader = () => (
   </div>
 );
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
 export default function App() {
-  const [currentTab, setCurrentTab] = useState<PageTab>('home');
+  const location = useLocation();
+  const navigate = useNavigate();
   const [trialModalOpen, setTrialModalOpen] = useState(false);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [currentTab]);
+  // Map path to currentTab
+  const getTabFromPath = (path: string): PageTab => {
+    if (path === '/about') return 'about';
+    if (path === '/coaches') return 'coaches';
+    if (path === '/schedule') return 'schedule';
+    if (path === '/gallery') return 'gallery';
+    if (path === '/contacts') return 'contacts';
+    return 'home';
+  };
 
-  const renderPage = () => {
-    switch (currentTab) {
-      case 'home':
-        return (
-          <Home
-            setCurrentTab={setCurrentTab}
-            openTrialModal={() => setTrialModalOpen(true)}
-            openReviewModal={() => setReviewModalOpen(true)}
-          />
-        );
-      case 'about':
-        return (
-          <AboutClub
-            setCurrentTab={setCurrentTab}
-            openTrialModal={() => setTrialModalOpen(true)}
-            openReviewModal={() => setReviewModalOpen(true)}
-          />
-        );
-      case 'coaches':
-        return <Coaches openTrialModal={() => setTrialModalOpen(true)} />;
-      case 'schedule':
-        return <Schedule openTrialModal={() => setTrialModalOpen(true)} />;
-      case 'gallery':
-        return <Gallery openTrialModal={() => setTrialModalOpen(true)} />;
-      case 'contacts':
-        return <Contacts openTrialModal={() => setTrialModalOpen(true)} />;
-      default:
-        return (
-          <Home
-            setCurrentTab={setCurrentTab}
-            openTrialModal={() => setTrialModalOpen(true)}
-            openReviewModal={() => setReviewModalOpen(true)}
-          />
-        );
-    }
+  const currentTab = getTabFromPath(location.pathname);
+
+  const setCurrentTab = (tab: PageTab) => {
+    const routeMap: Record<PageTab, string> = {
+      home: '/',
+      about: '/about',
+      coaches: '/coaches',
+      schedule: '/schedule',
+      gallery: '/gallery',
+      contacts: '/contacts',
+    };
+    navigate(routeMap[tab] || '/');
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f7f3ec] text-[#1c1b18] font-serif selection:bg-[#c83832] selection:text-white relative overflow-x-hidden">
+      <ScrollToTop />
       <JapaneseBackground />
       <Navbar
         currentTab={currentTab}
@@ -77,7 +71,45 @@ export default function App() {
 
       <main className="flex-grow relative z-10">
         <Suspense fallback={<PageLoader />}>
-          {renderPage()}
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Home
+                  setCurrentTab={setCurrentTab}
+                  openTrialModal={() => setTrialModalOpen(true)}
+                  openReviewModal={() => setReviewModalOpen(true)}
+                />
+              }
+            />
+            <Route
+              path="/about"
+              element={
+                <AboutClub
+                  setCurrentTab={setCurrentTab}
+                  openTrialModal={() => setTrialModalOpen(true)}
+                  openReviewModal={() => setReviewModalOpen(true)}
+                />
+              }
+            />
+            <Route
+              path="/coaches"
+              element={<Coaches openTrialModal={() => setTrialModalOpen(true)} />}
+            />
+            <Route
+              path="/schedule"
+              element={<Schedule openTrialModal={() => setTrialModalOpen(true)} />}
+            />
+            <Route
+              path="/gallery"
+              element={<Gallery openTrialModal={() => setTrialModalOpen(true)} />}
+            />
+            <Route
+              path="/contacts"
+              element={<Contacts openTrialModal={() => setTrialModalOpen(true)} />}
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
         </Suspense>
       </main>
 
