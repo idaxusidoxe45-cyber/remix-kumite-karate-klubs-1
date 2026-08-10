@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Clock, CheckCircle } from 'lucide-react';
 import { motion } from 'motion/react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
+import { sendFormToEmail } from '../services/emailService';
 
 interface ContactsProps {
   openTrialModal: () => void;
@@ -17,6 +18,15 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email) return;
+
+    sendFormToEmail({
+      type: 'contact',
+      name: name.trim(),
+      phone: phone.trim() || undefined,
+      email: email.trim(),
+      message: message.trim() || undefined
+    });
+
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);

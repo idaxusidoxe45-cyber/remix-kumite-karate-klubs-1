@@ -1,4 +1,4 @@
-export type PageTab = 'home' | 'about' | 'coaches' | 'schedule' | 'gallery' | 'contacts';
+export type PageTab = 'home' | 'about' | 'coaches' | 'schedule' | 'gallery' | 'contacts' | 'admin';
 
 export interface ScheduleGroup {
   id: number | string;

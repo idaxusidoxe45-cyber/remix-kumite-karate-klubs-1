@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, CheckCircle, Send } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Logo } from './Logo';
+import { sendFormToEmail } from '../services/emailService';
 
 interface TrialModalProps {
   isOpen: boolean;
@@ -27,6 +28,16 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
       return;
     }
     if (!name || !phone || !gdprConsent) return;
+
+    // Send application to email & store for Admin panel
+    sendFormToEmail({
+      type: 'trial',
+      name: name.trim(),
+      phone: phone.trim(),
+      email: email.trim() || undefined,
+      message: message.trim() || undefined
+    });
+
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);

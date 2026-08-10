@@ -14,6 +14,7 @@ const Coaches = lazy(() => import('./pages/Coaches'));
 const Schedule = lazy(() => import('./pages/Schedule'));
 const Gallery = lazy(() => import('./pages/Gallery'));
 const Contacts = lazy(() => import('./pages/Contacts'));
+const Admin = lazy(() => import('./pages/Admin'));
 
 const PageLoader = () => (
   <div className="min-h-[60vh] flex items-center justify-center bg-[#ffffff]">
@@ -35,6 +36,8 @@ export default function App() {
   const [trialModalOpen, setTrialModalOpen] = useState(false);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
 
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
   // Map path to currentTab
   const getTabFromPath = (path: string): PageTab => {
     if (path === '/about') return 'about';
@@ -42,6 +45,7 @@ export default function App() {
     if (path === '/schedule') return 'schedule';
     if (path === '/gallery') return 'gallery';
     if (path === '/contacts') return 'contacts';
+    if (path.startsWith('/admin')) return 'admin';
     return 'home';
   };
 
@@ -55,9 +59,18 @@ export default function App() {
       schedule: '/schedule',
       gallery: '/gallery',
       contacts: '/contacts',
+      admin: '/admin'
     };
     navigate(routeMap[tab] || '/');
   };
+
+  if (isAdminRoute) {
+    return (
+      <Suspense fallback={<PageLoader />}>
+        <Admin />
+      </Suspense>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f7f3ec] text-[#1c1b18] font-serif selection:bg-[#c83832] selection:text-white relative overflow-x-hidden">
@@ -108,6 +121,7 @@ export default function App() {
               path="/contacts"
               element={<Contacts openTrialModal={() => setTrialModalOpen(true)} />}
             />
+            <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
