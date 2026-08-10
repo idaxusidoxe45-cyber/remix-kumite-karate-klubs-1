@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   getStoredSubmissions, 
+  fetchSubmissionsFromCloud,
   updateSubmissionStatus, 
   deleteSubmission, 
   FormSubmission 
 } from '../services/emailService';
-import { getDynamicTestimonials, getDynamicGalleryItems } from '../data';
+import { getDynamicTestimonials, fetchCloudTestimonials, getDynamicGalleryItems } from '../data';
 import { Testimonial, GalleryItem } from '../types';
 import { 
   Lock, 
@@ -22,7 +23,8 @@ import {
   Save, 
   UserCheck, 
   Download,
-  Eye
+  Eye,
+  RefreshCw
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Logo } from '../components/Logo';
@@ -64,17 +66,37 @@ export default function Admin() {
   const [newPassword, setNewPassword] = useState('');
   const [passSaveSuccess, setPassSaveSuccess] = useState(false);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      refreshData();
-    }
-  }, [isAuthenticated]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const refreshData = () => {
+  const refreshData = useCallback(async () => {
+    setIsRefreshing(true);
+    // Instant local cache load
     setSubmissions(getStoredSubmissions());
     setReviews(getDynamicTestimonials());
     setGalleryItems(getDynamicGalleryItems());
-  };
+
+    // Asynchronous Cloud DB load
+    try {
+      const [cloudSubs, cloudRevs] = await Promise.all([
+        fetchSubmissionsFromCloud(),
+        fetchCloudTestimonials()
+      ]);
+      setSubmissions(cloudSubs);
+      setReviews(cloudRevs);
+    } catch (err) {
+      console.error('Data refresh error:', err);
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      refreshData();
+      const interval = setInterval(refreshData, 8000);
+      return () => clearInterval(interval);
+    }
+  }, [isAuthenticated, refreshData]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,38 +115,37 @@ export default function Admin() {
     setIsAuthenticated(false);
   };
 
-  const handleStatusToggle = (id: string, currentStatus: FormSubmission['status']) => {
+  const handleStatusToggle = async (id: string, currentStatus: FormSubmission['status']) => {
     const nextStatus = currentStatus === 'new' ? 'contacted' : 'new';
-    updateSubmissionStatus(id, nextStatus);
-    setSubmissions(getStoredSubmissions());
+    setSubmissions(prev => prev.map(s => s.id === id ? { ...s, status: nextStatus } : s));
+    await updateSubmissionStatus(id, nextStatus);
+    refreshData();
   };
 
-  const handleDeleteSub = (id: string) => {
+  const handleDeleteSub = async (id: string) => {
     if (confirm('Vai tiešām vēlaties dzēst šo pieteikumu?')) {
-      deleteSubmission(id);
-      setSubmissions(getStoredSubmissions());
+      setSubmissions(prev => prev.filter(s => s.id !== id));
+      await deleteSubmission(id);
+      refreshData();
     }
   };
 
-  const handleToggleReviewStatus = (reviewId: number | string, currentStatus?: string) => {
+  const handleToggleReviewStatus = async (reviewId: number | string, currentStatus?: string) => {
     const newStatus = currentStatus === 'published' ? 'draft' : 'published';
-    const updated = reviews.map(r => r.id === reviewId ? { ...r, status: newStatus as any } : r);
-    setReviews(updated);
+    setReviews(prev => prev.map(r => r.id === reviewId ? { ...r, status: newStatus as any } : r));
 
-    // Save to user_submitted_reviews in localStorage
     try {
-      const existing = JSON.parse(localStorage.getItem('user_submitted_reviews') || '[]');
-      const filtered = existing.filter((item: any) => item.id !== reviewId);
-      const targetReview = updated.find(item => item.id === reviewId);
-      if (targetReview) {
-        localStorage.setItem('user_submitted_reviews', JSON.stringify([...filtered, targetReview]));
-      }
-    } catch {
-      // ignore
-    }
+      await fetch('/api/reviews', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: reviewId, status: newStatus })
+      });
+    } catch {}
+
+    refreshData();
   };
 
-  const handleAddReview = (e: React.FormEvent) => {
+  const handleAddReview = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newReviewAuthor || !newReviewText) return;
 
@@ -137,19 +158,22 @@ export default function Admin() {
       status: 'published'
     };
 
-    try {
-      const existing = JSON.parse(localStorage.getItem('user_submitted_reviews') || '[]');
-      localStorage.setItem('user_submitted_reviews', JSON.stringify([newRev, ...existing]));
-    } catch {
-      // ignore
-    }
-
-    setReviews([newRev, ...reviews]);
+    setReviews(prev => [newRev, ...prev]);
     setShowAddReviewModal(false);
+
+    try {
+      await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newRev)
+      });
+    } catch {}
+
     setNewReviewAuthor('');
     setNewReviewRole('');
     setNewReviewText('');
     setNewReviewRating(5);
+    refreshData();
   };
 
   const handleChangePassword = (e: React.FormEvent) => {
@@ -250,13 +274,25 @@ export default function Admin() {
             </div>
           </div>
 
-          <button
-            onClick={handleLogout}
-            className="flex items-center space-x-1.5 bg-[#1e293b] hover:bg-[#dc2626] px-3.5 py-2 rounded-lg text-xs font-heading uppercase font-bold text-slate-200 hover:text-white transition-colors"
-          >
-            <LogOut className="w-4 h-4" />
-            <span className="hidden sm:inline">Iziet</span>
-          </button>
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={refreshData}
+              disabled={isRefreshing}
+              title="Atjaunot datus no mākoņa"
+              className="flex items-center space-x-1.5 bg-[#1e293b] hover:bg-[#334155] px-3 py-2 rounded-lg text-xs font-heading uppercase font-bold text-slate-200 transition-colors"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-[#dc2626]' : ''}`} />
+              <span className="hidden sm:inline">Atjaunot</span>
+            </button>
+
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-1.5 bg-[#1e293b] hover:bg-[#dc2626] px-3.5 py-2 rounded-lg text-xs font-heading uppercase font-bold text-slate-200 hover:text-white transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="hidden sm:inline">Iziet</span>
+            </button>
+          </div>
         </div>
       </header>
 

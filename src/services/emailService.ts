@@ -27,6 +27,26 @@ export function getStoredSubmissions(): FormSubmission[] {
   }
 }
 
+export async function fetchSubmissionsFromCloud(): Promise<FormSubmission[]> {
+  try {
+    const res = await fetch('/api/submissions');
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && Array.isArray(data.submissions)) {
+        if (typeof window !== 'undefined') {
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data.submissions));
+          } catch {}
+        }
+        return data.submissions;
+      }
+    }
+  } catch (err) {
+    console.error('Cloud fetch failed, using local storage cache:', err);
+  }
+  return getStoredSubmissions();
+}
+
 export function saveSubmission(submission: Omit<FormSubmission, 'id' | 'createdAt' | 'status'>): FormSubmission {
   const newSub: FormSubmission = {
     ...submission,
@@ -46,10 +66,17 @@ export function saveSubmission(submission: Omit<FormSubmission, 'id' | 'createdA
     }
   }
 
+  // Also post to Cloud API
+  fetch('/api/submissions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(submission)
+  }).catch(() => {});
+
   return newSub;
 }
 
-export function updateSubmissionStatus(id: string, status: FormSubmission['status']) {
+export async function updateSubmissionStatus(id: string, status: FormSubmission['status']) {
   const current = getStoredSubmissions();
   const updated = current.map(item => item.id === id ? { ...item, status } : item);
   if (typeof window !== 'undefined') {
@@ -59,9 +86,18 @@ export function updateSubmissionStatus(id: string, status: FormSubmission['statu
       // ignore
     }
   }
+
+  // Update in Cloud API
+  try {
+    await fetch('/api/submissions', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, status })
+    });
+  } catch {}
 }
 
-export function deleteSubmission(id: string) {
+export async function deleteSubmission(id: string) {
   const current = getStoredSubmissions();
   const updated = current.filter(item => item.id !== id);
   if (typeof window !== 'undefined') {
@@ -71,6 +107,15 @@ export function deleteSubmission(id: string) {
       // ignore
     }
   }
+
+  // Delete in Cloud API
+  try {
+    await fetch('/api/submissions', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    });
+  } catch {}
 }
 
 export async function sendFormToEmail(data: {

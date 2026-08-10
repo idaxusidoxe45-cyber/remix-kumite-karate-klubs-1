@@ -1208,3 +1208,22 @@ export function getDynamicTestimonials(): Testimonial[] {
 
   return [...cachedCmsTestimonials, ...localReviews];
 }
+
+export async function fetchCloudTestimonials(): Promise<Testimonial[]> {
+  const base = getDynamicTestimonials();
+  try {
+    const res = await fetch('/api/reviews');
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && Array.isArray(data.reviews)) {
+        // Merge cloud reviews with static reviews
+        const cloudIds = new Set(data.reviews.map((r: Testimonial) => String(r.id)));
+        const staticFiltered = base.filter(r => !cloudIds.has(String(r.id)));
+        return [...data.reviews, ...staticFiltered];
+      }
+    }
+  } catch (err) {
+    console.error('Cloud reviews fetch error:', err);
+  }
+  return base;
+}
