@@ -143,7 +143,11 @@ export async function sendFormToEmail(data: {
     body: JSON.stringify({ ...data, targetEmail: DEFAULT_TARGET_EMAIL })
   }).catch(() => {});
 
-  // 3. Direct Browser Dispatch via Web3Forms (Strict Free Tier Compatible Payload)
+  const senderEmail = (data.email && data.email.includes('@')) ? data.email.trim() : 'pieteikums@kumitekarate.lv';
+  const clientPhone = data.phone ? data.phone.trim() : 'Nav norādīts';
+  const clientMessage = data.message ? data.message.trim() : 'Bezmaksas treniņa pieteikums';
+
+  // 3. Direct Browser Dispatch via Web3Forms (Strict Email Regex Validated Payload)
   try {
     fetch('https://api.web3forms.com/submit', {
       method: 'POST',
@@ -156,9 +160,9 @@ export async function sendFormToEmail(data: {
         subject: `Jauns pieteikums (${data.type === 'trial' ? 'Bezmaksas treniņš' : 'Kontaktforma'}): ${data.name}`,
         from_name: 'Kumite Karate Klubs Mājaslapa',
         name: data.name,
-        phone: data.phone || 'Nav norādīts',
-        email: data.email || 'Nav norādīts',
-        message: data.message || 'Bezmaksas treniņa pieteikums',
+        email: senderEmail,
+        phone: clientPhone,
+        message: `Vārds: ${data.name}\nTālrunis: ${clientPhone}\nE-pasts: ${data.email || 'Nav norādīts'}\nZiņa / Vecums: ${clientMessage}`,
         type: data.type
       })
     }).catch(err => console.error('[FORM DISPATCH] Web3Forms error:', err));
@@ -174,9 +178,9 @@ export async function sendFormToEmail(data: {
       },
       body: JSON.stringify({
         name: data.name,
-        phone: data.phone || 'Nav norādīts',
-        email: data.email || 'Nav norādīts',
-        message: data.message || 'Pieteikums no mājaslapas',
+        phone: clientPhone,
+        email: senderEmail,
+        message: `Vārds: ${data.name}\nTālrunis: ${clientPhone}\nE-pasts: ${data.email || 'Nav norādīts'}\nZiņa / Vecums: ${clientMessage}`,
         _subject: `Jauns pieteikums (${data.type === 'trial' ? 'Bezmaksas treniņš' : 'Kontaktforma'}): ${data.name}`,
         _template: 'table',
         _captcha: 'false'
