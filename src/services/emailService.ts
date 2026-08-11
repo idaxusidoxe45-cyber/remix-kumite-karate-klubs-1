@@ -137,9 +137,28 @@ export async function sendFormToEmail(data: {
     body: JSON.stringify({ ...data, targetEmail })
   }).catch(() => {});
 
-  // 3. Direct Browser Dispatch via Web3Forms (Bypasses Cloudflare Server blocks)
+  // 3. Dispatch via FormSubmit (Direct email delivery to target email)
   try {
-    const web3Res = await fetch('https://api.web3forms.com/submit', {
+    fetch(`https://formsubmit.co/ajax/${encodeURIComponent(targetEmail)}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        name: data.name,
+        phone: data.phone || 'Nav norādīts',
+        email: data.email || 'Nav norādīts',
+        message: data.message || 'Pieteikums no mājaslapas',
+        _subject: `Jauns pieteikums (${data.type === 'trial' ? 'Bezmaksas treniņš' : 'Kontaktforma'}): ${data.name}`,
+        _template: 'table'
+      })
+    }).catch(err => console.error('[FORM DISPATCH] FormSubmit error:', err));
+  } catch {}
+
+  // 4. Direct Browser Dispatch via Web3Forms
+  try {
+    fetch('https://api.web3forms.com/submit', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -156,15 +175,8 @@ export async function sendFormToEmail(data: {
         message: data.message || 'Bezmaksas treniņa pieteikums',
         type: data.type
       })
-    });
-
-    if (web3Res.ok) {
-      console.log('[CLIENT EMAIL] Direct Web3Forms submission successful');
-      return true;
-    }
-  } catch (err) {
-    console.error('[CLIENT EMAIL] Direct Web3Forms error:', err);
-  }
+    }).catch(err => console.error('[FORM DISPATCH] Web3Forms error:', err));
+  } catch {}
 
   return true; // Form is recorded in Admin Panel regardless
 }
