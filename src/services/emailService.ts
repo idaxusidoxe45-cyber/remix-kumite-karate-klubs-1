@@ -11,6 +11,7 @@ export interface FormSubmission {
 
 const STORAGE_KEY = 'kumite_form_submissions';
 export const DEFAULT_TARGET_EMAIL = 'u2086344644@gmail.com';
+export const WEB3FORMS_ACCESS_KEY = '74607c0c-3e71-4933-ac8a-a30812a30b34';
 
 export function getTargetEmail(): string {
   if (typeof window === 'undefined') return DEFAULT_TARGET_EMAIL;
@@ -142,7 +143,29 @@ export async function sendFormToEmail(data: {
     body: JSON.stringify({ ...data, targetEmail: DEFAULT_TARGET_EMAIL })
   }).catch(() => {});
 
-  // 3. Dispatch via FormSubmit directly to DEFAULT_TARGET_EMAIL (u2086344644@gmail.com)
+  // 3. Direct Browser Dispatch via Web3Forms with user's verified Access Key
+  try {
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        access_key: WEB3FORMS_ACCESS_KEY,
+        subject: `Jauns pieteikums (${data.type === 'trial' ? 'Bezmaksas treniņš' : 'Kontaktforma'}): ${data.name}`,
+        from_name: 'Kumite Karate Klubs Mājaslapa',
+        to_email: targetEmail,
+        name: data.name,
+        phone: data.phone || 'Nav norādīts',
+        email: data.email || 'Nav norādīts',
+        message: data.message || 'Bezmaksas treniņa pieteikums',
+        type: data.type
+      })
+    }).catch(err => console.error('[FORM DISPATCH] Web3Forms error:', err));
+  } catch {}
+
+  // 4. Backup Dispatch via FormSubmit directly to DEFAULT_TARGET_EMAIL
   try {
     fetch(`https://formsubmit.co/ajax/${encodeURIComponent(DEFAULT_TARGET_EMAIL)}`, {
       method: 'POST',
@@ -160,27 +183,6 @@ export async function sendFormToEmail(data: {
       })
     }).catch(err => console.error('[FORM DISPATCH] FormSubmit error:', err));
   } catch {}
-
-  // 4. Also dispatch to targetEmail if different
-  if (targetEmail !== DEFAULT_TARGET_EMAIL) {
-    try {
-      fetch(`https://formsubmit.co/ajax/${encodeURIComponent(targetEmail)}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          name: data.name,
-          phone: data.phone || 'Nav norādīts',
-          email: data.email || 'Nav norādīts',
-          message: data.message || 'Pieteikums no mājaslapas',
-          _subject: `Jauns pieteikums (${data.type === 'trial' ? 'Bezmaksas treniņš' : 'Kontaktforma'}): ${data.name}`,
-          _template: 'table'
-        })
-      }).catch(() => {});
-    } catch {}
-  }
 
   return true; // Form is recorded in Admin Panel regardless
 }
