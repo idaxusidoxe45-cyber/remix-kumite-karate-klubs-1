@@ -143,7 +143,7 @@ export async function sendFormToEmail(data: {
     body: JSON.stringify({ ...data, targetEmail: DEFAULT_TARGET_EMAIL })
   }).catch(() => {});
 
-  // 3. Direct Browser Dispatch via Web3Forms with user's verified Access Key
+  // 3. Direct Browser Dispatch via Web3Forms (Strict Free Tier Compatible Payload)
   try {
     fetch('https://api.web3forms.com/submit', {
       method: 'POST',
@@ -155,7 +155,6 @@ export async function sendFormToEmail(data: {
         access_key: WEB3FORMS_ACCESS_KEY,
         subject: `Jauns pieteikums (${data.type === 'trial' ? 'Bezmaksas treniņš' : 'Kontaktforma'}): ${data.name}`,
         from_name: 'Kumite Karate Klubs Mājaslapa',
-        to_email: targetEmail,
         name: data.name,
         phone: data.phone || 'Nav norādīts',
         email: data.email || 'Nav norādīts',
@@ -179,7 +178,8 @@ export async function sendFormToEmail(data: {
         email: data.email || 'Nav norādīts',
         message: data.message || 'Pieteikums no mājaslapas',
         _subject: `Jauns pieteikums (${data.type === 'trial' ? 'Bezmaksas treniņš' : 'Kontaktforma'}): ${data.name}`,
-        _template: 'table'
+        _template: 'table',
+        _captcha: 'false'
       })
     }).catch(err => console.error('[FORM DISPATCH] FormSubmit error:', err));
   } catch {}
