@@ -146,6 +146,7 @@ export async function sendFormToEmail(data: {
   const senderEmail = (data.email && data.email.includes('@')) ? data.email.trim() : 'pieteikums@kumitekarate.lv';
   const clientPhone = data.phone ? data.phone.trim() : 'Nav norādīts';
   const clientMessage = data.message ? data.message.trim() : 'Bezmaksas treniņa pieteikums';
+  const mailSubject = `Jauns pieteikums (${data.type === 'trial' ? 'Bezmaksas treniņš' : 'Kontaktforma'}): ${data.name}`;
 
   // 3. Direct Browser Dispatch via Web3Forms (Strict Email Regex Validated Payload)
   try {
@@ -157,7 +158,7 @@ export async function sendFormToEmail(data: {
       },
       body: JSON.stringify({
         access_key: WEB3FORMS_ACCESS_KEY,
-        subject: `Jauns pieteikums (${data.type === 'trial' ? 'Bezmaksas treniņš' : 'Kontaktforma'}): ${data.name}`,
+        subject: mailSubject,
         from_name: 'Kumite Karate Klubs Mājaslapa',
         name: data.name,
         email: senderEmail,
@@ -168,7 +169,54 @@ export async function sendFormToEmail(data: {
     }).catch(err => console.error('[FORM DISPATCH] Web3Forms error:', err));
   } catch {}
 
-  // 4. Backup Dispatch via FormSubmit directly to DEFAULT_TARGET_EMAIL
+  // 4. Native HTML Hidden Form Submission to Web3Forms (Guaranteed Browser Delivery)
+  if (typeof document !== 'undefined') {
+    try {
+      let iframe = document.getElementById('web3forms_hidden_iframe') as HTMLIFrameElement;
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.id = 'web3forms_hidden_iframe';
+        iframe.name = 'web3forms_hidden_iframe';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+      }
+
+      const form = document.createElement('form');
+      form.action = 'https://api.web3forms.com/submit';
+      form.method = 'POST';
+      form.target = 'web3forms_hidden_iframe';
+      form.style.display = 'none';
+
+      const fields: Record<string, string> = {
+        access_key: WEB3FORMS_ACCESS_KEY,
+        subject: mailSubject,
+        from_name: 'Kumite Karate Klubs Mājaslapa',
+        name: data.name,
+        email: senderEmail,
+        phone: clientPhone,
+        message: `Vārds: ${data.name}\nTālrunis: ${clientPhone}\nE-pasts: ${data.email || 'Nav norādīts'}\nZiņa / Vecums: ${clientMessage}`
+      };
+
+      for (const key in fields) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = fields[key];
+        form.appendChild(input);
+      }
+
+      document.body.appendChild(form);
+      form.submit();
+
+      setTimeout(() => {
+        if (form.parentNode) form.parentNode.removeChild(form);
+      }, 2500);
+    } catch (e) {
+      console.error('[FORM DISPATCH] HTML Form submission error:', e);
+    }
+  }
+
+  // 5. Backup Dispatch via FormSubmit directly to DEFAULT_TARGET_EMAIL
   try {
     fetch(`https://formsubmit.co/ajax/${encodeURIComponent(DEFAULT_TARGET_EMAIL)}`, {
       method: 'POST',
@@ -181,7 +229,7 @@ export async function sendFormToEmail(data: {
         phone: clientPhone,
         email: senderEmail,
         message: `Vārds: ${data.name}\nTālrunis: ${clientPhone}\nE-pasts: ${data.email || 'Nav norādīts'}\nZiņa / Vecums: ${clientMessage}`,
-        _subject: `Jauns pieteikums (${data.type === 'trial' ? 'Bezmaksas treniņš' : 'Kontaktforma'}): ${data.name}`,
+        _subject: mailSubject,
         _template: 'table',
         _captcha: 'false'
       })
