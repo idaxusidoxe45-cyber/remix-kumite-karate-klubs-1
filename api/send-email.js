@@ -17,9 +17,9 @@ export default async function handler(req, res) {
     const recipient = targetEmail || process.env.NOTIFICATION_EMAIL || 'u2086344644@gmail.com';
     const formTypeLabel = type === 'trial' ? 'Bezmaksas treniņš' : 'Kontaktforma / Pieteikums';
 
-    console.log(`[FORM SUBMISSION] Type: ${type}, Name: ${name}, Phone: ${phone}, Email: ${email}, Message: ${message} -> Sending to: ${recipient}`);
+    console.log(`[FORM SUBMISSION] Type: ${type}, Name: ${name}, Phone: ${phone}, Email: ${email}, Message: ${message} -> Target: ${recipient}`);
 
-    // 1. Save submission to Cloud Key-Value store
+    // 1. Save submission to Cloud Key-Value store for Admin Panel
     try {
       const newSubmission = {
         id: 'sub-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
@@ -39,7 +39,7 @@ export default async function handler(req, res) {
       console.error('Cloud DB Save Error:', dbErr);
     }
 
-    // 2. Dispatch email via Resend if API key is set
+    // 2. Dispatch email via Resend if RESEND_API_KEY environment variable is configured
     if (process.env.RESEND_API_KEY) {
       try {
         const resendRes = await fetch('https://api.resend.com/emails', {
@@ -72,34 +72,9 @@ export default async function handler(req, res) {
       }
     }
 
-    // 3. Dispatch email via Web3Forms API fallback (Guaranteed direct delivery)
-    try {
-      const web3Res = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          access_key: '6b63c7b3-85f0-4c3e-bfa1-e631d87e0766',
-          subject: `Jauns pieteikums (${formTypeLabel}): ${name}`,
-          from_name: 'Kumite Karate Klubs',
-          to_email: recipient,
-          name: name,
-          phone: phone || 'Nav norādīts',
-          email: email || 'Nav norādīts',
-          message: message || 'Nav norādīts',
-          type: type
-        })
-      });
-
-      if (web3Res.ok) {
-        return res.status(200).json({ success: true, message: 'Email sent successfully via Web3Forms' });
-      }
-    } catch (web3Err) {
-      console.error('Web3Forms API error:', web3Err);
-    }
-
     return res.status(200).json({
       success: true,
-      message: 'Application recorded successfully',
+      message: 'Application recorded successfully in Admin panel database',
       data: { name, phone, email, message, recipient }
     });
   } catch (error) {
