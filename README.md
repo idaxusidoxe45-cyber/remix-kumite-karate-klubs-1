@@ -1,20 +1,42 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Kumite Karate Klubs (Rīga)
 
-# Run and deploy your AI Studio app
+Modern, fast, interactive web application for **Kumite Karate Klubs** in Riga, Latvia. Features dynamic schedules, coaches showcase, photo gallery, online trial applications, review moderation system, and password-protected admin CMS.
 
-This contains everything you need to run your app locally.
+## Tech Stack
 
-View your app in AI Studio: https://ai.studio/apps/08304fbf-0f94-4bfd-8473-17fcf14a48a4
+- **Frontend Framework:** React 19 + TypeScript + Vite 6
+- **Routing:** React Router DOM 7
+- **Styling:** Tailwind CSS 4 + Custom Japanese Sumi-e design system
+- **Animations:** Motion (Framer Motion) + Anime.js
+- **Icons:** Lucide React
+- **Backend & APIs:** Vercel Serverless Functions + Cloud DB (Upstash Redis) + Resend / Web3Forms email dispatcher
+- **Content Management:** Decap CMS + Built-in React Admin Panel (`/admin`)
 
-## Run Locally
+## Getting Started
 
-**Prerequisites:**  Node.js
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
+2. **Start Development Server:**
+   ```bash
+   npm run dev
+   ```
+   Open `http://localhost:3000` in your browser.
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+3. **Check TypeScript:**
+   ```bash
+   npm run lint
+   ```
+
+4. **Production Build:**
+   ```bash
+   npm run build
+   ```
+
+## Admin Panel Access
+
+Access the admin dashboard directly on the website at `/admin`:
+- **Default Username:** `admin`
+- **Default Password:** `kumite2026` (configurable in settings)

@@ -1,3 +1,7 @@
+import { getCloudData, saveCloudData } from './_kv.js';
+
+const SUBMISSIONS_KEY = 'kumite_submissions';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method Not Allowed' });
@@ -15,11 +19,8 @@ export default async function handler(req, res) {
 
     console.log(`[FORM SUBMISSION] Type: ${type}, Name: ${name}, Phone: ${phone}, Email: ${email}, Message: ${message} -> Sending to: ${recipient}`);
 
-    // 1. First, save the application to the Cloud Database API (/api/submissions)
+    // 1. Save submission to Cloud Key-Value store
     try {
-      const KV_URL = process.env.UPSTASH_REDIS_REST_URL;
-      const KV_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
-
       const newSubmission = {
         id: 'sub-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
         type: type || 'trial',
@@ -31,25 +32,14 @@ export default async function handler(req, res) {
         status: 'new'
       };
 
-      if (KV_URL && KV_TOKEN) {
-        const getRes = await fetch(`${KV_URL}/get/kumite_submissions`, {
-          headers: { Authorization: `Bearer ${KV_TOKEN}` }
-        });
-        const json = await getRes.json();
-        const currentSubs = json.result ? JSON.parse(json.result) : [];
-        const updatedSubs = [newSubmission, ...currentSubs];
-
-        await fetch(`${KV_URL}/set/kumite_submissions`, {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${KV_TOKEN}` },
-          body: JSON.stringify(JSON.stringify(updatedSubs))
-        });
-      }
+      const currentSubs = await getCloudData(SUBMISSIONS_KEY, []);
+      const updatedSubs = [newSubmission, ...currentSubs];
+      await saveCloudData(SUBMISSIONS_KEY, updatedSubs);
     } catch (dbErr) {
       console.error('Cloud DB Save Error:', dbErr);
     }
 
-    // 2. Dispatch email via Resend if API key present
+    // 2. Dispatch email via Resend if API key is set
     if (process.env.RESEND_API_KEY) {
       try {
         const resendRes = await fetch('https://api.resend.com/emails', {
@@ -82,7 +72,7 @@ export default async function handler(req, res) {
       }
     }
 
-    // 3. Dispatch email via Web3Forms API fallback (Guaranteed direct email delivery)
+    // 3. Dispatch email via Web3Forms API fallback (Guaranteed direct delivery)
     try {
       const web3Res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',

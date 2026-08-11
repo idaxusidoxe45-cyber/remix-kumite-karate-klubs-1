@@ -1,7 +1,8 @@
-// Serverless endpoint for fetching, updating, and deleting form submissions
-// Works with Cloud DB / Upstash / KV / In-Memory & File persistence
+import { getCloudData, saveCloudData } from './_kv.js';
 
-let memorySubmissionsStore = [
+const SUBMISSIONS_KEY = 'kumite_submissions';
+
+const DEMO_SUBMISSIONS = [
   {
     id: 'sub-demo-1',
     type: 'trial',
@@ -23,46 +24,10 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  // Use Upstash / KV / Firebase if environment key configured
-  const KV_URL = process.env.UPSTASH_REDIS_REST_URL;
-  const KV_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
-
-  async function getCloudSubmissions() {
-    if (KV_URL && KV_TOKEN) {
-      try {
-        const response = await fetch(`${KV_URL}/get/kumite_submissions`, {
-          headers: { Authorization: `Bearer ${KV_TOKEN}` }
-        });
-        const json = await response.json();
-        if (json.result) {
-          return JSON.parse(json.result);
-        }
-      } catch (err) {
-        console.error('KV Read Error:', err);
-      }
-    }
-    return memorySubmissionsStore;
-  }
-
-  async function saveCloudSubmissions(submissions) {
-    memorySubmissionsStore = submissions;
-    if (KV_URL && KV_TOKEN) {
-      try {
-        await fetch(`${KV_URL}/set/kumite_submissions`, {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${KV_TOKEN}` },
-          body: JSON.stringify(JSON.stringify(submissions))
-        });
-      } catch (err) {
-        console.error('KV Write Error:', err);
-      }
-    }
-  }
-
   try {
     // GET: Fetch all form submissions
     if (req.method === 'GET') {
-      const submissions = await getCloudSubmissions();
+      const submissions = await getCloudData(SUBMISSIONS_KEY, DEMO_SUBMISSIONS);
       return res.status(200).json({ success: true, submissions });
     }
 
@@ -84,23 +49,23 @@ export default async function handler(req, res) {
         status: 'new'
       };
 
-      const submissions = await getCloudSubmissions();
+      const submissions = await getCloudData(SUBMISSIONS_KEY, DEMO_SUBMISSIONS);
       const updated = [newSubmission, ...submissions];
-      await saveCloudSubmissions(updated);
+      await saveCloudData(SUBMISSIONS_KEY, updated);
 
       return res.status(200).json({ success: true, submission: newSubmission });
     }
 
-    // PUT: Update status (e.g. 'new' -> 'contacted')
+    // PUT: Update status
     if (req.method === 'PUT') {
       const { id, status } = req.body || {};
       if (!id || !status) {
         return res.status(400).json({ message: 'ID and status required' });
       }
 
-      const submissions = await getCloudSubmissions();
+      const submissions = await getCloudData(SUBMISSIONS_KEY, DEMO_SUBMISSIONS);
       const updated = submissions.map(item => item.id === id ? { ...item, status } : item);
-      await saveCloudSubmissions(updated);
+      await saveCloudData(SUBMISSIONS_KEY, updated);
 
       return res.status(200).json({ success: true, submissions: updated });
     }
@@ -112,9 +77,9 @@ export default async function handler(req, res) {
         return res.status(400).json({ message: 'ID is required' });
       }
 
-      const submissions = await getCloudSubmissions();
+      const submissions = await getCloudData(SUBMISSIONS_KEY, DEMO_SUBMISSIONS);
       const updated = submissions.filter(item => item.id !== id);
-      await saveCloudSubmissions(updated);
+      await saveCloudData(SUBMISSIONS_KEY, updated);
 
       return res.status(200).json({ success: true, submissions: updated });
     }

@@ -1,6 +1,6 @@
-// Serverless endpoint for managing and moderating reviews across devices
+import { getCloudData, saveCloudData } from './_kv.js';
 
-let memoryReviewsStore = [];
+const REVIEWS_KEY = 'kumite_reviews';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -11,49 +11,14 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const KV_URL = process.env.UPSTASH_REDIS_REST_URL;
-  const KV_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
-
-  async function getCloudReviews() {
-    if (KV_URL && KV_TOKEN) {
-      try {
-        const response = await fetch(`${KV_URL}/get/kumite_reviews`, {
-          headers: { Authorization: `Bearer ${KV_TOKEN}` }
-        });
-        const json = await response.json();
-        if (json.result) {
-          return JSON.parse(json.result);
-        }
-      } catch (err) {
-        console.error('KV Read Error:', err);
-      }
-    }
-    return memoryReviewsStore;
-  }
-
-  async function saveCloudReviews(reviews) {
-    memoryReviewsStore = reviews;
-    if (KV_URL && KV_TOKEN) {
-      try {
-        await fetch(`${KV_URL}/set/kumite_reviews`, {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${KV_TOKEN}` },
-          body: JSON.stringify(JSON.stringify(reviews))
-        });
-      } catch (err) {
-        console.error('KV Write Error:', err);
-      }
-    }
-  }
-
   try {
     // GET: Fetch reviews
     if (req.method === 'GET') {
-      const reviews = await getCloudReviews();
+      const reviews = await getCloudData(REVIEWS_KEY, []);
       return res.status(200).json({ success: true, reviews });
     }
 
-    // POST: Create a new review (by visitor or admin)
+    // POST: Create a new review
     if (req.method === 'POST') {
       const { author, role, text, rating, status } = req.body || {};
       if (!author || !text) {
@@ -70,21 +35,21 @@ export default async function handler(req, res) {
         createdAt: new Date().toISOString()
       };
 
-      const reviews = await getCloudReviews();
+      const reviews = await getCloudData(REVIEWS_KEY, []);
       const updated = [newReview, ...reviews];
-      await saveCloudReviews(updated);
+      await saveCloudData(REVIEWS_KEY, updated);
 
       return res.status(200).json({ success: true, review: newReview });
     }
 
-    // PUT: Update review status (e.g. 'draft' -> 'published')
+    // PUT: Update review status
     if (req.method === 'PUT') {
       const { id, status, text, author, role, rating } = req.body || {};
       if (!id) {
         return res.status(400).json({ message: 'ID required' });
       }
 
-      const reviews = await getCloudReviews();
+      const reviews = await getCloudData(REVIEWS_KEY, []);
       const updated = reviews.map(item => {
         if (item.id === id) {
           return {
@@ -98,7 +63,7 @@ export default async function handler(req, res) {
         }
         return item;
       });
-      await saveCloudReviews(updated);
+      await saveCloudData(REVIEWS_KEY, updated);
 
       return res.status(200).json({ success: true, reviews: updated });
     }
@@ -110,9 +75,9 @@ export default async function handler(req, res) {
         return res.status(400).json({ message: 'ID is required' });
       }
 
-      const reviews = await getCloudReviews();
+      const reviews = await getCloudData(REVIEWS_KEY, []);
       const updated = reviews.filter(item => item.id !== Number(id) && item.id !== id);
-      await saveCloudReviews(updated);
+      await saveCloudData(REVIEWS_KEY, updated);
 
       return res.status(200).json({ success: true, reviews: updated });
     }
