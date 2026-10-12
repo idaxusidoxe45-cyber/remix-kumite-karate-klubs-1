@@ -1124,42 +1124,50 @@ export const STRIKE_LEVELS = [
   { level: 'Apakšējais līmenis – GEDAN', desc: '(kājas, ceļi)' }
 ];
 
-// Memoized dynamic gallery items
+// Dynamic gallery items loader with local storage and cloud support
 let cachedGalleryItems: GalleryItem[] | null = null;
 export function getDynamicGalleryItems(): GalleryItem[] {
-  if (cachedGalleryItems) return cachedGalleryItems;
+  let localCustomItems: GalleryItem[] = [];
+  let deletedIds = new Set<string>();
 
-  const globGalleryJson = import.meta.glob<{
-    id?: number | string;
-    title: string;
-    category: 'trenini' | 'eksameni' | 'sacensibas' | 'nometnes' | 'pasakumi' | 'zale';
-    caption: string;
-    image: string;
-    fullImage?: string;
-  }>([
-    '/public/content/gallery/*.json',
-    '/src/content/gallery/*.json'
-  ], { eager: true, import: 'default' });
-
-  const cmsItems: GalleryItem[] = [];
-  let autoId = 1;
-
-  for (const path in globGalleryJson) {
-    const data = globGalleryJson[path];
-    if (data && data.image) {
-      cmsItems.push({
-        id: data.id || `cms-${autoId++}`,
-        title: data.title || 'Galerijas attēls',
-        category: data.category || 'trenini',
-        caption: data.caption || 'Galerijas fotogrāfija',
-        image: data.image,
-        fullImage: data.fullImage || data.image,
-      });
+  if (typeof window !== 'undefined') {
+    try {
+      localCustomItems = JSON.parse(localStorage.getItem('kumite_custom_gallery') || '[]');
+      const deletedArr = JSON.parse(localStorage.getItem('kumite_deleted_gallery_ids') || '[]');
+      deletedIds = new Set(deletedArr.map(String));
+    } catch {
+      // ignore
     }
   }
 
-  cachedGalleryItems = cmsItems.length > 0 ? cmsItems : GALLERY_ITEMS;
-  return cachedGalleryItems;
+  const baseItems = GALLERY_ITEMS.filter(item => !deletedIds.has(String(item.id)));
+  return [...localCustomItems, ...baseItems];
+}
+
+export async function fetchCloudGalleryItems(): Promise<GalleryItem[]> {
+  const base = getDynamicGalleryItems();
+  try {
+    const res = await fetch('/api/gallery');
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && Array.isArray(data.items)) {
+        let deletedIds = new Set<string>();
+        if (typeof window !== 'undefined') {
+          try {
+            const deletedArr = JSON.parse(localStorage.getItem('kumite_deleted_gallery_ids') || '[]');
+            deletedIds = new Set(deletedArr.map(String));
+          } catch {}
+        }
+        const cloudFiltered = data.items.filter((item: GalleryItem) => !deletedIds.has(String(item.id)));
+        const cloudIds = new Set(cloudFiltered.map((i: GalleryItem) => String(i.id)));
+        const baseFiltered = base.filter(i => !cloudIds.has(String(i.id)));
+        return [...cloudFiltered, ...baseFiltered];
+      }
+    }
+  } catch (err) {
+    console.error('Cloud gallery fetch error:', err);
+  }
+  return base;
 }
 
 // Memoized dynamic testimonials loader

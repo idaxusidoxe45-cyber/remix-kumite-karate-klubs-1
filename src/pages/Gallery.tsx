@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GalleryItem } from '../types';
-import { getDynamicGalleryItems } from '../data';
+import { getDynamicGalleryItems, fetchCloudGalleryItems } from '../data';
 import LightboxModal from '../components/LightboxModal';
 import { ZoomIn, CheckCircle } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -14,6 +14,11 @@ interface GalleryProps {
 export default function Gallery({ openTrialModal }: GalleryProps) {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  const [allGalleryItems, setAllGalleryItems] = useState<GalleryItem[]>(() => getDynamicGalleryItems());
+
+  useEffect(() => {
+    fetchCloudGalleryItems().then(items => setAllGalleryItems(items));
+  }, []);
 
   const [formName, setFormName] = useState('');
   const [formPhone, setFormPhone] = useState('');
@@ -31,7 +36,6 @@ export default function Gallery({ openTrialModal }: GalleryProps) {
     { key: 'zale', label: 'Zāle' }
   ];
 
-  const allGalleryItems = getDynamicGalleryItems();
   const filteredItems = activeCategory === 'all'
     ? allGalleryItems
     : allGalleryItems.filter(item => item.category === activeCategory);

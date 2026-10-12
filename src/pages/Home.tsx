@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PageTab } from '../types';
-import { getDynamicTestimonials, getDynamicGalleryItems } from '../data';
+import { PageTab, Testimonial, GalleryItem } from '../types';
+import { getDynamicTestimonials, getDynamicGalleryItems, fetchCloudTestimonials, fetchCloudGalleryItems } from '../data';
 import { CheckCircle, ArrowRight, Play, Star, MapPin, Phone, Mail } from 'lucide-react';
 import { motion } from 'motion/react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
@@ -66,7 +66,15 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
     }, 3000);
   };
 
-  const previewGallery = getDynamicGalleryItems().slice(0, 3);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(() => getDynamicTestimonials());
+  const [galleryList, setGalleryList] = useState<GalleryItem[]>(() => getDynamicGalleryItems());
+
+  useEffect(() => {
+    fetchCloudTestimonials().then(revs => setTestimonials(revs));
+    fetchCloudGalleryItems().then(items => setGalleryList(items));
+  }, []);
+
+  const previewGallery = galleryList.slice(0, 3);
 
   return (
     <div className="bg-[#ffffff] text-[#0f172a]">
@@ -377,7 +385,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {getDynamicTestimonials().filter(t => t.status === 'published').slice(0, 3).map((t, idx) => (
+            {testimonials.filter(t => t.status === 'published').slice(0, 3).map((t, idx) => (
               <InteractiveRepelCard key={t.id} maxShift={14} maxRotate={6}>
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}

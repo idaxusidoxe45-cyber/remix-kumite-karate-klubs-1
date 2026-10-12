@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { PageTab } from '../types';
-import { BELT_SYSTEM, JAPANESE_NUMBERS, STRIKE_LEVELS, FAQ_ITEMS, getDynamicTestimonials } from '../data';
+import { PageTab, Testimonial } from '../types';
+import { BELT_SYSTEM, JAPANESE_NUMBERS, STRIKE_LEVELS, FAQ_ITEMS, getDynamicTestimonials, fetchCloudTestimonials } from '../data';
 import { Star } from 'lucide-react';
 import { motion } from 'motion/react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
@@ -15,6 +15,11 @@ interface AboutClubProps {
 export default function AboutClub({ setCurrentTab, openTrialModal, openReviewModal }: AboutClubProps) {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [openToggle, setOpenToggle] = useState<number | null>(null);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(() => getDynamicTestimonials());
+
+  useEffect(() => {
+    fetchCloudTestimonials().then(revs => setTestimonials(revs));
+  }, []);
 
   useEffect(() => {
     if (window.location.hash === '#atsauksmes') {
@@ -266,7 +271,7 @@ export default function AboutClub({ setCurrentTab, openTrialModal, openReviewMod
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {getDynamicTestimonials().filter(t => t.status === 'published').map((t, idx) => (
+            {testimonials.filter(t => t.status === 'published').map((t, idx) => (
               <InteractiveRepelCard key={t.id} maxShift={14} maxRotate={6}>
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}
