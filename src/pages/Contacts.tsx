@@ -220,7 +220,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                     className="w-full h-80 object-cover transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <span className="bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-xl uppercase tracking-widest px-8 py-4 rounded-xl shadow-2xl font-bold transition-all transform group-hover:scale-105 active:scale-95 border-2 border-white">
+                    <span className="bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-sm sm:text-xl uppercase tracking-wider px-5 sm:px-8 py-3 sm:py-4 rounded-xl shadow-2xl font-bold transition-all transform group-hover:scale-105 active:scale-95 border-2 border-white text-center">
                       Atvērt Waze navigāciju
                     </span>
                   </div>

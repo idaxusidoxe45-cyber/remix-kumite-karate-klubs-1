@@ -529,21 +529,25 @@ export default function Admin() {
     <div className="min-h-screen bg-[#f8fafc] text-[#0f172a] font-sans">
       {/* Top Admin Navbar */}
       <header className="bg-[#0a0a0c] text-white border-b-4 border-[#dc2626] sticky top-0 z-40 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Logo variant="dark" className="w-8 h-8" />
-            <div>
-              <h2 className="font-heading font-bold uppercase tracking-wider text-base leading-tight">Kumite Karate — CMS Admin</h2>
-              <p className="text-[10px] text-slate-400 uppercase tracking-widest">Autorizēts kā Admin</p>
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-2">
+          <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+            <Logo variant="dark" className="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0" />
+            <div className="min-w-0">
+              <h2 className="font-heading font-bold uppercase tracking-wider text-xs sm:text-base leading-tight truncate">
+                Kumite Karate — CMS Admin
+              </h2>
+              <p className="text-[9px] sm:text-[10px] text-slate-400 uppercase tracking-widest hidden xs:block">
+                Autorizēts kā Admin
+              </p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-1.5 sm:space-x-3 flex-shrink-0">
             <button
               onClick={refreshData}
               disabled={isRefreshing}
               title="Atjaunot datus no mākoņa"
-              className="flex items-center space-x-1.5 bg-[#1e293b] hover:bg-[#334155] px-3 py-2 rounded-lg text-xs font-heading uppercase font-bold text-slate-200 transition-colors"
+              className="flex items-center space-x-1.5 bg-[#1e293b] hover:bg-[#334155] p-2 sm:px-3 sm:py-2 rounded-lg text-xs font-heading uppercase font-bold text-slate-200 transition-colors"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-[#dc2626]' : ''}`} />
               <span className="hidden sm:inline">Atjaunot</span>
@@ -551,7 +555,7 @@ export default function Admin() {
 
             <button
               onClick={handleLogout}
-              className="flex items-center space-x-1.5 bg-[#1e293b] hover:bg-[#dc2626] px-3.5 py-2 rounded-lg text-xs font-heading uppercase font-bold text-slate-200 hover:text-white transition-colors"
+              className="flex items-center space-x-1.5 bg-[#1e293b] hover:bg-[#dc2626] p-2 sm:px-3.5 sm:py-2 rounded-lg text-xs font-heading uppercase font-bold text-slate-200 hover:text-white transition-colors"
             >
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Iziet</span>
@@ -560,12 +564,12 @@ export default function Admin() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Navigation Tabs */}
-        <div className="flex flex-wrap gap-2 border-b border-slate-200 pb-4 mb-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8">
+        {/* Navigation Tabs - Horizontally scrollable on mobile */}
+        <div className="flex overflow-x-auto no-scrollbar gap-2 border-b border-slate-200 pb-3 mb-6 sm:flex-wrap sm:overflow-visible -mx-3 px-3 sm:mx-0 sm:px-0">
           <button
             onClick={() => setActiveTab('submissions')}
-            className={`flex items-center space-x-2 px-5 py-2.5 rounded-lg font-heading text-sm font-bold uppercase tracking-wider transition-colors ${
+            className={`flex items-center space-x-2 px-4 py-2.5 sm:px-5 sm:py-2.5 rounded-lg font-heading text-xs sm:text-sm font-bold uppercase tracking-wider transition-colors flex-shrink-0 whitespace-nowrap ${
               activeTab === 'submissions'
                 ? 'bg-[#dc2626] text-white shadow-md'
                 : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
@@ -577,7 +581,7 @@ export default function Admin() {
 
           <button
             onClick={() => setActiveTab('reviews')}
-            className={`flex items-center space-x-2 px-5 py-2.5 rounded-lg font-heading text-sm font-bold uppercase tracking-wider transition-colors ${
+            className={`flex items-center space-x-2 px-4 py-2.5 sm:px-5 sm:py-2.5 rounded-lg font-heading text-xs sm:text-sm font-bold uppercase tracking-wider transition-colors flex-shrink-0 whitespace-nowrap ${
               activeTab === 'reviews'
                 ? 'bg-[#dc2626] text-white shadow-md'
                 : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
@@ -589,7 +593,7 @@ export default function Admin() {
 
           <button
             onClick={() => setActiveTab('gallery')}
-            className={`flex items-center space-x-2 px-5 py-2.5 rounded-lg font-heading text-sm font-bold uppercase tracking-wider transition-colors ${
+            className={`flex items-center space-x-2 px-4 py-2.5 sm:px-5 sm:py-2.5 rounded-lg font-heading text-xs sm:text-sm font-bold uppercase tracking-wider transition-colors flex-shrink-0 whitespace-nowrap ${
               activeTab === 'gallery'
                 ? 'bg-[#dc2626] text-white shadow-md'
                 : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
@@ -601,7 +605,7 @@ export default function Admin() {
 
           <button
             onClick={() => setActiveTab('trash')}
-            className={`flex items-center space-x-2 px-5 py-2.5 rounded-lg font-heading text-sm font-bold uppercase tracking-wider transition-colors relative ${
+            className={`flex items-center space-x-2 px-4 py-2.5 sm:px-5 sm:py-2.5 rounded-lg font-heading text-xs sm:text-sm font-bold uppercase tracking-wider transition-colors flex-shrink-0 whitespace-nowrap relative ${
               activeTab === 'trash'
                 ? 'bg-[#dc2626] text-white shadow-md'
                 : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
@@ -620,7 +624,7 @@ export default function Admin() {
 
           <button
             onClick={() => setActiveTab('settings')}
-            className={`flex items-center space-x-2 px-5 py-2.5 rounded-lg font-heading text-sm font-bold uppercase tracking-wider transition-colors ${
+            className={`flex items-center space-x-2 px-4 py-2.5 sm:px-5 sm:py-2.5 rounded-lg font-heading text-xs sm:text-sm font-bold uppercase tracking-wider transition-colors flex-shrink-0 whitespace-nowrap ${
               activeTab === 'settings'
                 ? 'bg-[#dc2626] text-white shadow-md'
                 : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
@@ -657,68 +661,141 @@ export default function Admin() {
                 <p className="text-slate-500 font-heading uppercase text-sm">Pagaidām nav jaunu pieteikumu</p>
               </div>
             ) : (
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm font-sans">
-                    <thead className="bg-slate-900 text-white font-heading uppercase text-xs tracking-wider">
-                      <tr>
-                        <th className="p-4">Veids</th>
-                        <th className="p-4">Vārds</th>
-                        <th className="p-4">Tālrunis / E-pasts</th>
-                        <th className="p-4">Ziņa / Vecums</th>
-                        <th className="p-4">Datums</th>
-                        <th className="p-4">Statuss</th>
-                        <th className="p-4 text-right">Darbības</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {submissions.map((sub) => (
-                        <tr key={sub.id} className={sub.status === 'new' ? 'bg-red-50/40' : ''}>
-                          <td className="p-4">
-                            <span className={`inline-block px-2.5 py-1 rounded text-[11px] font-heading font-bold uppercase ${
-                              sub.type === 'trial' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
-                            }`}>
-                              {sub.type === 'trial' ? 'Bezmaksas treniņš' : 'Kontaktforma'}
-                            </span>
-                          </td>
-                          <td className="p-4 font-bold text-slate-900">{sub.name}</td>
-                          <td className="p-4">
-                            {sub.phone && <div className="font-semibold text-slate-800">{sub.phone}</div>}
-                            {sub.email && <div className="text-xs text-slate-500">{sub.email}</div>}
-                          </td>
-                          <td className="p-4 max-w-xs text-slate-700 text-xs">
-                            {sub.message || '—'}
-                          </td>
-                          <td className="p-4 text-xs text-slate-400 whitespace-nowrap">
-                            {new Date(sub.createdAt).toLocaleString('lv-LV')}
-                          </td>
-                          <td className="p-4 whitespace-nowrap">
-                            <button
-                              onClick={() => handleStatusToggle(sub.id, sub.status)}
-                              className={`px-3 py-1 rounded-full text-xs font-heading font-bold uppercase transition-colors ${
-                                sub.status === 'contacted'
-                                  ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
-                                  : 'bg-amber-100 text-amber-800 hover:bg-amber-200 animate-pulse'
-                              }`}
-                            >
-                              {sub.status === 'contacted' ? 'Sazināts ✓' : 'Jauns !'}
-                            </button>
-                          </td>
-                          <td className="p-4 text-right whitespace-nowrap">
-                            <button
-                              onClick={() => handleDeleteSub(sub.id)}
-                              className="p-2 text-slate-400 hover:text-red-600 rounded-lg transition-colors"
-                              title="Dzēst"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+              <>
+                {/* Mobile Cards View */}
+                <div className="md:hidden space-y-3">
+                  {submissions.map((sub) => (
+                    <div 
+                      key={sub.id} 
+                      className={`bg-white rounded-xl p-4 border shadow-sm space-y-3 transition-colors ${
+                        sub.status === 'new' ? 'border-red-300 bg-red-50/20' : 'border-slate-200'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className={`inline-block px-2.5 py-0.5 rounded text-[10px] font-heading font-bold uppercase ${
+                          sub.type === 'trial' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
+                        }`}>
+                          {sub.type === 'trial' ? 'Bezmaksas treniņš' : 'Kontaktforma'}
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-mono">
+                          {new Date(sub.createdAt).toLocaleDateString('lv-LV')}
+                        </span>
+                      </div>
+
+                      <div>
+                        <h4 className="font-bold text-slate-900 text-base leading-snug">{sub.name}</h4>
+                        {sub.phone && (
+                          <a 
+                            href={`tel:${sub.phone.replace(/\s+/g, '')}`} 
+                            className="text-xs text-blue-600 font-semibold block mt-1 hover:underline"
+                          >
+                            📞 {sub.phone}
+                          </a>
+                        )}
+                        {sub.email && (
+                          <a 
+                            href={`mailto:${sub.email}`} 
+                            className="text-xs text-slate-500 block truncate mt-0.5 hover:underline"
+                          >
+                            ✉️ {sub.email}
+                          </a>
+                        )}
+                      </div>
+
+                      {sub.message && (
+                        <div className="text-xs text-slate-700 bg-slate-50 p-2.5 rounded-lg border border-slate-100 font-sans">
+                          {sub.message}
+                        </div>
+                      )}
+
+                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                        <button
+                          onClick={() => handleStatusToggle(sub.id, sub.status)}
+                          className={`px-3 py-1.5 rounded-full text-xs font-heading font-bold uppercase transition-colors ${
+                            sub.status === 'contacted'
+                              ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
+                              : 'bg-amber-100 text-amber-800 hover:bg-amber-200 animate-pulse'
+                          }`}
+                        >
+                          {sub.status === 'contacted' ? 'Sazināts ✓' : 'Jauns !'}
+                        </button>
+
+                        <button
+                          onClick={() => handleDeleteSub(sub.id)}
+                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Pārvietot uz atkritni"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
+
+                {/* Desktop Table View */}
+                <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm font-sans">
+                      <thead className="bg-slate-900 text-white font-heading uppercase text-xs tracking-wider">
+                        <tr>
+                          <th className="p-4">Veids</th>
+                          <th className="p-4">Vārds</th>
+                          <th className="p-4">Tālrunis / E-pasts</th>
+                          <th className="p-4">Ziņa / Vecums</th>
+                          <th className="p-4">Datums</th>
+                          <th className="p-4">Statuss</th>
+                          <th className="p-4 text-right">Darbības</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {submissions.map((sub) => (
+                          <tr key={sub.id} className={sub.status === 'new' ? 'bg-red-50/40' : ''}>
+                            <td className="p-4">
+                              <span className={`inline-block px-2.5 py-1 rounded text-[11px] font-heading font-bold uppercase ${
+                                sub.type === 'trial' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
+                              }`}>
+                                {sub.type === 'trial' ? 'Bezmaksas treniņš' : 'Kontaktforma'}
+                              </span>
+                            </td>
+                            <td className="p-4 font-bold text-slate-900">{sub.name}</td>
+                            <td className="p-4">
+                              {sub.phone && <div className="font-semibold text-slate-800">{sub.phone}</div>}
+                              {sub.email && <div className="text-xs text-slate-500">{sub.email}</div>}
+                            </td>
+                            <td className="p-4 max-w-xs text-slate-700 text-xs">
+                              {sub.message || '—'}
+                            </td>
+                            <td className="p-4 text-xs text-slate-400 whitespace-nowrap">
+                              {new Date(sub.createdAt).toLocaleString('lv-LV')}
+                            </td>
+                            <td className="p-4 whitespace-nowrap">
+                              <button
+                                onClick={() => handleStatusToggle(sub.id, sub.status)}
+                                className={`px-3 py-1 rounded-full text-xs font-heading font-bold uppercase transition-colors ${
+                                  sub.status === 'contacted'
+                                    ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
+                                    : 'bg-amber-100 text-amber-800 hover:bg-amber-200 animate-pulse'
+                                }`}
+                              >
+                                {sub.status === 'contacted' ? 'Sazināts ✓' : 'Jauns !'}
+                              </button>
+                            </td>
+                            <td className="p-4 text-right whitespace-nowrap">
+                              <button
+                                onClick={() => handleDeleteSub(sub.id)}
+                                className="p-2 text-slate-400 hover:text-red-600 rounded-lg transition-colors"
+                                title="Dzēst"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
             )}
           </div>
         )}
@@ -1175,16 +1252,16 @@ export default function Admin() {
 
       {/* Add Review Modal */}
       {showAddReviewModal && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0a0a0c] border-2 border-slate-800 text-white rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-[#0a0a0c] border-2 border-slate-800 text-white rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl relative max-h-[92vh] overflow-y-auto">
             <button
               onClick={() => setShowAddReviewModal(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white p-1"
+              className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-full bg-slate-900"
             >
               ✕
             </button>
 
-            <h3 className="text-2xl font-heading font-bold uppercase tracking-wide text-white mb-4">Pievienot jaunu atsauksmi</h3>
+            <h3 className="text-xl sm:text-2xl font-heading font-bold uppercase tracking-wide text-white mb-4">Pievienot jaunu atsauksmi</h3>
 
             <form onSubmit={handleAddReview} className="space-y-4">
               <div>
@@ -1195,7 +1272,7 @@ export default function Admin() {
                   value={newReviewAuthor}
                   onChange={(e) => setNewReviewAuthor(e.target.value)}
                   placeholder="Piem., Anna Kalniņa"
-                  className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-[#dc2626]"
+                  className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 text-base focus:outline-none focus:border-[#dc2626]"
                 />
               </div>
 
@@ -1206,7 +1283,7 @@ export default function Admin() {
                   value={newReviewRole}
                   onChange={(e) => setNewReviewRole(e.target.value)}
                   placeholder="Piem., Vecāks"
-                  className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-[#dc2626]"
+                  className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 text-base focus:outline-none focus:border-[#dc2626]"
                 />
               </div>
 
@@ -1234,7 +1311,7 @@ export default function Admin() {
                   value={newReviewText}
                   onChange={(e) => setNewReviewText(e.target.value)}
                   placeholder="Atsauksmes teksts..."
-                  className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-[#dc2626]"
+                  className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 text-base focus:outline-none focus:border-[#dc2626]"
                 ></textarea>
               </div>
 
@@ -1242,7 +1319,7 @@ export default function Admin() {
                 <button
                   type="button"
                   onClick={() => setShowAddReviewModal(false)}
-                  className="px-4 py-2 rounded-lg border border-slate-700 text-slate-300 text-xs font-heading uppercase font-bold"
+                  className="px-4 py-2.5 rounded-lg border border-slate-700 text-slate-300 text-xs font-heading uppercase font-bold"
                 >
                   Atcelt
                 </button>
@@ -1259,8 +1336,8 @@ export default function Admin() {
       )}
       {/* MODAL: ADD GALLERY PHOTO */}
       {showAddGalleryModal && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0a0a0c] border-2 border-slate-800 text-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative">
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-[#0a0a0c] border-2 border-slate-800 text-white rounded-2xl max-w-lg w-full p-5 sm:p-8 shadow-2xl relative max-h-[92vh] overflow-y-auto">
             <button
               onClick={() => setShowAddGalleryModal(false)}
               className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-full bg-slate-900"
@@ -1268,8 +1345,8 @@ export default function Admin() {
               <X className="w-5 h-5" />
             </button>
 
-            <h3 className="text-2xl font-heading font-bold uppercase tracking-wide text-white mb-2">Pievienot fotoattēlu</h3>
-            <p className="text-xs text-slate-400 font-sans mb-6">Augšupielādējiet failu no ierīces vai norādiet saiti.</p>
+            <h3 className="text-xl sm:text-2xl font-heading font-bold uppercase tracking-wide text-white mb-1">Pievienot fotoattēlu</h3>
+            <p className="text-xs text-slate-400 font-sans mb-5">Augšupielādējiet failu no ierīces vai norādiet saiti.</p>
 
             {uploadError && (
               <div className="mb-4 p-3 bg-red-500/20 border border-red-500 text-red-300 rounded-lg text-sm flex items-center space-x-2">
@@ -1287,7 +1364,7 @@ export default function Admin() {
                   value={newPhotoTitle}
                   onChange={(e) => setNewPhotoTitle(e.target.value)}
                   placeholder="Piem., Ziemas nometne 2026"
-                  className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-[#dc2626]"
+                  className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 text-base focus:outline-none focus:border-[#dc2626]"
                 />
               </div>
 
@@ -1296,7 +1373,7 @@ export default function Admin() {
                 <select
                   value={newPhotoCategory}
                   onChange={(e) => setNewPhotoCategory(e.target.value as any)}
-                  className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#dc2626]"
+                  className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white text-base focus:outline-none focus:border-[#dc2626]"
                 >
                   <option value="trenini">Treniņi</option>
                   <option value="eksameni">Eksāmeni</option>
@@ -1314,15 +1391,15 @@ export default function Admin() {
                   value={newPhotoCaption}
                   onChange={(e) => setNewPhotoCaption(e.target.value)}
                   placeholder="Attēla paraksts..."
-                  className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-[#dc2626]"
+                  className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 text-base focus:outline-none focus:border-[#dc2626]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs uppercase font-heading font-bold text-slate-300 mb-1">Augšupielādēt attēlu no datora</label>
-                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-700 hover:border-[#dc2626] rounded-xl cursor-pointer bg-[#111827] transition-colors">
+                <label className="block text-xs uppercase font-heading font-bold text-slate-300 mb-1">Augšupielādēt attēlu no tālruņa vai datora</label>
+                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-700 hover:border-[#dc2626] rounded-xl cursor-pointer bg-[#111827] transition-colors p-3 text-center">
                   <Upload className="w-8 h-8 text-slate-400 mb-2" />
-                  <span className="text-xs text-slate-300 font-sans">Noklikšķiniet, lai izvēlētos attēlu (JPG, PNG, WEBP)</span>
+                  <span className="text-xs text-slate-300 font-sans">Izvēlieties foto (JPG, PNG, WEBP)</span>
                   <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
                 </label>
               </div>
@@ -1363,20 +1440,20 @@ export default function Admin() {
 
       {/* MODAL: PHOTO VIEWER & DELETE CONFIRMATION */}
       {selectedGalleryItem && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#0a0a0c] border-2 border-slate-800 text-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative">
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-[#0a0a0c] border-2 border-slate-800 text-white rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl relative max-h-[92vh] overflow-y-auto">
             <button
               onClick={() => setSelectedGalleryItem(null)}
               className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-full bg-slate-900 z-10"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
 
-            <div className="max-h-[60vh] overflow-hidden rounded-xl border border-slate-800 bg-black flex items-center justify-center mb-4">
+            <div className="max-h-[50vh] sm:max-h-[60vh] overflow-hidden rounded-xl border border-slate-800 bg-black flex items-center justify-center mb-4">
               <img 
                 src={selectedGalleryItem.fullImage || selectedGalleryItem.image} 
                 alt={selectedGalleryItem.title} 
-                className="max-h-[60vh] max-w-full object-contain"
+                className="max-h-[50vh] sm:max-h-[60vh] max-w-full object-contain"
               />
             </div>
 
@@ -1385,13 +1462,13 @@ export default function Admin() {
                 <span className="text-[10px] uppercase font-heading tracking-wider text-[#dc2626] font-bold block">
                   {selectedGalleryItem.category}
                 </span>
-                <h4 className="text-lg font-heading font-bold text-white">{selectedGalleryItem.title}</h4>
+                <h4 className="text-base sm:text-lg font-heading font-bold text-white">{selectedGalleryItem.title}</h4>
                 <p className="text-xs text-slate-400 font-sans mt-0.5">{selectedGalleryItem.caption}</p>
               </div>
 
               <button
                 onClick={() => handleDeleteGalleryItem(selectedGalleryItem.id)}
-                className="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-lg font-heading uppercase text-xs font-bold flex items-center space-x-2 transition-colors shadow"
+                className="w-full sm:w-auto justify-center bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-lg font-heading uppercase text-xs font-bold flex items-center space-x-2 transition-colors shadow"
               >
                 <Trash2 className="w-4 h-4" />
                 <span>Dzēst šo fotoattēlu</span>

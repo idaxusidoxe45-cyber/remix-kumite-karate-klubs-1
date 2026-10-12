@@ -66,12 +66,12 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-3 sm:p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        className="bg-[#0a0a0c] text-white rounded-2xl shadow-2xl max-w-lg w-full p-6 sm:p-8 relative border-2 border-slate-800"
+        className="bg-[#0a0a0c] text-white rounded-2xl shadow-2xl max-w-lg w-full p-5 sm:p-8 relative border-2 border-slate-800 max-h-[92vh] overflow-y-auto"
       >
         <button
           onClick={onClose}

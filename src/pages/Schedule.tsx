@@ -20,7 +20,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-heading text-white uppercase font-bold tracking-tight mb-6 leading-tight">Nodarbību Grafiks</h1>
             <button
               onClick={openTrialModal}
-              className="bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-xl uppercase tracking-widest px-8 py-3.5 font-bold transition-all transform hover:scale-105 active:scale-95 shadow-xl border-2 border-white rounded-lg"
+              className="w-full sm:w-auto bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-xl uppercase tracking-wider px-6 sm:px-8 py-3.5 font-bold transition-all transform hover:scale-105 active:scale-95 shadow-xl border-2 border-white rounded-lg text-center"
             >
               Pieteikties bezmaksas nodarbībai
             </button>

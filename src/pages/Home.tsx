@@ -133,7 +133,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
       </section>
 
       {/* Age Groups Section */}
-      <section className="py-24 bg-[#f8fafc] border-b border-slate-200">
+      <section className="py-24 bg-[#f8fafc] border-b border-slate-200 content-visibility-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -332,7 +332,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
       </section>
 
       {/* Gallery Highlight */}
-      <section className="py-24 bg-[#f8fafc] border-y border-slate-200">
+      <section className="py-24 bg-[#f8fafc] border-y border-slate-200 content-visibility-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
             <div>
@@ -376,7 +376,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
       </section>
 
       {/* Testimonials */}
-      <section className="py-24 bg-[#ffffff]">
+      <section className="py-24 bg-[#ffffff] content-visibility-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <span className="text-6xl text-[#dc2626] font-serif font-bold">“</span>

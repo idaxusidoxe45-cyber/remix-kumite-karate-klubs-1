@@ -54,7 +54,7 @@ export default function AboutClub({ setCurrentTab, openTrialModal, openReviewMod
               href="https://wa.link/y3zuwq"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-xl uppercase tracking-widest px-8 py-3.5 font-bold transition-all transform hover:scale-105 active:scale-95 rounded-lg border-2 border-white shadow-xl"
+              className="w-full sm:w-auto text-center inline-block bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-xl uppercase tracking-wider px-6 sm:px-8 py-3.5 font-bold transition-all transform hover:scale-105 active:scale-95 rounded-lg border-2 border-white shadow-xl"
             >
               Uzdod jautājumu
             </a>
@@ -237,7 +237,7 @@ export default function AboutClub({ setCurrentTab, openTrialModal, openReviewMod
       </section>
 
       {/* FAQ Section */}
-      <section className="py-24 bg-[#ffffff] border-t border-slate-200">
+      <section className="py-24 bg-[#ffffff] border-t border-slate-200 content-visibility-auto">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#dc2626] font-bold">Atbildes uz jautājumiem</span>
@@ -262,7 +262,7 @@ export default function AboutClub({ setCurrentTab, openTrialModal, openReviewMod
       </section>
 
       {/* Testimonials Section */}
-      <section id="atsauksmes" className="py-24 bg-[#f8fafc]">
+      <section id="atsauksmes" className="py-24 bg-[#f8fafc] content-visibility-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span className="text-6xl text-[#dc2626] font-serif font-bold">“</span>

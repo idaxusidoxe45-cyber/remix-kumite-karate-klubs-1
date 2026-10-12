@@ -181,12 +181,12 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
               <div className="w-16 h-1 bg-[#dc2626] mx-auto mt-3 rounded-full"></div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
               {COACH_GALLERY_PHOTOS.map((photo, idx) => (
                 <InteractiveRepelCard key={photo.id} maxShift={10} maxRotate={4}>
                   <div
                     onClick={() => setSelectedPhotoIndex(idx)}
-                    className="relative overflow-hidden rounded-xl bg-gray-900 border border-slate-200 shadow-md group h-72 cursor-pointer hover:border-[#dc2626] transition-all"
+                    className="relative overflow-hidden rounded-xl bg-gray-900 border border-slate-200 shadow-md group h-48 sm:h-72 cursor-pointer hover:border-[#dc2626] transition-all"
                   >
                     <img
                       src={photo.src}
@@ -195,14 +195,14 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
                       decoding="async"
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3 sm:p-4">
                       <div className="w-full flex items-end justify-between">
                         <div>
-                          <p className="text-white font-heading text-lg font-bold uppercase">{photo.title}</p>
-                          <p className="text-xs text-slate-300 font-sans">{photo.caption}</p>
+                          <p className="text-white font-heading text-xs sm:text-base font-bold uppercase">{photo.title}</p>
+                          <p className="text-[10px] sm:text-xs text-slate-300 font-sans hidden xs:block">{photo.caption}</p>
                         </div>
-                        <div className="bg-[#dc2626] p-2 rounded-full text-white shadow-lg">
-                          <ZoomIn className="w-4 h-4" />
+                        <div className="bg-[#dc2626] p-1.5 sm:p-2 rounded-full text-white shadow-lg flex-shrink-0">
+                          <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         </div>
                       </div>
                     </div>
@@ -228,7 +228,7 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
                 controls
                 playsInline
                 preload="metadata"
-                poster="/assets_gallery/trenini/karate-web-10-1.webp"
+                poster="/assets_coaches/img_1820-scaled.webp"
                 className="w-full h-full object-cover"
               >
                 <source src="/assets_video/kumite-video.mp4" type="video/mp4" />
@@ -238,7 +238,7 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
           </InteractiveRepelCard>
           <button
             onClick={openTrialModal}
-            className="bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-xl uppercase tracking-widest px-8 py-4 rounded-lg font-bold shadow-xl transition-all transform hover:scale-105 active:scale-95 border-2 border-white"
+            className="w-full sm:w-auto bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-xl uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 rounded-lg font-bold shadow-xl transition-all transform hover:scale-105 active:scale-95 border-2 border-white"
           >
             Pievienojies mūsu karatē ģimenei
           </button>
