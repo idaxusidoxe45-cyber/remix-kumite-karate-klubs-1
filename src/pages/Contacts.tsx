@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { MapPin, Phone, Mail, Clock, CheckCircle } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, CheckCircle, Loader2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
 import { sendFormToEmail } from '../services/emailService';
+import { formatLatvianPhoneNumber } from '../utils/phone';
 
 interface ContactsProps {
   openTrialModal: () => void;
@@ -10,31 +11,44 @@ interface ContactsProps {
 
 export default function Contacts({ openTrialModal }: ContactsProps) {
   const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState('+371 ');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhone(formatLatvianPhoneNumber(e.target.value));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
     if (!name || !email) return;
 
-    sendFormToEmail({
-      type: 'contact',
-      name: name.trim(),
-      phone: phone.trim() || undefined,
-      email: email.trim(),
-      message: message.trim() || undefined
-    });
+    setIsSubmitting(true);
 
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setName('');
-      setPhone('');
-      setEmail('');
-      setMessage('');
-    }, 3000);
+    try {
+      await sendFormToEmail({
+        type: 'contact',
+        name: name.trim(),
+        phone: phone.trim() || undefined,
+        email: email.trim(),
+        message: message.trim() || undefined
+      });
+    } catch (err) {
+      console.error('Error submitting contact form:', err);
+    } finally {
+      setIsSubmitting(false);
+      setSubmitted(true);
+      setTimeout(() => {
+        setSubmitted(false);
+        setName('');
+        setPhone('+371 ');
+        setEmail('');
+        setMessage('');
+      }, 3000);
+    }
   };
 
   const workingHours = [
@@ -99,9 +113,9 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                         <input
                           type="tel"
                           value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          placeholder="Tālruņa numurs"
-                          className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 text-base focus:outline-none focus:border-[#dc2626]"
+                          onChange={handlePhoneChange}
+                          placeholder="+371 XXXXXXXX"
+                          className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 text-base font-mono focus:outline-none focus:border-[#dc2626]"
                         />
                       </div>
                     </div>
@@ -130,9 +144,17 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                     <div className="flex justify-end pt-2">
                       <button
                         type="submit"
-                        className="bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-xl uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-xl border-2 border-white"
+                        disabled={isSubmitting}
+                        className="bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white font-heading text-xl uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-xl border-2 border-white flex items-center space-x-2 disabled:cursor-not-allowed"
                       >
-                        Nosūtīt
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            <span>Sūta...</span>
+                          </>
+                        ) : (
+                          <span>Nosūtīt</span>
+                        )}
                       </button>
                     </div>
                   </form>

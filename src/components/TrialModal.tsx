@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { X, CheckCircle, Send } from 'lucide-react';
+import { X, CheckCircle, Send, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Logo } from './Logo';
 import { sendFormToEmail } from '../services/emailService';
+import { formatLatvianPhoneNumber } from '../utils/phone';
 
 interface TrialModalProps {
   isOpen: boolean;
@@ -11,17 +12,24 @@ interface TrialModalProps {
 
 export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
   const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState('+371 ');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [websiteHoneypot, setWebsiteHoneypot] = useState('');
   const [gdprConsent, setGdprConsent] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhone(formatLatvianPhoneNumber(e.target.value));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     if (websiteHoneypot) {
       // Honeypot triggered by spam bot
       setSubmitted(true);
@@ -29,25 +37,32 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
     }
     if (!name || !phone || !gdprConsent) return;
 
-    // Send application to email & store for Admin panel
-    sendFormToEmail({
-      type: 'trial',
-      name: name.trim(),
-      phone: phone.trim(),
-      email: email.trim() || undefined,
-      message: message.trim() || undefined
-    });
+    setIsSubmitting(true);
 
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setName('');
-      setPhone('');
-      setEmail('');
-      setMessage('');
-      setWebsiteHoneypot('');
-      onClose();
-    }, 2500);
+    try {
+      // Send application to email & store for Admin panel
+      await sendFormToEmail({
+        type: 'trial',
+        name: name.trim(),
+        phone: phone.trim(),
+        email: email.trim() || undefined,
+        message: message.trim() || undefined
+      });
+    } catch (err) {
+      console.error('Error submitting trial form:', err);
+    } finally {
+      setIsSubmitting(false);
+      setSubmitted(true);
+      setTimeout(() => {
+        setSubmitted(false);
+        setName('');
+        setPhone('+371 ');
+        setEmail('');
+        setMessage('');
+        setWebsiteHoneypot('');
+        onClose();
+      }, 2500);
+    }
   };
 
   return (
@@ -113,9 +128,9 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
                     type="tel"
                     required
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={handlePhoneChange}
                     placeholder="+371 XXXXXXXX"
-                    className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#dc2626] text-base"
+                    className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#dc2626] text-base font-mono"
                   />
                 </div>
                 <div>
@@ -159,11 +174,20 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
               <div className="flex justify-end pt-2">
                 <button
                   type="submit"
-                  disabled={!gdprConsent}
-                  className="w-full bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white font-heading text-xl uppercase tracking-widest px-6 py-4 rounded-lg font-bold flex items-center justify-center space-x-2 transition-all transform hover:scale-105 active:scale-95 shadow-xl border-2 border-white"
+                  disabled={!gdprConsent || isSubmitting}
+                  className="w-full bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white font-heading text-xl uppercase tracking-widest px-6 py-4 rounded-lg font-bold flex items-center justify-center space-x-2 transition-all transform hover:scale-105 active:scale-95 shadow-xl border-2 border-white disabled:cursor-not-allowed"
                 >
-                  <span>Nosūtīt pieteikumu</span>
-                  <Send className="w-5 h-5" />
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span>Sūta...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Nosūtīt pieteikumu</span>
+                      <Send className="w-5 h-5" />
+                    </>
+                  )}
                 </button>
               </div>
             </form>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Star, CheckCircle } from 'lucide-react';
+import { X, Star, CheckCircle, Loader2 } from 'lucide-react';
 import { Testimonial } from '../types';
 
 interface ReviewModalProps {
@@ -14,18 +14,23 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
   const [rating, setRating] = useState(5);
   const [text, setText] = useState('');
   const [websiteHoneypot, setWebsiteHoneypot] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     if (websiteHoneypot) {
       // Spam bot trap
       setSubmitted(true);
       return;
     }
     if (!author.trim() || !text.trim()) return;
+
+    setIsSubmitting(true);
 
     const newReview: Testimonial = {
       id: Date.now(),
@@ -50,25 +55,26 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
 
     // Attempt to post to server API if available
     try {
-      fetch('/api/reviews', {
+      await fetch('/api/reviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newReview),
-      }).catch(() => {});
+      });
     } catch {
       // Ignore network errors
+    } finally {
+      setIsSubmitting(false);
+      setSubmitted(true);
+      setTimeout(() => {
+        setSubmitted(false);
+        setAuthor('');
+        setRole('');
+        setRating(5);
+        setText('');
+        setWebsiteHoneypot('');
+        onClose();
+      }, 3000);
     }
-
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setAuthor('');
-      setRole('');
-      setRating(5);
-      setText('');
-      setWebsiteHoneypot('');
-      onClose();
-    }, 3000);
   };
 
   return (
@@ -187,9 +193,17 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
               </button>
               <button
                 type="submit"
-                className="bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-xs uppercase tracking-widest px-6 py-2.5 rounded-lg font-bold transition-all shadow-lg border border-white/20"
+                disabled={isSubmitting}
+                className="bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white font-heading text-xs uppercase tracking-widest px-6 py-2.5 rounded-lg font-bold transition-all shadow-lg border border-white/20 flex items-center space-x-1.5 disabled:cursor-not-allowed"
               >
-                Nosūtīt atsauksmi
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Sūta...</span>
+                  </>
+                ) : (
+                  <span>Nosūtīt atsauksmi</span>
+                )}
               </button>
             </div>
           </form>
