@@ -12,6 +12,16 @@ import {
   getDynamicGalleryItems,
   fetchCloudGalleryItems 
 } from '../data';
+import { 
+  TrashItem, 
+  getStoredTrashItems, 
+  fetchTrashFromCloud, 
+  moveToTrash, 
+  restoreItem, 
+  permanentlyDeleteItem, 
+  emptyTrash, 
+  getDaysRemaining 
+} from '../services/trashService';
 import { Testimonial, GalleryItem } from '../types';
 import { 
   Lock, 
@@ -32,7 +42,12 @@ import {
   RefreshCw,
   X,
   Upload,
-  AlertCircle
+  AlertCircle,
+  RotateCcw,
+  Clock,
+  AlertTriangle,
+  Search,
+  Filter
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Logo } from '../components/Logo';
@@ -46,7 +61,7 @@ export default function Admin() {
     return localStorage.getItem('kumite_admin_auth') === 'true' || sessionStorage.getItem('kumite_admin_auth') === 'true';
   });
 
-  const [activeTab, setActiveTab] = useState<'submissions' | 'reviews' | 'gallery' | 'settings'>('submissions');
+  const [activeTab, setActiveTab] = useState<'submissions' | 'reviews' | 'gallery' | 'trash' | 'settings'>('submissions');
   
   // Custom admin credentials stored in localStorage
   const getStoredPassword = () => {
@@ -58,6 +73,9 @@ export default function Admin() {
   const [submissions, setSubmissions] = useState<FormSubmission[]>([]);
   const [reviews, setReviews] = useState<Testimonial[]>([]);
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+  const [trashItems, setTrashItems] = useState<TrashItem[]>([]);
+  const [trashFilter, setTrashFilter] = useState<'all' | 'gallery' | 'review' | 'submission'>('all');
+  const [trashSearch, setTrashSearch] = useState('');
   const [targetEmail, setTargetEmail] = useState(() => {
     if (typeof window === 'undefined') return 'u2086344644@gmail.com';
     return localStorage.getItem('kumite_target_email') || 'u2086344644@gmail.com';
@@ -97,17 +115,20 @@ export default function Admin() {
     setSubmissions(getStoredSubmissions());
     setReviews(getDynamicTestimonials());
     setGalleryItems(getDynamicGalleryItems());
+    setTrashItems(getStoredTrashItems());
 
     // Asynchronous Cloud DB load
     try {
-      const [cloudSubs, cloudRevs, cloudGal] = await Promise.all([
+      const [cloudSubs, cloudRevs, cloudGal, cloudTrash] = await Promise.all([
         fetchSubmissionsFromCloud(),
         fetchCloudTestimonials(),
-        fetchCloudGalleryItems()
+        fetchCloudGalleryItems(),
+        fetchTrashFromCloud()
       ]);
       setSubmissions(cloudSubs);
       setReviews(cloudRevs);
       setGalleryItems(cloudGal);
+      setTrashItems(cloudTrash);
     } catch (err) {
       console.error('Data refresh error:', err);
     } finally {
@@ -152,12 +173,26 @@ export default function Admin() {
   };
 
   const handleDeleteSub = async (id: string) => {
-    if (confirm('Vai tiešām vēlaties dzēst šo pieteikumu?')) {
-      setSubmissions(prev => prev.filter(s => s.id !== id));
-      await deleteSubmission(id);
-      showToast('Pieteikums dzēsts.');
-      refreshData();
+    const targetSub = submissions.find(s => s.id === id);
+    if (!targetSub) return;
+
+    if (!confirm(`Vai pārvietot pieteikumu no "${targetSub.name}" uz atkritni?\nTas glabāsies 30 dienas ar iespēju jebkurā laikā to atjaunot.`)) {
+      return;
     }
+
+    // Move to trash
+    const trashed = moveToTrash(
+      'submission',
+      targetSub,
+      targetSub.name,
+      `${targetSub.type === 'trial' ? 'Bezmaksas treniņš' : 'Kontakti'} | ${targetSub.phone || targetSub.email || ''}`
+    );
+    setTrashItems(prev => [trashed, ...prev]);
+
+    setSubmissions(prev => prev.filter(s => s.id !== id));
+    await deleteSubmission(id);
+    showToast('Pieteikums pārvietots uz atkritni (glabājas 30 dienas).');
+    refreshData();
   };
 
   const handleToggleReviewStatus = async (reviewId: number | string, currentStatus?: string) => {
@@ -184,7 +219,21 @@ export default function Admin() {
   };
 
   const handleDeleteReview = async (reviewId: number | string) => {
-    if (!confirm('Vai tiešām vēlaties neatgriezeniski dzēst šo atsauksmi?')) return;
+    const targetReview = reviews.find(r => String(r.id) === String(reviewId));
+    if (!targetReview) return;
+
+    if (!confirm(`Vai pārvietot atsauksmi no "${targetReview.author}" uz atkritni?\nTā glabāsies 30 dienas ar iespēju jebkurā laikā to atjaunot.`)) {
+      return;
+    }
+
+    // Move to trash
+    const trashed = moveToTrash(
+      'review',
+      targetReview,
+      targetReview.author,
+      `${targetReview.role || 'Atsauksme'} • ★ ${targetReview.rating || 5}`
+    );
+    setTrashItems(prev => [trashed, ...prev]);
 
     setReviews(prev => prev.filter(r => String(r.id) !== String(reviewId)));
 
@@ -200,9 +249,9 @@ export default function Admin() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: reviewId })
       });
-      showToast('Atsauksme veiksmīgi dzēsta.');
     } catch {}
 
+    showToast('Atsauksme pārvietota uz atkritni (glabājas 30 dienas).');
     refreshData();
   };
 
@@ -245,7 +294,22 @@ export default function Admin() {
 
   // GALLERY MANAGEMENT
   const handleDeleteGalleryItem = async (itemId: number | string) => {
-    if (!confirm('Vai tiešām vēlaties noņemt šo attēlu no galerijas?')) return;
+    const targetItem = galleryItems.find(g => String(g.id) === String(itemId));
+    if (!targetItem) return;
+
+    if (!confirm(`Vai pārvietot fotoattēlu "${targetItem.title}" uz atkritni?\nTas glabāsies 30 dienas ar iespēju jebkurā laikā to atjaunot.`)) {
+      return;
+    }
+
+    // Move to trash
+    const trashed = moveToTrash(
+      'gallery',
+      targetItem,
+      targetItem.title,
+      `Kategorija: ${targetItem.category}`,
+      targetItem.image
+    );
+    setTrashItems(prev => [trashed, ...prev]);
 
     setGalleryItems(prev => prev.filter(g => String(g.id) !== String(itemId)));
 
@@ -271,7 +335,40 @@ export default function Admin() {
       setSelectedGalleryItem(null);
     }
 
-    showToast('Fotoattēls dzēsts no galerijas.');
+    showToast('Fotoattēls pārvietots uz atkritni (glabājas 30 dienas).');
+    refreshData();
+  };
+
+  // TRASH RESTORE & PERMANENT DELETE HANDLERS
+  const handleRestoreFromTrash = async (trashId: string) => {
+    const restored = await restoreItem(trashId);
+    if (restored) {
+      setTrashItems(prev => prev.filter(t => t.id !== trashId));
+      showToast(`"${restored.title}" veiksmīgi atjaunots!`);
+      refreshData();
+    }
+  };
+
+  const handlePermanentDelete = async (trashId: string, title: string) => {
+    if (!confirm(`Vai tiešām vēlaties NEATGRIEZENISKI dzēst "${title}"?\nŠo darbību nebūs iespējams atsaukt!`)) {
+      return;
+    }
+
+    await permanentlyDeleteItem(trashId);
+    setTrashItems(prev => prev.filter(t => t.id !== trashId));
+    showToast(`"${title}" neatgriezeniski izdzēsts.`);
+    refreshData();
+  };
+
+  const handleEmptyTrash = async () => {
+    if (trashItems.length === 0) return;
+    if (!confirm(`UZMANĪBU: Vai tiešām vēlaties IZTĪRĪT visu atkritni (${trashItems.length} vienumi)?\nVisi elementi tiks neatgriezeniski izdzēsti!`)) {
+      return;
+    }
+
+    await emptyTrash();
+    setTrashItems([]);
+    showToast('Atkritne pilnībā iztīrīta.');
     refreshData();
   };
 
@@ -500,6 +597,25 @@ export default function Admin() {
           >
             <ImageIcon className="w-4 h-4" />
             <span>Galerija ({galleryItems.length})</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('trash')}
+            className={`flex items-center space-x-2 px-5 py-2.5 rounded-lg font-heading text-sm font-bold uppercase tracking-wider transition-colors relative ${
+              activeTab === 'trash'
+                ? 'bg-[#dc2626] text-white shadow-md'
+                : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+            }`}
+          >
+            <Trash2 className="w-4 h-4" />
+            <span>Atkritne ({trashItems.length})</span>
+            {trashItems.length > 0 && (
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-1 ${
+                activeTab === 'trash' ? 'bg-white text-red-600' : 'bg-red-600 text-white'
+              }`}>
+                {trashItems.length}
+              </span>
+            )}
           </button>
 
           <button
@@ -813,6 +929,246 @@ export default function Admin() {
                 </button>
               </form>
             </div>
+          </div>
+        )}
+
+        {/* TAB 5: TRASH / RECYCLE BIN (30 DAYS RETENTION) */}
+        {activeTab === 'trash' && (
+          <div className="space-y-6">
+            {/* Top Info Banner & Actions */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center space-x-2">
+                  <h3 className="text-xl font-heading font-bold uppercase tracking-wide text-[#0a0a0c]">Atkritne (Miskaste)</h3>
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-heading font-bold uppercase bg-red-100 text-[#dc2626]">
+                    30 dienu glabāšana
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 font-sans mt-1">
+                  Visi dzēstie elementi šeit tiek droši uzglabāti 30 dienas un pēc tam tiek neatgriezeniski izdzēsti. 
+                  Jūs varat jebkurā brīdī tos atjaunot vai izdzēst pavisam.
+                </p>
+              </div>
+
+              {trashItems.length > 0 && (
+                <button
+                  onClick={handleEmptyTrash}
+                  className="flex items-center space-x-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-heading font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg shadow-sm transition-colors"
+                >
+                  <Trash2 className="w-4 h-4 text-rose-600" />
+                  <span>Iztīrīt visu atkritni</span>
+                </button>
+              )}
+            </div>
+
+            {/* Retention Info Notice */}
+            <div className="bg-amber-50/70 border border-amber-200 rounded-xl p-4 flex items-start space-x-3 text-xs text-amber-900 font-sans">
+              <Clock className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-bold">Automātiskā tīrīšana pēc 30 dienām:</p>
+                <p className="text-amber-800 mt-0.5">
+                  Katram elementam tiek sekots atlikušais dienu skaits. Noklikšķiniet uz <strong>«Atjaunot»</strong>, lai atgrieztu fotoattēlu, atsauksmi vai pieteikumu sākotnējā vietā bez datu zuduma.
+                </p>
+              </div>
+            </div>
+
+            {/* Filters & Search */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200">
+              <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
+                <button
+                  onClick={() => setTrashFilter('all')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-heading font-bold uppercase tracking-wider transition-colors ${
+                    trashFilter === 'all'
+                      ? 'bg-slate-900 text-white'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  Visi ({trashItems.length})
+                </button>
+
+                <button
+                  onClick={() => setTrashFilter('gallery')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-heading font-bold uppercase tracking-wider transition-colors ${
+                    trashFilter === 'gallery'
+                      ? 'bg-purple-700 text-white'
+                      : 'bg-purple-50 text-purple-700 hover:bg-purple-100'
+                  }`}
+                >
+                  Fotoattēli ({trashItems.filter(i => i.type === 'gallery').length})
+                </button>
+
+                <button
+                  onClick={() => setTrashFilter('review')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-heading font-bold uppercase tracking-wider transition-colors ${
+                    trashFilter === 'review'
+                      ? 'bg-amber-600 text-white'
+                      : 'bg-amber-50 text-amber-700 hover:bg-amber-100'
+                  }`}
+                >
+                  Atsauksmes ({trashItems.filter(i => i.type === 'review').length})
+                </button>
+
+                <button
+                  onClick={() => setTrashFilter('submission')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-heading font-bold uppercase tracking-wider transition-colors ${
+                    trashFilter === 'submission'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-blue-50 text-blue-700 hover:bg-blue-100'
+                  }`}
+                >
+                  Pieteikumi ({trashItems.filter(i => i.type === 'submission').length})
+                </button>
+              </div>
+
+              <div className="relative w-full sm:w-64">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={trashSearch}
+                  onChange={(e) => setTrashSearch(e.target.value)}
+                  placeholder="Meklēt atkritnē..."
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#dc2626]"
+                />
+              </div>
+            </div>
+
+            {/* Trash Items Grid */}
+            {(() => {
+              const filtered = trashItems.filter(item => {
+                if (trashFilter !== 'all' && item.type !== trashFilter) return false;
+                if (trashSearch.trim()) {
+                  const q = trashSearch.toLowerCase();
+                  const matchTitle = item.title.toLowerCase().includes(q);
+                  const matchSub = (item.subtitle || '').toLowerCase().includes(q);
+                  const matchData = JSON.stringify(item.data).toLowerCase().includes(q);
+                  if (!matchTitle && !matchSub && !matchData) return false;
+                }
+                return true;
+              });
+
+              if (filtered.length === 0) {
+                return (
+                  <div className="bg-white rounded-2xl p-16 text-center border border-slate-200">
+                    <Trash2 className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                    <h4 className="font-heading font-bold uppercase text-slate-700 text-sm">
+                      {trashItems.length === 0 ? 'Atkritne ir tukša' : 'Nekas netika atrasts'}
+                    </h4>
+                    <p className="text-xs text-slate-400 font-sans mt-1 max-w-sm mx-auto">
+                      {trashItems.length === 0 
+                        ? 'Šeit tiks saglabāti dzēstie fotoattēli, atsauksmes un pieteikumi 30 dienu laikā ar iespēju tos atjaunot.'
+                        : 'Mēģiniet mainīt meklēšanas vaicājumu vai izvēlēties citu kategoriju.'}
+                    </p>
+                  </div>
+                );
+              }
+
+              return (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {filtered.map(item => {
+                    const daysRemaining = getDaysRemaining(item.expiresAt);
+
+                    return (
+                      <div 
+                        key={item.id}
+                        className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow relative"
+                      >
+                        <div>
+                          {/* Top Tag & Countdown */}
+                          <div className="flex items-center justify-between mb-3">
+                            <span className={`text-[10px] font-heading font-bold uppercase px-2.5 py-1 rounded-md ${
+                              item.type === 'gallery'
+                                ? 'bg-purple-100 text-purple-800'
+                                : item.type === 'review'
+                                ? 'bg-amber-100 text-amber-800'
+                                : 'bg-blue-100 text-blue-800'
+                            }`}>
+                              {item.type === 'gallery' && '🖼 Fotoattēls'}
+                              {item.type === 'review' && '★ Atsauksme'}
+                              {item.type === 'submission' && '✉ Pieteikums'}
+                            </span>
+
+                            <span className={`text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full flex items-center space-x-1 border ${
+                              daysRemaining > 15
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                : daysRemaining > 5
+                                ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                : 'bg-rose-50 text-rose-700 border-rose-200 font-bold animate-pulse'
+                            }`}>
+                              <Clock className="w-3 h-3" />
+                              <span>{daysRemaining} {daysRemaining === 1 ? 'diena' : 'dienas'}</span>
+                            </span>
+                          </div>
+
+                          {/* Image preview for gallery item */}
+                          {item.type === 'gallery' && item.previewImage && (
+                            <div className="h-40 w-full rounded-xl overflow-hidden mb-3 bg-slate-900 border border-slate-100 relative">
+                              <img 
+                                src={item.previewImage} 
+                                alt={item.title} 
+                                className="w-full h-full object-cover filter grayscale contrast-125 opacity-90"
+                              />
+                              <div className="absolute top-2 right-2 bg-black/60 text-white text-[10px] uppercase font-heading px-2 py-0.5 rounded">
+                                Dzēsts
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Title & Subtitle */}
+                          <h4 className="font-heading font-bold text-base text-slate-900 leading-tight">
+                            {item.title}
+                          </h4>
+                          {item.subtitle && (
+                            <p className="text-xs text-slate-500 font-sans mt-0.5">
+                              {item.subtitle}
+                            </p>
+                          )}
+
+                          {/* Detailed snippet depending on type */}
+                          {item.type === 'review' && item.data && (
+                            <div className="mt-2 text-xs text-slate-700 font-sans italic bg-slate-50 p-2.5 rounded-lg border border-slate-100 line-clamp-3">
+                              "{item.data.text}"
+                            </div>
+                          )}
+
+                          {item.type === 'submission' && item.data && (
+                            <div className="mt-2 text-xs text-slate-700 font-sans bg-slate-50 p-2.5 rounded-lg border border-slate-100 space-y-1">
+                              {item.data.phone && <div><strong>Tālr:</strong> {item.data.phone}</div>}
+                              {item.data.message && <div><strong>Ziņa:</strong> {item.data.message}</div>}
+                            </div>
+                          )}
+
+                          {/* Deletion Date Info */}
+                          <div className="mt-3 text-[11px] text-slate-400 font-sans flex items-center justify-between">
+                            <span>Dzēsts: {new Date(item.deletedAt).toLocaleDateString('lv-LV')}</span>
+                            <span>Derīgs līdz: {new Date(item.expiresAt).toLocaleDateString('lv-LV')}</span>
+                          </div>
+                        </div>
+
+                        {/* Card Action Buttons: Restore or Delete Permanently */}
+                        <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
+                          <button
+                            onClick={() => handleRestoreFromTrash(item.id)}
+                            className="flex-1 flex items-center justify-center space-x-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-heading font-bold uppercase tracking-wider py-2.5 px-3 rounded-lg shadow-sm transition-colors"
+                          >
+                            <RotateCcw className="w-3.5 h-3.5" />
+                            <span>Atjaunot</span>
+                          </button>
+
+                          <button
+                            onClick={() => handlePermanentDelete(item.id, item.title)}
+                            className="flex items-center justify-center space-x-1.5 bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 text-xs font-heading font-bold uppercase tracking-wider py-2.5 px-3 rounded-lg border border-slate-200 hover:border-rose-200 transition-colors"
+                            title="Dzēst neatgriezeniski"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span className="hidden sm:inline">Dzēst pavisam</span>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
           </div>
         )}
       </div>
