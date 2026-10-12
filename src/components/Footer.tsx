@@ -48,10 +48,16 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-[#1e293b] pt-8 text-center">
-          <p className="text-sm tracking-wide text-slate-400 font-sans">
+        <div className="border-t border-[#1e293b] pt-8 text-center flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 font-sans">
+          <p>
             Copyrights © 2026 | Kumite Karate Klubs | Rīga, Gustava Zemgala gatve 71, mob. +371 29177274
           </p>
+          <a
+            href="/admin"
+            className="text-slate-500 hover:text-[#dc2626] transition-colors uppercase font-heading tracking-widest font-bold text-[11px]"
+          >
+            Vadības panelis (CMS)
+          </a>
         </div>
       </div>
     </footer>
