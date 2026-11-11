@@ -15,6 +15,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,19 +28,22 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
     if (!name || !email) return;
 
     setIsSubmitting(true);
+    setSubmitError('');
 
     try {
-      await sendFormToEmail({
+      const result = await sendFormToEmail({
         type: 'contact',
         name: name.trim(),
         phone: phone.trim() || undefined,
         email: email.trim(),
         message: message.trim() || undefined
       });
-    } catch (err) {
-      console.error('Error submitting contact form:', err);
-    } finally {
-      setIsSubmitting(false);
+
+      if (!result.ok) {
+        setSubmitError(result.error || 'Neizdevās nosūtīt ziņu.');
+        return;
+      }
+
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);
@@ -48,6 +52,11 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
         setEmail('');
         setMessage('');
       }, 3000);
+    } catch (err) {
+      console.error('Error submitting contact form:', err);
+      setSubmitError('Savienojuma kļūda. Lūdzu, mēģiniet vēlreiz.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -141,6 +150,11 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                         className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 text-base focus:outline-none focus:border-[#dc2626]"
                       ></textarea>
                     </div>
+                    {submitError && (
+                      <div className="p-3 bg-red-500/20 border border-red-500 text-red-200 rounded-lg text-sm">
+                        {submitError}
+                      </div>
+                    )}
                     <div className="flex justify-end pt-2">
                       <button
                         type="submit"

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PageTab, Testimonial, GalleryItem } from '../types';
 import { getDynamicTestimonials, getDynamicGalleryItems, fetchCloudTestimonials, fetchCloudGalleryItems } from '../data';
-import { CheckCircle, ArrowRight, Play, Star, MapPin, Phone, Mail } from 'lucide-react';
+import { CheckCircle, ArrowRight, Star, MapPin, Phone, Mail } from 'lucide-react';
 import { motion } from 'motion/react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
 import { Logo } from '../components/Logo';
@@ -19,51 +19,77 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
   const [formName, setFormName] = useState('');
   const [formPhone, setFormPhone] = useState('');
   const [formMessage, setFormMessage] = useState('');
+  const [formSubmitting, setFormSubmitting] = useState(false);
+  const [formError, setFormError] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   const [contactName, setContactName] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [contactMessage, setContactMessage] = useState('');
+  const [contactSubmitting, setContactSubmitting] = useState(false);
+  const [contactError, setContactError] = useState('');
   const [contactSubmitted, setContactSubmitted] = useState(false);
 
-  const handleTrialSubmit = (e: React.FormEvent) => {
+  const handleTrialSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formName || !formPhone) return;
+    if (formSubmitting || !formName || !formPhone) return;
 
-    sendFormToEmail({
-      type: 'trial',
-      name: formName.trim(),
-      phone: formPhone.trim(),
-      message: formMessage.trim() || undefined
-    });
-
-    setFormSubmitted(true);
-    setTimeout(() => {
-      setFormSubmitted(false);
-      setFormName('');
-      setFormPhone('');
-      setFormMessage('');
-    }, 3000);
+    setFormSubmitting(true);
+    setFormError('');
+    try {
+      const res = await sendFormToEmail({
+        type: 'trial',
+        name: formName.trim(),
+        phone: formPhone.trim(),
+        message: formMessage.trim() || undefined
+      });
+      if (!res.ok) {
+        setFormError(res.error || 'Neizdevās nosūtīt pieteikumu.');
+        return;
+      }
+      setFormSubmitted(true);
+      setTimeout(() => {
+        setFormSubmitted(false);
+        setFormName('');
+        setFormPhone('');
+        setFormMessage('');
+      }, 3000);
+    } catch {
+      setFormError('Savienojuma kļūda.');
+    } finally {
+      setFormSubmitting(false);
+    }
   };
 
-  const handleContactFormSubmit = (e: React.FormEvent) => {
+  const handleContactFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!contactName || !contactEmail) return;
+    if (contactSubmitting || !contactName || !contactEmail) return;
 
-    sendFormToEmail({
-      type: 'contact',
-      name: contactName.trim(),
-      email: contactEmail.trim(),
-      message: contactMessage.trim() || undefined
-    });
-
-    setContactSubmitted(true);
-    setTimeout(() => {
-      setContactSubmitted(false);
-      setContactName('');
-      setContactEmail('');
-      setContactMessage('');
-    }, 3000);
+    setContactSubmitting(true);
+    setContactError('');
+    try {
+      const res = await sendFormToEmail({
+        type: 'contact',
+        name: contactName.trim(),
+        email: contactEmail.trim(),
+        message: contactMessage.trim() || undefined
+      });
+      if (!res.ok) {
+        setContactError(res.error || 'Neizdevās nosūtīt ziņu.');
+        return;
+      }
+      setContactSubmitted(true);
+      setTimeout(() => {
+        setContactSubmitted(false);
+        setContactName('');
+        setContactEmail('');
+        setContactMessage('');
+      }, 3000);
+    } catch {
+      setContactError('Savienojuma kļūda.');
+    } finally {
+      setContactSubmitting(false);
+    }
   };
 
   const [testimonials, setTestimonials] = useState<Testimonial[]>(() => getDynamicTestimonials());
@@ -263,11 +289,17 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                       className="w-full bg-[#0a0a0c] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#dc2626] text-base"
                     ></textarea>
                   </div>
+                  {formError && (
+                    <div className="p-3 bg-red-500/20 border border-red-500 text-red-200 rounded-lg text-sm">
+                      {formError}
+                    </div>
+                  )}
                   <button
                     type="submit"
-                    className="w-full bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-xl uppercase tracking-widest py-4 rounded-lg font-bold transition-all transform hover:scale-[1.02] active:scale-95 shadow-xl border-2 border-white"
+                    disabled={formSubmitting}
+                    className="w-full bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-xl uppercase tracking-widest py-4 rounded-lg font-bold transition-all transform hover:scale-[1.02] active:scale-95 shadow-xl border-2 border-white"
                   >
-                    Nosūtīt pieteikumu
+                    {formSubmitting ? 'Sūta...' : 'Nosūtīt pieteikumu'}
                   </button>
                 </form>
               )}
@@ -498,12 +530,18 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                       className="w-full bg-[#0a0a0c] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#dc2626] text-base"
                     ></textarea>
                   </div>
+                  {contactError && (
+                    <div className="p-3 bg-red-500/20 border border-red-500 text-red-200 rounded-lg text-sm">
+                      {contactError}
+                    </div>
+                  )}
                   <div className="flex justify-end">
                     <button
                       type="submit"
-                      className="bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-lg border-2 border-white"
+                      disabled={contactSubmitting}
+                      className="bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-lg border-2 border-white"
                     >
-                      Nosūtīt
+                      {contactSubmitting ? 'Sūta...' : 'Nosūtīt'}
                     </button>
                   </div>
                 </form>

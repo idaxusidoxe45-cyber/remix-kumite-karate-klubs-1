@@ -22,6 +22,7 @@ import {
   emptyTrash, 
   getDaysRemaining 
 } from '../services/trashService';
+import { compressImageForGallery, CompressedImageResult } from '../utils/imageCompress';
 import { Testimonial, GalleryItem } from '../types';
 import { 
   Lock, 
@@ -30,13 +31,10 @@ import {
   MessageSquare, 
   Image as ImageIcon, 
   Settings, 
-  CheckCircle, 
-  XCircle, 
   Trash2, 
   Plus, 
   Star, 
   Save, 
-  UserCheck, 
   Download,
   Eye,
   RefreshCw,
@@ -45,29 +43,25 @@ import {
   AlertCircle,
   RotateCcw,
   Clock,
-  AlertTriangle,
   Search,
-  Filter
+  Loader2,
+  ShieldCheck
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { Logo } from '../components/Logo';
 
 export default function Admin() {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return false;
-    return localStorage.getItem('kumite_admin_auth') === 'true' || sessionStorage.getItem('kumite_admin_auth') === 'true';
-  });
+  const [authLoading, setAuthLoading] = useState(true);
+  const [authBusy, setAuthBusy] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [needsSetup, setNeedsSetup] = useState(false);
+  const [setupPassword, setSetupPassword] = useState('');
+  const [setupConfirm, setSetupConfirm] = useState('');
 
   const [activeTab, setActiveTab] = useState<'submissions' | 'reviews' | 'gallery' | 'trash' | 'settings'>('submissions');
-  
-  // Custom admin credentials stored in localStorage
-  const getStoredPassword = () => {
-    if (typeof window === 'undefined') return 'kumite2026';
-    return localStorage.getItem('kumite_admin_pass') || 'kumite2026';
-  };
 
   // State data
   const [submissions, setSubmissions] = useState<FormSubmission[]>([]);
@@ -76,10 +70,7 @@ export default function Admin() {
   const [trashItems, setTrashItems] = useState<TrashItem[]>([]);
   const [trashFilter, setTrashFilter] = useState<'all' | 'gallery' | 'review' | 'submission'>('all');
   const [trashSearch, setTrashSearch] = useState('');
-  const [targetEmail, setTargetEmail] = useState(() => {
-    if (typeof window === 'undefined') return 'u2086344644@gmail.com';
-    return localStorage.getItem('kumite_target_email') || 'u2086344644@gmail.com';
-  });
+  const [targetEmail, setTargetEmail] = useState('info@kumitekarate.lv');
   
   // Review modals
   const [showAddReviewModal, setShowAddReviewModal] = useState(false);
@@ -94,12 +85,16 @@ export default function Admin() {
   const [newPhotoTitle, setNewPhotoTitle] = useState('');
   const [newPhotoCategory, setNewPhotoCategory] = useState<GalleryItem['category']>('trenini');
   const [newPhotoCaption, setNewPhotoCaption] = useState('');
-  const [newPhotoUrl, setNewPhotoUrl] = useState('');
+  const [compressedPhoto, setCompressedPhoto] = useState<CompressedImageResult | null>(null);
+  const [isCompressing, setIsCompressing] = useState(false);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [uploadError, setUploadError] = useState('');
 
-  // Settings change pass state
+  // Settings change pass & email state
+  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [passSaveSuccess, setPassSaveSuccess] = useState(false);
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [settingsMsg, setSettingsMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -109,15 +104,41 @@ export default function Admin() {
     setTimeout(() => setToastMessage(null), 3500);
   };
 
+  const handleUnauthorized = useCallback(() => {
+    setIsAuthenticated(false);
+    setLoginError('Sesija ir beigusies. Lūdzu, autorizējieties vēlreiz.');
+  }, []);
+
+  // Verify persistent HttpOnly session cookie on load / F5 refresh
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await fetch('/api/auth', { credentials: 'include' });
+        if (res.ok && mounted) {
+          const data = await res.json();
+          setIsAuthenticated(Boolean(data.authenticated));
+          setNeedsSetup(Boolean(data.needsSetup));
+          if (data.notificationEmail) setTargetEmail(data.notificationEmail);
+        }
+      } catch {
+        // Offline / server unavailable
+      } finally {
+        if (mounted) setAuthLoading(false);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   const refreshData = useCallback(async () => {
     setIsRefreshing(true);
-    // Instant local cache load
     setSubmissions(getStoredSubmissions());
     setReviews(getDynamicTestimonials());
     setGalleryItems(getDynamicGalleryItems());
     setTrashItems(getStoredTrashItems());
 
-    // Asynchronous Cloud DB load
     try {
       const [cloudSubs, cloudRevs, cloudGal, cloudTrash] = await Promise.all([
         fetchSubmissionsFromCloud(),
@@ -130,46 +151,114 @@ export default function Admin() {
       setGalleryItems(cloudGal);
       setTrashItems(cloudTrash);
     } catch (err) {
-      console.error('Data refresh error:', err);
+      if (err instanceof Error && err.message === 'UNAUTHORIZED') {
+        handleUnauthorized();
+      } else {
+        console.error('Data refresh error:', err);
+      }
     } finally {
       setIsRefreshing(false);
     }
-  }, []);
+  }, [handleUnauthorized]);
 
   useEffect(() => {
     if (isAuthenticated) {
       refreshData();
-      const interval = setInterval(refreshData, 10000);
+      const interval = setInterval(refreshData, 15000);
       return () => clearInterval(interval);
     }
   }, [isAuthenticated, refreshData]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleSetupPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    const correctPass = getStoredPassword();
-    if (username.trim().toLowerCase() === 'admin' && password === correctPass) {
-      localStorage.setItem('kumite_admin_auth', 'true');
-      sessionStorage.setItem('kumite_admin_auth', 'true');
-      setIsAuthenticated(true);
-      setLoginError('');
-      showToast('Veiksmīgi autorizējies!');
-    } else {
-      setLoginError('Nepareizs lietotājvārds vai parole!');
+    if (setupPassword.length < 8) {
+      setLoginError('Parolei jābūt vismaz 8 simbolus garai.');
+      return;
+    }
+    if (setupPassword !== setupConfirm) {
+      setLoginError('Paroles nesakrīt.');
+      return;
+    }
+
+    setAuthBusy(true);
+    setLoginError('');
+    try {
+      const res = await fetch('/api/auth?action=setup', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: setupPassword })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.success) {
+        setNeedsSetup(false);
+        setIsAuthenticated(true);
+        setSetupPassword('');
+        setSetupConfirm('');
+        if (data.notificationEmail) setTargetEmail(data.notificationEmail);
+        showToast('Administratora parole izveidota!');
+      } else {
+        setLoginError(data.message || 'Neizdevās saglabāt paroli.');
+      }
+    } catch {
+      setLoginError('Savienojuma kļūda.');
+    } finally {
+      setAuthBusy(false);
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('kumite_admin_auth');
-    sessionStorage.removeItem('kumite_admin_auth');
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthBusy(true);
+    setLoginError('');
+    try {
+      const res = await fetch('/api/auth?action=login', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: username.trim(), password })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.success) {
+        setIsAuthenticated(true);
+        setPassword('');
+        if (data.notificationEmail) setTargetEmail(data.notificationEmail);
+        showToast('Veiksmīgi autorizējies!');
+      } else if (data.needsSetup) {
+        setNeedsSetup(true);
+        setLoginError(data.message || 'Nepieciešama sākotnējā iestatīšana.');
+      } else {
+        setLoginError(data.message || 'Nepareizs lietotājvārds vai parole!');
+      }
+    } catch {
+      setLoginError('Neizdevās savienoties ar serveri.');
+    } finally {
+      setAuthBusy(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth?action=logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch {}
     setIsAuthenticated(false);
+    setPassword('');
   };
 
   const handleStatusToggle = async (id: string, currentStatus: FormSubmission['status']) => {
     const nextStatus = currentStatus === 'new' ? 'contacted' : 'new';
     setSubmissions(prev => prev.map(s => s.id === id ? { ...s, status: nextStatus } : s));
-    await updateSubmissionStatus(id, nextStatus);
-    showToast(`Pieteikuma statuss: ${nextStatus === 'contacted' ? 'Apstrādāts' : 'Jauns'}`);
-    refreshData();
+    try {
+      await updateSubmissionStatus(id, nextStatus);
+      showToast(`Pieteikuma statuss: ${nextStatus === 'contacted' ? 'Apstrādāts' : 'Jauns'}`);
+      refreshData();
+    } catch (err) {
+      if (err instanceof Error && err.message === 'UNAUTHORIZED') handleUnauthorized();
+      else showToast('Neizdevās atjaunināt statusu.');
+    }
   };
 
   const handleDeleteSub = async (id: string) => {
@@ -180,40 +269,44 @@ export default function Admin() {
       return;
     }
 
-    // Move to trash
-    const trashed = moveToTrash(
-      'submission',
-      targetSub,
-      targetSub.name,
-      `${targetSub.type === 'trial' ? 'Bezmaksas treniņš' : 'Kontakti'} | ${targetSub.phone || targetSub.email || ''}`
-    );
-    setTrashItems(prev => [trashed, ...prev]);
-
-    setSubmissions(prev => prev.filter(s => s.id !== id));
-    await deleteSubmission(id);
-    showToast('Pieteikums pārvietots uz atkritni (glabājas 30 dienas).');
-    refreshData();
+    try {
+      const trashed = await moveToTrash(
+        'submission',
+        targetSub,
+        targetSub.name,
+        `${targetSub.type === 'trial' ? 'Bezmaksas treniņš' : 'Kontakti'} | ${targetSub.phone || targetSub.email || ''}`
+      );
+      setTrashItems(prev => [trashed, ...prev]);
+      setSubmissions(prev => prev.filter(s => s.id !== id));
+      await deleteSubmission(id);
+      showToast('Pieteikums pārvietots uz atkritni (glabājas 30 dienas).');
+      refreshData();
+    } catch (err) {
+      if (err instanceof Error && err.message === 'UNAUTHORIZED') handleUnauthorized();
+      else showToast('Neizdevās dzēst pieteikumu.');
+    }
   };
 
   const handleToggleReviewStatus = async (reviewId: number | string, currentStatus?: string) => {
     const newStatus = currentStatus === 'published' ? 'draft' : 'published';
     setReviews(prev => prev.map(r => String(r.id) === String(reviewId) ? { ...r, status: newStatus as any } : r));
 
-    // Update local storage reviews cache
     try {
-      const stored = JSON.parse(localStorage.getItem('user_submitted_reviews') || '[]');
-      const updatedLocal = stored.map((r: Testimonial) => String(r.id) === String(reviewId) ? { ...r, status: newStatus } : r);
-      localStorage.setItem('user_submitted_reviews', JSON.stringify(updatedLocal));
-    } catch {}
-
-    try {
-      await fetch('/api/reviews', {
+      const res = await fetch('/api/reviews', {
         method: 'PUT',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: reviewId, status: newStatus })
       });
+      if (res.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+      if (!res.ok) throw new Error('Update failed');
       showToast(`Atsauksme: ${newStatus === 'published' ? 'Publicēta mājaslapā' : 'Paslēpta'}`);
-    } catch {}
+    } catch {
+      showToast('Kļūda saglabājot atsauksmes statusu.');
+    }
 
     refreshData();
   };
@@ -226,32 +319,30 @@ export default function Admin() {
       return;
     }
 
-    // Move to trash
-    const trashed = moveToTrash(
-      'review',
-      targetReview,
-      targetReview.author,
-      `${targetReview.role || 'Atsauksme'} • ★ ${targetReview.rating || 5}`
-    );
-    setTrashItems(prev => [trashed, ...prev]);
-
-    setReviews(prev => prev.filter(r => String(r.id) !== String(reviewId)));
-
     try {
-      const stored = JSON.parse(localStorage.getItem('user_submitted_reviews') || '[]');
-      const updatedLocal = stored.filter((r: Testimonial) => String(r.id) !== String(reviewId));
-      localStorage.setItem('user_submitted_reviews', JSON.stringify(updatedLocal));
-    } catch {}
+      const trashed = await moveToTrash(
+        'review',
+        targetReview,
+        targetReview.author,
+        `${targetReview.role || 'Atsauksme'} • ★ ${targetReview.rating || 5}`
+      );
+      setTrashItems(prev => [trashed, ...prev]);
+      setReviews(prev => prev.filter(r => String(r.id) !== String(reviewId)));
 
-    try {
-      await fetch('/api/reviews', {
+      const res = await fetch(`/api/reviews?id=${encodeURIComponent(reviewId)}`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: reviewId })
+        credentials: 'include'
       });
-    } catch {}
+      if (res.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+      showToast('Atsauksme pārvietota uz atkritni (glabājas 30 dienas).');
+    } catch (err) {
+      if (err instanceof Error && err.message === 'UNAUTHORIZED') handleUnauthorized();
+      else showToast('Neizdevās dzēst atsauksmi.');
+    }
 
-    showToast('Atsauksme pārvietota uz atkritni (glabājas 30 dienas).');
     refreshData();
   };
 
@@ -268,28 +359,28 @@ export default function Admin() {
       status: 'published'
     };
 
-    setReviews(prev => [newRev, ...prev]);
-    setShowAddReviewModal(false);
-
     try {
-      const existing = JSON.parse(localStorage.getItem('user_submitted_reviews') || '[]');
-      localStorage.setItem('user_submitted_reviews', JSON.stringify([newRev, ...existing]));
-    } catch {}
-
-    try {
-      await fetch('/api/reviews', {
+      const res = await fetch('/api/reviews', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newRev)
+        body: JSON.stringify({ ...newRev, isCustom: true })
       });
+      if (res.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+      if (!res.ok) throw new Error('Failed');
+      setShowAddReviewModal(false);
+      setNewReviewAuthor('');
+      setNewReviewRole('');
+      setNewReviewText('');
+      setNewReviewRating(5);
       showToast('Atsauksme veiksmīgi pievienota un publicēta!');
-    } catch {}
-
-    setNewReviewAuthor('');
-    setNewReviewRole('');
-    setNewReviewText('');
-    setNewReviewRating(5);
-    refreshData();
+      refreshData();
+    } catch {
+      showToast('Kļūda pievienojot atsauksmi.');
+    }
   };
 
   // GALLERY MANAGEMENT
@@ -301,51 +392,51 @@ export default function Admin() {
       return;
     }
 
-    // Move to trash
-    const trashed = moveToTrash(
-      'gallery',
-      targetItem,
-      targetItem.title,
-      `Kategorija: ${targetItem.category}`,
-      targetItem.image
-    );
-    setTrashItems(prev => [trashed, ...prev]);
-
-    setGalleryItems(prev => prev.filter(g => String(g.id) !== String(itemId)));
-
     try {
-      const deletedArr: string[] = JSON.parse(localStorage.getItem('kumite_deleted_gallery_ids') || '[]');
-      if (!deletedArr.includes(String(itemId))) {
-        deletedArr.push(String(itemId));
-        localStorage.setItem('kumite_deleted_gallery_ids', JSON.stringify(deletedArr));
+      const trashed = await moveToTrash(
+        'gallery',
+        targetItem,
+        targetItem.title,
+        `Kategorija: ${targetItem.category}`,
+        targetItem.image
+      );
+      setTrashItems(prev => [trashed, ...prev]);
+      setGalleryItems(prev => prev.filter(g => String(g.id) !== String(itemId)));
+
+      const res = await fetch(`/api/gallery?id=${encodeURIComponent(itemId)}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      if (res.status === 401) {
+        handleUnauthorized();
+        return;
       }
 
-      const customGal: GalleryItem[] = JSON.parse(localStorage.getItem('kumite_custom_gallery') || '[]');
-      const filteredCustom = customGal.filter(i => String(i.id) !== String(itemId));
-      localStorage.setItem('kumite_custom_gallery', JSON.stringify(filteredCustom));
-    } catch {}
+      if (selectedGalleryItem && String(selectedGalleryItem.id) === String(itemId)) {
+        setSelectedGalleryItem(null);
+      }
 
-    try {
-      await fetch(`/api/gallery?id=${encodeURIComponent(itemId)}`, {
-        method: 'DELETE'
-      });
-    } catch {}
-
-    if (selectedGalleryItem && String(selectedGalleryItem.id) === String(itemId)) {
-      setSelectedGalleryItem(null);
+      showToast('Fotoattēls pārvietots uz atkritni (glabājas 30 dienas).');
+    } catch (err) {
+      if (err instanceof Error && err.message === 'UNAUTHORIZED') handleUnauthorized();
+      else showToast('Kļūda dzēšot fotoattēlu.');
     }
 
-    showToast('Fotoattēls pārvietots uz atkritni (glabājas 30 dienas).');
     refreshData();
   };
 
   // TRASH RESTORE & PERMANENT DELETE HANDLERS
   const handleRestoreFromTrash = async (trashId: string) => {
-    const restored = await restoreItem(trashId);
-    if (restored) {
-      setTrashItems(prev => prev.filter(t => t.id !== trashId));
-      showToast(`"${restored.title}" veiksmīgi atjaunots!`);
-      refreshData();
+    try {
+      const restored = await restoreItem(trashId);
+      if (restored) {
+        setTrashItems(prev => prev.filter(t => t.id !== trashId));
+        showToast(`"${restored.title}" veiksmīgi atjaunots!`);
+        refreshData();
+      }
+    } catch (err) {
+      if (err instanceof Error && err.message === 'UNAUTHORIZED') handleUnauthorized();
+      else showToast('Neizdevās atjaunot vienumu.');
     }
   };
 
@@ -354,10 +445,15 @@ export default function Admin() {
       return;
     }
 
-    await permanentlyDeleteItem(trashId);
-    setTrashItems(prev => prev.filter(t => t.id !== trashId));
-    showToast(`"${title}" neatgriezeniski izdzēsts.`);
-    refreshData();
+    try {
+      await permanentlyDeleteItem(trashId);
+      setTrashItems(prev => prev.filter(t => t.id !== trashId));
+      showToast(`"${title}" neatgriezeniski izdzēsts.`);
+      refreshData();
+    } catch (err) {
+      if (err instanceof Error && err.message === 'UNAUTHORIZED') handleUnauthorized();
+      else showToast('Kļūda dzēšot vienumu.');
+    }
   };
 
   const handleEmptyTrash = async () => {
@@ -366,13 +462,18 @@ export default function Admin() {
       return;
     }
 
-    await emptyTrash();
-    setTrashItems([]);
-    showToast('Atkritne pilnībā iztīrīta.');
-    refreshData();
+    try {
+      await emptyTrash();
+      setTrashItems([]);
+      showToast('Atkritne pilnībā iztīrīta.');
+      refreshData();
+    } catch (err) {
+      if (err instanceof Error && err.message === 'UNAUTHORIZED') handleUnauthorized();
+      else showToast('Kļūda tīrot atkritni.');
+    }
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -381,71 +482,179 @@ export default function Admin() {
       return;
     }
 
-    if (file.size > 8 * 1024 * 1024) {
-      setUploadError('Attēls ir pārāk liels (maks. 8MB).');
+    if (file.size > 20 * 1024 * 1024) {
+      setUploadError('Attēls ir pārāk liels (maks. 20 MB pirms saspiešanas).');
       return;
     }
 
     setUploadError('');
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        setNewPhotoUrl(reader.result);
-      }
-    };
-    reader.readAsDataURL(file);
+    setIsCompressing(true);
+    try {
+      const result = await compressImageForGallery(file);
+      setCompressedPhoto(result);
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : 'Neizdevās apstrādāt attēlu.');
+      setCompressedPhoto(null);
+    } finally {
+      setIsCompressing(false);
+    }
+  };
+
+  const uploadBlobToCloudinary = async (blob: Blob, signData: any): Promise<string> => {
+    const form = new FormData();
+    form.append('file', blob, 'photo.webp');
+    form.append('api_key', signData.apiKey);
+    form.append('timestamp', String(signData.timestamp));
+    form.append('signature', signData.signature);
+    form.append('folder', signData.folder);
+
+    const upRes = await fetch(`https://api.cloudinary.com/v1_1/${signData.cloudName}/image/upload`, {
+      method: 'POST',
+      body: form
+    });
+    const upJson = await upRes.json();
+    if (!upRes.ok || !upJson.secure_url) {
+      throw new Error(upJson?.error?.message || 'Cloudinary augšupielāde neizdevās.');
+    }
+    return upJson.secure_url;
   };
 
   const handleAddGalleryItem = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newPhotoTitle.trim() || !newPhotoUrl.trim()) {
-      setUploadError('Lūdzu, norādiet nosaukumu un pievienojiet attēlu.');
+    if (!newPhotoTitle.trim() || !compressedPhoto) {
+      setUploadError('Lūdzu, norādiet nosaukumu un izvēlieties attēlu.');
       return;
     }
 
-    const newItem: GalleryItem = {
-      id: 'custom-' + Date.now(),
-      title: newPhotoTitle.trim(),
-      category: newPhotoCategory,
-      caption: newPhotoCaption.trim() || newPhotoTitle.trim(),
-      image: newPhotoUrl.trim(),
-      fullImage: newPhotoUrl.trim()
-    };
-
-    setGalleryItems(prev => [newItem, ...prev]);
-    setShowAddGalleryModal(false);
+    setIsUploadingPhoto(true);
+    setUploadError('');
 
     try {
-      const customGal = JSON.parse(localStorage.getItem('kumite_custom_gallery') || '[]');
-      localStorage.setItem('kumite_custom_gallery', JSON.stringify([newItem, ...customGal]));
-    } catch {}
+      let imageUrl = compressedPhoto.thumbDataUrl;
+      let fullImageUrl = compressedPhoto.fullDataUrl;
 
-    try {
-      await fetch('/api/gallery', {
+      // Check if direct Cloudinary upload is configured on server (bypasses 4.5MB limit completely)
+      const signRes = await fetch('/api/upload', { credentials: 'include' });
+      if (signRes.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+      if (signRes.ok) {
+        const signData = await signRes.json();
+        if (signData.mode === 'cloudinary') {
+          const [uploadedThumb, uploadedFull] = await Promise.all([
+            uploadBlobToCloudinary(compressedPhoto.thumbBlob, signData),
+            uploadBlobToCloudinary(compressedPhoto.fullBlob, signData)
+          ]);
+          imageUrl = uploadedThumb;
+          fullImageUrl = uploadedFull;
+        }
+      }
+
+      const newItem: GalleryItem = {
+        id: 'gal-' + Date.now(),
+        title: newPhotoTitle.trim(),
+        category: newPhotoCategory,
+        caption: newPhotoCaption.trim() || newPhotoTitle.trim(),
+        image: imageUrl,
+        fullImage: fullImageUrl
+      };
+
+      const res = await fetch('/api/gallery', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newItem)
       });
+
+      if (res.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+
+      const resJson = await res.json().catch(() => ({}));
+      if (!res.ok || !resJson.success) {
+        setUploadError(resJson.message || 'Serveris noraidīja attēlu.');
+        return;
+      }
+
+      setShowAddGalleryModal(false);
+      setNewPhotoTitle('');
+      setNewPhotoCaption('');
+      setCompressedPhoto(null);
+      setUploadError('');
       showToast('Jauns fotoattēls veiksmīgi pievienots galerijai!');
+      refreshData();
     } catch (err) {
       console.error('Gallery upload error:', err);
+      setUploadError(err instanceof Error ? err.message : 'Kļūda augšupielādējot fotoattēlu.');
+    } finally {
+      setIsUploadingPhoto(false);
     }
-
-    setNewPhotoTitle('');
-    setNewPhotoCaption('');
-    setNewPhotoUrl('');
-    setUploadError('');
-    refreshData();
   };
 
-  const handleChangePassword = (e: React.FormEvent) => {
+  const handleSaveSettingsEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newPassword.length < 4) return;
-    localStorage.setItem('kumite_admin_pass', newPassword);
-    setPassSaveSuccess(true);
-    setNewPassword('');
-    showToast('Parole veiksmīgi atjaunināta!');
-    setTimeout(() => setPassSaveSuccess(false), 3000);
+    setSettingsMsg(null);
+    try {
+      const res = await fetch('/api/auth?action=update-settings', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notificationEmail: targetEmail.trim() })
+      });
+      if (res.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.success) {
+        setSettingsMsg({ type: 'ok', text: 'Paziņojumu e-pasts saglabāts serverī!' });
+        showToast('E-pasta adrese atjaunināta.');
+      } else {
+        setSettingsMsg({ type: 'err', text: data.message || 'Neizdevās saglabāt e-pastu.' });
+      }
+    } catch {
+      setSettingsMsg({ type: 'err', text: 'Savienojuma kļūda.' });
+    }
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSettingsMsg(null);
+    if (newPassword.length < 8) {
+      setSettingsMsg({ type: 'err', text: 'Jaunajai parolei jābūt vismaz 8 simbolus garai.' });
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      setSettingsMsg({ type: 'err', text: 'Jaunās paroles nesakrīt.' });
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/auth?action=change-password', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword, newPassword })
+      });
+      if (res.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.success) {
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmNewPassword('');
+        setSettingsMsg({ type: 'ok', text: 'Parole nomainīta! Visas pārējās sesijas atiestatītas.' });
+        showToast('Parole veiksmīgi nomainīta!');
+      } else {
+        setSettingsMsg({ type: 'err', text: data.message || 'Neizdevās nomainīt paroli.' });
+      }
+    } catch {
+      setSettingsMsg({ type: 'err', text: 'Savienojuma kļūda.' });
+    }
   };
 
   const exportSubmissionsCSV = () => {
@@ -463,7 +672,15 @@ export default function Admin() {
     showToast('CSV fails eksportēts.');
   };
 
-  // LOGIN SCREEN
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0c] flex items-center justify-center p-4 text-white">
+        <Loader2 className="w-10 h-10 text-[#dc2626] animate-spin" />
+      </div>
+    );
+  }
+
+  // FIRST-RUN SETUP OR LOGIN SCREEN
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#0a0a0c] flex items-center justify-center p-4 font-sans text-white relative">
@@ -477,7 +694,9 @@ export default function Admin() {
               <Logo variant="dark" className="w-10 h-10" />
             </div>
             <h1 className="text-2xl font-heading font-bold uppercase tracking-wider text-white">Kumite Karate Klubs</h1>
-            <p className="text-xs uppercase font-heading tracking-widest text-[#dc2626] font-bold mt-1">CMS Vadības Panelis</p>
+            <p className="text-xs uppercase font-heading tracking-widest text-[#dc2626] font-bold mt-1">
+              {needsSetup ? 'Drošības sākotnējā iestatīšana' : 'CMS Vadības Panelis'}
+            </p>
           </div>
 
           {loginError && (
@@ -486,39 +705,82 @@ export default function Admin() {
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="block text-xs uppercase font-heading font-bold text-slate-300 mb-1">Lietotājvārds</label>
-              <input
-                type="text"
-                required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="admin"
-                className="w-full bg-[#0a0a0c] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#dc2626] text-sm"
-              />
-            </div>
+          {needsSetup ? (
+            <form onSubmit={handleSetupPassword} className="space-y-4">
+              <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/70 p-3 rounded-lg border border-slate-800">
+                Šī ir pirmā autorizācija. Izveidojiet drošu administratora paroli (vismaz 8 simboli), kas tiks šifrēta serverī.
+              </p>
+              <div>
+                <label className="block text-xs uppercase font-heading font-bold text-slate-300 mb-1">Jaunā parole *</label>
+                <input
+                  type="password"
+                  required
+                  minLength={8}
+                  value={setupPassword}
+                  onChange={(e) => setSetupPassword(e.target.value)}
+                  placeholder="Vismaz 8 simboli..."
+                  className="w-full bg-[#0a0a0c] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#dc2626] text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-xs uppercase font-heading font-bold text-slate-300 mb-1">Atkārtojiet paroli *</label>
+                <input
+                  type="password"
+                  required
+                  minLength={8}
+                  value={setupConfirm}
+                  onChange={(e) => setSetupConfirm(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full bg-[#0a0a0c] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#dc2626] text-sm"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={authBusy}
+                className="w-full bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white font-heading text-lg uppercase tracking-wider py-3.5 rounded-lg font-bold transition-all shadow-lg border border-white flex items-center justify-center space-x-2"
+              >
+                {authBusy ? <Loader2 className="w-5 h-5 animate-spin" /> : <ShieldCheck className="w-5 h-5" />}
+                <span>Saglabāt un ieiet</span>
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <label className="block text-xs uppercase font-heading font-bold text-slate-300 mb-1">Lietotājvārds</label>
+                <input
+                  type="text"
+                  required
+                  autoComplete="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="admin"
+                  className="w-full bg-[#0a0a0c] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#dc2626] text-sm"
+                />
+              </div>
 
-            <div>
-              <label className="block text-xs uppercase font-heading font-bold text-slate-300 mb-1">Parole</label>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full bg-[#0a0a0c] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#dc2626] text-sm"
-              />
-            </div>
+              <div>
+                <label className="block text-xs uppercase font-heading font-bold text-slate-300 mb-1">Parole</label>
+                <input
+                  type="password"
+                  required
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full bg-[#0a0a0c] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-[#dc2626] text-sm"
+                />
+              </div>
 
-            <button
-              type="submit"
-              className="w-full bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg uppercase tracking-wider py-3.5 rounded-lg font-bold transition-all transform active:scale-95 shadow-lg border border-white flex items-center justify-center space-x-2"
-            >
-              <Lock className="w-5 h-5" />
-              <span>Ieiet vadības panelī</span>
-            </button>
-          </form>
+              <button
+                type="submit"
+                disabled={authBusy}
+                className="w-full bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white font-heading text-lg uppercase tracking-wider py-3.5 rounded-lg font-bold transition-all transform active:scale-95 shadow-lg border border-white flex items-center justify-center space-x-2"
+              >
+                {authBusy ? <Loader2 className="w-5 h-5 animate-spin" /> : <Lock className="w-5 h-5" />}
+                <span>Ieiet vadības panelī</span>
+              </button>
+            </form>
+          )}
         </motion.div>
       </div>
     );
@@ -536,7 +798,7 @@ export default function Admin() {
               <h2 className="font-heading font-bold uppercase tracking-wider text-xs sm:text-base leading-tight truncate">
                 Kumite Karate — CMS Admin
               </h2>
-              <p className="text-[9px] sm:text-[10px] text-slate-400 uppercase tracking-widest hidden xs:block">
+              <p className="text-[9px] sm:text-[10px] text-slate-400 uppercase tracking-widest hidden sm:block">
                 Autorizēts kā Admin
               </p>
             </div>
@@ -641,7 +903,7 @@ export default function Admin() {
             <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
               <div>
                 <h3 className="text-xl font-heading font-bold uppercase tracking-wide text-[#0a0a0c]">Saņemtie pieteikumi</h3>
-                <p className="text-xs text-slate-500 font-sans mt-0.5">Visas анкеты un ziņas, ko lietotāji aizpildījuši mājaslapā</p>
+                <p className="text-xs text-slate-500 font-sans mt-0.5">Visas anketas un ziņas, ko lietotāji aizpildījuši mājaslapā</p>
               </div>
 
               {submissions.length > 0 && (
@@ -942,16 +1204,23 @@ export default function Admin() {
         {/* TAB 4: SETTINGS */}
         {activeTab === 'settings' && (
           <div className="max-w-2xl space-y-6">
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+            {settingsMsg && (
+              <div
+                className={`p-3 rounded-lg text-sm border ${
+                  settingsMsg.type === 'ok'
+                    ? 'bg-emerald-100 border-emerald-400 text-emerald-800'
+                    : 'bg-red-100 border-red-400 text-red-800'
+                }`}
+              >
+                {settingsMsg.text}
+              </div>
+            )}
+
+            <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
               <h3 className="text-xl font-heading font-bold uppercase tracking-wide text-[#0a0a0c]">Paziņojumu e-pasta adrese</h3>
               <p className="text-xs text-slate-500 font-sans">Uz šo e-pasta adresi tiks nosūtīti visi pieteikumi no mājaslapas</p>
 
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                localStorage.setItem('kumite_target_email', targetEmail);
-                setPassSaveSuccess(true);
-                setTimeout(() => setPassSaveSuccess(false), 3000);
-              }} className="space-y-4">
+              <form onSubmit={handleSaveSettingsEmail} className="space-y-4">
                 <div>
                   <label className="block text-xs uppercase font-heading font-bold text-slate-700 mb-1">E-pasta adrese pieteikumu saņemšanai</label>
                   <input
@@ -959,8 +1228,8 @@ export default function Admin() {
                     required
                     value={targetEmail}
                     onChange={(e) => setTargetEmail(e.target.value)}
-                    placeholder="u2086344644@gmail.com"
-                    className="w-full border border-slate-300 rounded-lg px-4 py-3 text-slate-900 text-sm focus:outline-none focus:border-[#dc2626]"
+                    placeholder="info@kumitekarate.lv"
+                    className="w-full border border-slate-300 rounded-lg px-4 py-3 text-slate-900 text-base focus:outline-none focus:border-[#dc2626]"
                   />
                 </div>
 
@@ -974,26 +1243,45 @@ export default function Admin() {
               </form>
             </div>
 
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+            <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
               <h3 className="text-xl font-heading font-bold uppercase tracking-wide text-[#0a0a0c]">Paroles maiņa</h3>
-              
-              {passSaveSuccess && (
-                <div className="p-3 bg-emerald-100 border border-emerald-400 text-emerald-800 rounded-lg text-sm">
-                  Iestatījumi veiksmīgi saglabāti!
-                </div>
-              )}
 
               <form onSubmit={handleChangePassword} className="space-y-4">
                 <div>
-                  <label className="block text-xs uppercase font-heading font-bold text-slate-700 mb-1">Jaunā admin parole</label>
+                  <label className="block text-xs uppercase font-heading font-bold text-slate-700 mb-1">Pašreizējā admin parole</label>
                   <input
                     type="password"
                     required
-                    minLength={4}
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Ievadiet pašreizējo paroli..."
+                    className="w-full border border-slate-300 rounded-lg px-4 py-3 text-slate-900 text-base focus:outline-none focus:border-[#dc2626]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs uppercase font-heading font-bold text-slate-700 mb-1">Jaunā admin parole (min. 8 simboli)</label>
+                  <input
+                    type="password"
+                    required
+                    minLength={8}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Ievadiet jauno paroli..."
-                    className="w-full border border-slate-300 rounded-lg px-4 py-3 text-slate-900 text-sm focus:outline-none focus:border-[#dc2626]"
+                    className="w-full border border-slate-300 rounded-lg px-4 py-3 text-slate-900 text-base focus:outline-none focus:border-[#dc2626]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs uppercase font-heading font-bold text-slate-700 mb-1">Apstiprināt jauno paroli</label>
+                  <input
+                    type="password"
+                    required
+                    minLength={8}
+                    value={confirmNewPassword}
+                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                    placeholder="Atkārtojiet jauno paroli..."
+                    className="w-full border border-slate-300 rounded-lg px-4 py-3 text-slate-900 text-base focus:outline-none focus:border-[#dc2626]"
                   />
                 </div>
 
@@ -1346,7 +1634,7 @@ export default function Admin() {
             </button>
 
             <h3 className="text-xl sm:text-2xl font-heading font-bold uppercase tracking-wide text-white mb-1">Pievienot fotoattēlu</h3>
-            <p className="text-xs text-slate-400 font-sans mb-5">Augšupielādējiet failu no ierīces vai norādiet saiti.</p>
+            <p className="text-xs text-slate-400 font-sans mb-5">Attēls tiek automātiski saspiests WebP formātā pirms augšupielādes.</p>
 
             {uploadError && (
               <div className="mb-4 p-3 bg-red-500/20 border border-red-500 text-red-300 rounded-lg text-sm flex items-center space-x-2">
@@ -1398,22 +1686,36 @@ export default function Admin() {
               <div>
                 <label className="block text-xs uppercase font-heading font-bold text-slate-300 mb-1">Augšupielādēt attēlu no tālruņa vai datora</label>
                 <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-700 hover:border-[#dc2626] rounded-xl cursor-pointer bg-[#111827] transition-colors p-3 text-center">
-                  <Upload className="w-8 h-8 text-slate-400 mb-2" />
-                  <span className="text-xs text-slate-300 font-sans">Izvēlieties foto (JPG, PNG, WEBP)</span>
-                  <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
+                  {isCompressing ? (
+                    <>
+                      <Loader2 className="w-8 h-8 text-[#dc2626] animate-spin mb-2" />
+                      <span className="text-xs text-slate-300 font-sans">Saspiež attēlu WebP formātā...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-8 h-8 text-slate-400 mb-2" />
+                      <span className="text-xs text-slate-300 font-sans">Izvēlieties foto (JPG, PNG, WEBP)</span>
+                    </>
+                  )}
+                  <input type="file" accept="image/*" disabled={isCompressing || isUploadingPhoto} onChange={handleFileUpload} className="hidden" />
                 </label>
               </div>
 
-              {newPhotoUrl && (
-                <div className="relative rounded-lg overflow-hidden border border-slate-700 h-28 bg-slate-900 flex items-center justify-center">
-                  <img src={newPhotoUrl} alt="Preview" className="max-h-full object-contain" />
-                  <button
-                    type="button"
-                    onClick={() => setNewPhotoUrl('')}
-                    className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full shadow"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
+              {compressedPhoto && (
+                <div className="space-y-2">
+                  <div className="relative rounded-lg overflow-hidden border border-slate-700 h-28 bg-slate-900 flex items-center justify-center">
+                    <img src={compressedPhoto.thumbDataUrl} alt="Preview" className="max-h-full object-contain" />
+                    <button
+                      type="button"
+                      onClick={() => setCompressedPhoto(null)}
+                      className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full shadow"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-emerald-400 font-mono text-center">
+                    WebP saspiešana: {(compressedPhoto.origBytes / 1024).toFixed(0)} KB → {(compressedPhoto.compressedBytes / 1024).toFixed(0)} KB ({(compressedPhoto.thumbBlob.size / 1024).toFixed(0)} KB priekšskatījums)
+                  </p>
                 </div>
               )}
 
@@ -1427,10 +1729,17 @@ export default function Admin() {
                 </button>
                 <button
                   type="submit"
-                  disabled={!newPhotoUrl}
-                  className="bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white text-xs font-heading font-bold uppercase px-6 py-2.5 rounded-lg shadow"
+                  disabled={!compressedPhoto || isCompressing || isUploadingPhoto}
+                  className="bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white text-xs font-heading font-bold uppercase px-6 py-2.5 rounded-lg shadow flex items-center space-x-2 disabled:cursor-not-allowed"
                 >
-                  Pievienot galerijai
+                  {isUploadingPhoto ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Augšupielādē...</span>
+                    </>
+                  ) : (
+                    <span>Pievienot galerijai</span>
+                  )}
                 </button>
               </div>
             </form>

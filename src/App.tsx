@@ -84,7 +84,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f7f3ec] text-[#1c1b18] font-serif selection:bg-[#c83832] selection:text-white relative overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-[#ffffff] text-[#0f172a] font-sans selection:bg-[#dc2626] selection:text-white relative overflow-x-hidden">
       <ScrollToTop />
       <JapaneseBackground />
       <Navbar
@@ -132,7 +132,6 @@ export default function App() {
               path="/contacts"
               element={<Contacts openTrialModal={() => setTrialModalOpen(true)} />}
             />
-            <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

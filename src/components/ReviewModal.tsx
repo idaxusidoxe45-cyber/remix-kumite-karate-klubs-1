@@ -15,6 +15,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
   const [text, setText] = useState('');
   const [websiteHoneypot, setWebsiteHoneypot] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
   if (!isOpen) return null;
@@ -31,6 +32,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
     if (!author.trim() || !text.trim()) return;
 
     setIsSubmitting(true);
+    setSubmitError('');
 
     const newReview: Testimonial = {
       id: Date.now(),
@@ -41,29 +43,30 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
       status: 'draft',
     };
 
-    if (onSubmitReview) {
-      onSubmitReview(newReview);
-    }
-
-    // Save locally as draft for instant display & admin moderation review
     try {
-      const existing = JSON.parse(localStorage.getItem('user_submitted_reviews') || '[]');
-      localStorage.setItem('user_submitted_reviews', JSON.stringify([...existing, newReview]));
-    } catch {
-      // Ignore storage errors
-    }
-
-    // Attempt to post to server API if available
-    try {
-      await fetch('/api/reviews', {
+      const res = await fetch('/api/reviews', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newReview),
+        body: JSON.stringify({ ...newReview, website: websiteHoneypot }),
       });
-    } catch {
-      // Ignore network errors
-    } finally {
-      setIsSubmitting(false);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success) {
+        setSubmitError(data.message || 'Neizdevās nosūtīt atsauksmi.');
+        return;
+      }
+
+      if (onSubmitReview) {
+        onSubmitReview(newReview);
+      }
+
+      try {
+        const existing = JSON.parse(localStorage.getItem('user_submitted_reviews') || '[]');
+        localStorage.setItem('user_submitted_reviews', JSON.stringify([...existing, newReview]));
+      } catch {
+        // Ignore storage errors
+      }
+
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);
@@ -74,6 +77,10 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
         setWebsiteHoneypot('');
         onClose();
       }, 3000);
+    } catch {
+      setSubmitError('Savienojuma kļūda. Lūdzu, mēģiniet vēlreiz.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -182,6 +189,12 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
                 className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-[#dc2626]"
               ></textarea>
             </div>
+
+            {submitError && (
+              <div className="p-3 bg-red-500/20 border border-red-500 text-red-200 rounded-lg text-sm">
+                {submitError}
+              </div>
+            )}
 
             <div className="pt-2 flex justify-end space-x-3">
               <button

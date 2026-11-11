@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GalleryItem } from '../types';
 import { getDynamicGalleryItems, fetchCloudGalleryItems } from '../data';
 import LightboxModal from '../components/LightboxModal';
-import { ZoomIn, CheckCircle } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import { motion } from 'motion/react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
 import { sendFormToEmail } from '../services/emailService';
@@ -24,6 +24,8 @@ export default function Gallery({ openTrialModal }: GalleryProps) {
   const [formPhone, setFormPhone] = useState('');
   const [formMessage, setFormMessage] = useState('');
   const [formHoneypot, setFormHoneypot] = useState('');
+  const [formSubmitting, setFormSubmitting] = useState(false);
+  const [formError, setFormError] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   const categories = [
@@ -40,38 +42,51 @@ export default function Gallery({ openTrialModal }: GalleryProps) {
     ? allGalleryItems
     : allGalleryItems.filter(item => item.category === activeCategory);
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (formSubmitting) return;
     if (formHoneypot) {
       setFormSubmitted(true);
       return;
     }
     if (!formName || !formPhone) return;
 
-    sendFormToEmail({
-      type: 'trial',
-      name: formName.trim(),
-      phone: formPhone.trim(),
-      message: formMessage.trim() || undefined
-    });
-
-    setFormSubmitted(true);
-    setTimeout(() => {
-      setFormSubmitted(false);
-      setFormName('');
-      setFormPhone('');
-      setFormMessage('');
-      setFormHoneypot('');
-    }, 3000);
+    setFormSubmitting(true);
+    setFormError('');
+    try {
+      const result = await sendFormToEmail({
+        type: 'trial',
+        name: formName.trim(),
+        phone: formPhone.trim(),
+        message: formMessage.trim() || undefined,
+        website: formHoneypot
+      });
+      if (!result.ok) {
+        setFormError(result.error || 'Neizdevās nosūtīt pieteikumu.');
+        return;
+      }
+      setFormSubmitted(true);
+      setTimeout(() => {
+        setFormSubmitted(false);
+        setFormName('');
+        setFormPhone('');
+        setFormMessage('');
+        setFormHoneypot('');
+      }, 3000);
+    } catch {
+      setFormError('Savienojuma kļūda.');
+    } finally {
+      setFormSubmitting(false);
+    }
   };
 
   const handleNext = () => {
-    if (selectedImageIndex === null) return;
+    if (selectedImageIndex === null || filteredItems.length === 0) return;
     setSelectedImageIndex((selectedImageIndex + 1) % filteredItems.length);
   };
 
   const handlePrev = () => {
-    if (selectedImageIndex === null) return;
+    if (selectedImageIndex === null || filteredItems.length === 0) return;
     setSelectedImageIndex((selectedImageIndex - 1 + filteredItems.length) % filteredItems.length);
   };
 
@@ -138,12 +153,18 @@ export default function Gallery({ openTrialModal }: GalleryProps) {
                     placeholder="Jūsu ziņa"
                     className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 text-base focus:outline-none focus:border-[#dc2626]"
                   ></textarea>
+                  {formError && (
+                    <div className="p-3 bg-red-500/20 border border-red-500 text-red-200 rounded-lg text-sm">
+                      {formError}
+                    </div>
+                  )}
                   <div className="flex justify-end">
                     <button
                       type="submit"
-                      className="bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-xl border-2 border-white"
+                      disabled={formSubmitting}
+                      className="bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-xl border-2 border-white"
                     >
-                      Nosūtīt
+                      {formSubmitting ? 'Sūta...' : 'Nosūtīt'}
                     </button>
                   </div>
                 </form>

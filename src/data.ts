@@ -99,8 +99,8 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "category": "eksameni",
     "title": "Eksāmeni",
     "caption": "Eksāmenu fotogrāfija",
-    "image": "/assets_gallery/eksameni/640aaa93-9ab1-478d-95b9-b899581d7df4-copy-400x284.png",
-    "fullImage": "/assets_gallery/eksameni/640aaa93-9ab1-478d-95b9-b899581d7df4-copy.png"
+    "image": "/assets_gallery/eksameni/640aaa93-9ab1-478d-95b9-b899581d7df4-copy-400x284.webp",
+    "fullImage": "/assets_gallery/eksameni/640aaa93-9ab1-478d-95b9-b899581d7df4-copy.webp"
   },
   {
     "id": 6,
@@ -195,8 +195,8 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "category": "nometnes",
     "title": "Nometnes",
     "caption": "Nometņu fotogrāfija",
-    "image": "/assets_gallery/nometnes/img_0027-copy-400x284.png",
-    "fullImage": "/assets_gallery/nometnes/img_0027-copy.png"
+    "image": "/assets_gallery/nometnes/img_0027-copy-400x284.webp",
+    "fullImage": "/assets_gallery/nometnes/img_0027-copy.webp"
   },
   {
     "id": 18,
@@ -227,24 +227,24 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "category": "nometnes",
     "title": "Nometnes",
     "caption": "Nometņu fotogrāfija",
-    "image": "/assets_gallery/nometnes/img_4350-copy-400x284.png",
-    "fullImage": "/assets_gallery/nometnes/img_4350-copy.png"
+    "image": "/assets_gallery/nometnes/img_4350-copy-400x284.webp",
+    "fullImage": "/assets_gallery/nometnes/img_4350-copy.webp"
   },
   {
     "id": 22,
     "category": "nometnes",
     "title": "Nometnes",
     "caption": "Nometņu fotogrāfija",
-    "image": "/assets_gallery/nometnes/img_4373-copy-400x284.png",
-    "fullImage": "/assets_gallery/nometnes/img_4373-copy.png"
+    "image": "/assets_gallery/nometnes/img_4373-copy-400x284.webp",
+    "fullImage": "/assets_gallery/nometnes/img_4373-copy.webp"
   },
   {
     "id": 23,
     "category": "nometnes",
     "title": "Nometnes",
     "caption": "Nometņu fotogrāfija",
-    "image": "/assets_gallery/nometnes/img_4509-copy-400x284.png",
-    "fullImage": "/assets_gallery/nometnes/img_4509-copy.png"
+    "image": "/assets_gallery/nometnes/img_4509-copy-400x284.webp",
+    "fullImage": "/assets_gallery/nometnes/img_4509-copy.webp"
   },
   {
     "id": 24,
@@ -355,32 +355,32 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "category": "nometnes",
     "title": "Nometnes",
     "caption": "Nometņu fotogrāfija",
-    "image": "/assets_gallery/nometnes/img_8876-2-copy-400x284.png",
-    "fullImage": "/assets_gallery/nometnes/img_8876-2-copy.png"
+    "image": "/assets_gallery/nometnes/img_8876-2-copy-400x284.webp",
+    "fullImage": "/assets_gallery/nometnes/img_8876-2-copy.webp"
   },
   {
     "id": 38,
     "category": "nometnes",
     "title": "Nometnes",
     "caption": "Nometņu fotogrāfija",
-    "image": "/assets_gallery/nometnes/img_9701-copy-400x284.png",
-    "fullImage": "/assets_gallery/nometnes/img_9701-copy.png"
+    "image": "/assets_gallery/nometnes/img_9701-copy-400x284.webp",
+    "fullImage": "/assets_gallery/nometnes/img_9701-copy.webp"
   },
   {
     "id": 39,
     "category": "nometnes",
     "title": "Nometnes",
     "caption": "Nometņu fotogrāfija",
-    "image": "/assets_gallery/nometnes/img_9738-copy-400x284.png",
-    "fullImage": "/assets_gallery/nometnes/img_9738-copy.png"
+    "image": "/assets_gallery/nometnes/img_9738-copy-400x284.webp",
+    "fullImage": "/assets_gallery/nometnes/img_9738-copy.webp"
   },
   {
     "id": 40,
     "category": "nometnes",
     "title": "Nometnes",
     "caption": "Nometņu fotogrāfija",
-    "image": "/assets_gallery/nometnes/img_9855-copy-400x284.png",
-    "fullImage": "/assets_gallery/nometnes/img_9855-copy.png"
+    "image": "/assets_gallery/nometnes/img_9855-copy-400x284.webp",
+    "fullImage": "/assets_gallery/nometnes/img_9855-copy.webp"
   },
   {
     "id": 41,
@@ -395,16 +395,16 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "category": "pasakumi",
     "title": "Pasākumi",
     "caption": "Pasākuma fotogrāfija",
-    "image": "/assets_gallery/pasakumi/3b18f11e-7257-4236-ba1b-4d566a0f6503-copy-400x284.png",
-    "fullImage": "/assets_gallery/pasakumi/3b18f11e-7257-4236-ba1b-4d566a0f6503-copy.png"
+    "image": "/assets_gallery/pasakumi/3b18f11e-7257-4236-ba1b-4d566a0f6503-copy-400x284.webp",
+    "fullImage": "/assets_gallery/pasakumi/3b18f11e-7257-4236-ba1b-4d566a0f6503-copy.webp"
   },
   {
     "id": 43,
     "category": "pasakumi",
     "title": "Pasākumi",
     "caption": "Pasākuma fotogrāfija",
-    "image": "/assets_gallery/pasakumi/43c60968-6234-4102-bcbb-831057093e90-copy-400x284.png",
-    "fullImage": "/assets_gallery/pasakumi/43c60968-6234-4102-bcbb-831057093e90-copy.png"
+    "image": "/assets_gallery/pasakumi/43c60968-6234-4102-bcbb-831057093e90-copy-400x284.webp",
+    "fullImage": "/assets_gallery/pasakumi/43c60968-6234-4102-bcbb-831057093e90-copy.webp"
   },
   {
     "id": 44,
@@ -419,8 +419,8 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "category": "pasakumi",
     "title": "Pasākumi",
     "caption": "Pasākuma fotogrāfija",
-    "image": "/assets_gallery/pasakumi/b541c1db-63cb-41d8-a743-879644d736fe-copy-400x284.png",
-    "fullImage": "/assets_gallery/pasakumi/b541c1db-63cb-41d8-a743-879644d736fe-copy.png"
+    "image": "/assets_gallery/pasakumi/b541c1db-63cb-41d8-a743-879644d736fe-copy-400x284.webp",
+    "fullImage": "/assets_gallery/pasakumi/b541c1db-63cb-41d8-a743-879644d736fe-copy.webp"
   },
   {
     "id": 46,
@@ -451,8 +451,8 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "category": "sacensibas",
     "title": "Sacensības",
     "caption": "Sacensību fotogrāfija",
-    "image": "/assets_gallery/sacensibas/23681708-749b-440c-9009-a1ba08d82490-copy-400x284.png",
-    "fullImage": "/assets_gallery/sacensibas/23681708-749b-440c-9009-a1ba08d82490-copy.png"
+    "image": "/assets_gallery/sacensibas/23681708-749b-440c-9009-a1ba08d82490-copy-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/23681708-749b-440c-9009-a1ba08d82490-copy.webp"
   },
   {
     "id": 50,
@@ -539,8 +539,8 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "category": "sacensibas",
     "title": "Sacensības",
     "caption": "Sacensību fotogrāfija",
-    "image": "/assets_gallery/sacensibas/93a0f863-58df-4139-858a-198b864d793e-copy-400x284.png",
-    "fullImage": "/assets_gallery/sacensibas/93a0f863-58df-4139-858a-198b864d793e-copy.png"
+    "image": "/assets_gallery/sacensibas/93a0f863-58df-4139-858a-198b864d793e-copy-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/93a0f863-58df-4139-858a-198b864d793e-copy.webp"
   },
   {
     "id": 61,
@@ -555,8 +555,8 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "category": "sacensibas",
     "title": "Sacensības",
     "caption": "Sacensību fotogrāfija",
-    "image": "/assets_gallery/sacensibas/c49c2cb2-b1d6-4947-b264-a7ad3c6ccc5f-copy-400x284.png",
-    "fullImage": "/assets_gallery/sacensibas/c49c2cb2-b1d6-4947-b264-a7ad3c6ccc5f-copy.png"
+    "image": "/assets_gallery/sacensibas/c49c2cb2-b1d6-4947-b264-a7ad3c6ccc5f-copy-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/c49c2cb2-b1d6-4947-b264-a7ad3c6ccc5f-copy.webp"
   },
   {
     "id": 63,
@@ -643,16 +643,16 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "category": "sacensibas",
     "title": "Sacensības",
     "caption": "Sacensību fotogrāfija",
-    "image": "/assets_gallery/sacensibas/img_2526-copy-400x284.png",
-    "fullImage": "/assets_gallery/sacensibas/img_2526-copy.png"
+    "image": "/assets_gallery/sacensibas/img_2526-copy-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/img_2526-copy.webp"
   },
   {
     "id": 74,
     "category": "sacensibas",
     "title": "Sacensības",
     "caption": "Sacensību fotogrāfija",
-    "image": "/assets_gallery/sacensibas/img_2641-copy-400x284.png",
-    "fullImage": "/assets_gallery/sacensibas/img_2641-copy.png"
+    "image": "/assets_gallery/sacensibas/img_2641-copy-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/img_2641-copy.webp"
   },
   {
     "id": 75,
@@ -907,8 +907,8 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "category": "zale",
     "title": "Zāle",
     "caption": "Zāles fotogrāfija",
-    "image": "/assets_gallery/zale/img_2355-copy-400x284.png",
-    "fullImage": "/assets_gallery/zale/img_2355-copy.png"
+    "image": "/assets_gallery/zale/img_2355-copy-400x284.webp",
+    "fullImage": "/assets_gallery/zale/img_2355-copy.webp"
   },
   {
     "id": 107,
@@ -939,8 +939,8 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "category": "zale",
     "title": "Zāle",
     "caption": "Zāles fotogrāfija",
-    "image": "/assets_gallery/zale/img_2723-copy-400x284.png",
-    "fullImage": "/assets_gallery/zale/img_2723-copy.png"
+    "image": "/assets_gallery/zale/img_2723-copy-400x284.webp",
+    "fullImage": "/assets_gallery/zale/img_2723-copy.webp"
   },
   {
     "id": 111,
@@ -1023,13 +1023,13 @@ export const TESTIMONIALS: Testimonial[] = [
     id: 4,
     author: 'Margarita',
     status: 'published',
-    text: '“Дети занимаются 6 лет каратэ у Николая, очень нравится, дети спортивные, результаты хорошие, ездим на соревнования, занимаем хорошие места, рекомендую, очень довольны.”'
+    text: '“Bērni jau 6 gadus trenējas karatē pie Nikolaja — ļoti patīk! Bērni ir sportiski, rezultāti ir labi, braucam uz sacensībām un izcīnām augstas vietas. Noteikti iesaku, esam ļoti apmierināti.”'
   },
   {
     id: 5,
     author: 'Olivijas mamma',
     status: 'published',
-    text: '“Спасибо большое Николаю за такую серьезную работу с нашими детьми! Ваше неравнодушие и знание дела восхищает!”'
+    text: '“Liels paldies Nikolajam par tik nopietno darbu ar mūsu bērniem! Jūsu aizrautība un profesionalitāte patiesi iedvesmo!”'
   },
   {
     id: 6,
@@ -1053,7 +1053,7 @@ export const TESTIMONIALS: Testimonial[] = [
     id: 9,
     author: 'Kristina par nometni',
     status: 'published',
-    text: '“Очень понравилось, было много активностей, веселья, хорошая еда и домики.”'
+    text: '“Ļoti patika — bija daudz aktivitāšu, jautrības, garšīgs ēdiens un mājīgi namiņi.”'
   }
 ];
 
@@ -1124,8 +1124,7 @@ export const STRIKE_LEVELS = [
   { level: 'Apakšējais līmenis – GEDAN', desc: '(kājas, ceļi)' }
 ];
 
-// Dynamic gallery items loader with local storage and cloud support
-let cachedGalleryItems: GalleryItem[] | null = null;
+// Dynamic gallery items loader with cloud synchronization & server-side deletion support
 export function getDynamicGalleryItems(): GalleryItem[] {
   let localCustomItems: GalleryItem[] = [];
   let deletedIds = new Set<string>();
@@ -1141,33 +1140,39 @@ export function getDynamicGalleryItems(): GalleryItem[] {
   }
 
   const baseItems = GALLERY_ITEMS.filter(item => !deletedIds.has(String(item.id)));
-  return [...localCustomItems, ...baseItems];
+  const customFiltered = localCustomItems.filter(item => !deletedIds.has(String(item.id)));
+  return [...customFiltered, ...baseItems];
 }
 
 export async function fetchCloudGalleryItems(): Promise<GalleryItem[]> {
-  const base = getDynamicGalleryItems();
   try {
-    const res = await fetch('/api/gallery');
+    const res = await fetch('/api/gallery', { credentials: 'include' });
     if (res.ok) {
       const data = await res.json();
       if (data.success && Array.isArray(data.items)) {
-        let deletedIds = new Set<string>();
+        const cloudDeletedIds = new Set<string>((Array.isArray(data.deletedIds) ? data.deletedIds : []).map(String));
+
+        // Sync deleted IDs cache locally
         if (typeof window !== 'undefined') {
           try {
-            const deletedArr = JSON.parse(localStorage.getItem('kumite_deleted_gallery_ids') || '[]');
-            deletedIds = new Set(deletedArr.map(String));
+            localStorage.setItem('kumite_deleted_gallery_ids', JSON.stringify(Array.from(cloudDeletedIds)));
           } catch {}
         }
-        const cloudFiltered = data.items.filter((item: GalleryItem) => !deletedIds.has(String(item.id)));
-        const cloudIds = new Set(cloudFiltered.map((i: GalleryItem) => String(i.id)));
-        const baseFiltered = base.filter(i => !cloudIds.has(String(i.id)));
-        return [...cloudFiltered, ...baseFiltered];
+
+        const cloudItems: GalleryItem[] = data.items.filter(
+          (item: GalleryItem) => !cloudDeletedIds.has(String(item.id))
+        );
+        const cloudIds = new Set(cloudItems.map((i: GalleryItem) => String(i.id)));
+        const baseFiltered = GALLERY_ITEMS.filter(
+          i => !cloudIds.has(String(i.id)) && !cloudDeletedIds.has(String(i.id))
+        );
+        return [...cloudItems, ...baseFiltered];
       }
     }
   } catch (err) {
     console.error('Cloud gallery fetch error:', err);
   }
-  return base;
+  return getDynamicGalleryItems();
 }
 
 // Memoized dynamic testimonials loader
@@ -1180,10 +1185,7 @@ export function getDynamicTestimonials(): Testimonial[] {
       text?: string;
       rating?: number;
       status?: 'published' | 'draft' | 'rejected';
-    }>([
-      '/public/content/reviews/*.json',
-      '/src/content/reviews/*.json',
-    ], { eager: true, import: 'default' });
+    }>(['/src/content/reviews/*.json'], { eager: true, import: 'default' });
 
     const cmsReviews: Testimonial[] = [];
     let nextId = 20000;
@@ -1214,24 +1216,39 @@ export function getDynamicTestimonials(): Testimonial[] {
     }
   }
 
-  return [...cachedCmsTestimonials, ...localReviews];
+  return [...localReviews, ...cachedCmsTestimonials];
 }
 
 export async function fetchCloudTestimonials(): Promise<Testimonial[]> {
-  const base = getDynamicTestimonials();
+  const staticBase = (() => {
+    getDynamicTestimonials();
+    return cachedCmsTestimonials || TESTIMONIALS;
+  })();
+
   try {
-    const res = await fetch('/api/reviews');
+    const res = await fetch('/api/reviews', { credentials: 'include' });
     if (res.ok) {
       const data = await res.json();
       if (data.success && Array.isArray(data.reviews)) {
-        // Merge cloud reviews with static reviews
-        const cloudIds = new Set(data.reviews.map((r: Testimonial) => String(r.id)));
-        const staticFiltered = base.filter(r => !cloudIds.has(String(r.id)));
-        return [...data.reviews, ...staticFiltered];
+        const overrides: Record<string, any> = data.overrides || {};
+        const cloudReviews: Testimonial[] = (data.reviews as Testimonial[]).filter(
+          r => !overrides[String(r.id)]?.deleted
+        );
+        const cloudIds = new Set(cloudReviews.map(r => String(r.id)));
+
+        const mergedStatic = staticBase
+          .filter(r => !cloudIds.has(String(r.id)))
+          .filter(r => !overrides[String(r.id)]?.deleted)
+          .map(r => {
+            const ov = overrides[String(r.id)];
+            return ov ? { ...r, ...ov } : r;
+          });
+
+        return [...cloudReviews, ...mergedStatic];
       }
     }
   } catch (err) {
     console.error('Cloud reviews fetch error:', err);
   }
-  return base;
+  return getDynamicTestimonials();
 }

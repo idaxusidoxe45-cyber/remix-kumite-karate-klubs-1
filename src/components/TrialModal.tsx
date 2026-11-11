@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { X, CheckCircle, Send, Loader2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { X, CheckCircle, Send, Loader2, AlertCircle } from 'lucide-react';
+import { motion } from 'motion/react';
 import { Logo } from './Logo';
 import { sendFormToEmail } from '../services/emailService';
 import { formatLatvianPhoneNumber } from '../utils/phone';
@@ -18,6 +18,7 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
   const [websiteHoneypot, setWebsiteHoneypot] = useState('');
   const [gdprConsent, setGdprConsent] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
   if (!isOpen) return null;
@@ -31,27 +32,29 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
     if (isSubmitting) return;
 
     if (websiteHoneypot) {
-      // Honeypot triggered by spam bot
       setSubmitted(true);
       return;
     }
     if (!name || !phone || !gdprConsent) return;
 
     setIsSubmitting(true);
+    setSubmitError('');
 
     try {
-      // Send application to email & store for Admin panel
-      await sendFormToEmail({
+      const result = await sendFormToEmail({
         type: 'trial',
         name: name.trim(),
         phone: phone.trim(),
         email: email.trim() || undefined,
-        message: message.trim() || undefined
+        message: message.trim() || undefined,
+        website: websiteHoneypot
       });
-    } catch (err) {
-      console.error('Error submitting trial form:', err);
-    } finally {
-      setIsSubmitting(false);
+
+      if (!result.ok) {
+        setSubmitError(result.error || 'Neizdevās nosūtīt pieteikumu.');
+        return;
+      }
+
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);
@@ -62,6 +65,10 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
         setWebsiteHoneypot('');
         onClose();
       }, 2500);
+    } catch {
+      setSubmitError('Savienojuma kļūda. Lūdzu, mēģiniet vēlreiz.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -170,6 +177,13 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
                   Piekrītu personas datu apstrādei, lai Kumite Karate Klubs varētu ar mani sazināties.
                 </label>
               </div>
+
+              {submitError && (
+                <div className="p-3 bg-red-500/20 border border-red-500 text-red-200 rounded-lg text-sm flex items-center space-x-2">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                  <span>{submitError}</span>
+                </div>
+              )}
 
               <div className="flex justify-end pt-2">
                 <button

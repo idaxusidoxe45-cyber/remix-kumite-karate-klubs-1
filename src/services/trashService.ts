@@ -1,4 +1,3 @@
-import { GalleryItem, Testimonial } from '../types';
 import { FormSubmission } from './emailService';
 
 export interface TrashItem {
@@ -18,7 +17,7 @@ const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
 function filterExpired(items: TrashItem[]): TrashItem[] {
   const now = Date.now();
-  return items.filter(item => {
+  return items.filter((item) => {
     if (!item.expiresAt) return true;
     return new Date(item.expiresAt).getTime() > now;
   });
@@ -42,12 +41,12 @@ export function getStoredTrashItems(): TrashItem[] {
 
 export async function fetchTrashFromCloud(): Promise<TrashItem[]> {
   try {
-    const res = await fetch('/api/trash');
+    const res = await fetch('/api/trash', { credentials: 'include' });
+    if (res.status === 401) throw new Error('UNAUTHORIZED');
     if (res.ok) {
       const data = await res.json();
       if (data.success && Array.isArray(data.items)) {
-        const cloudItems: TrashItem[] = data.items;
-        const valid = filterExpired(cloudItems);
+        const valid = filterExpired(data.items as TrashItem[]);
         if (typeof window !== 'undefined') {
           try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(valid));
@@ -57,18 +56,19 @@ export async function fetchTrashFromCloud(): Promise<TrashItem[]> {
       }
     }
   } catch (err) {
+    if (err instanceof Error && err.message === 'UNAUTHORIZED') throw err;
     console.error('Failed to fetch trash from cloud:', err);
   }
   return getStoredTrashItems();
 }
 
-export function moveToTrash(
+export async function moveToTrash(
   type: 'gallery' | 'review' | 'submission',
   itemData: any,
   title: string,
   subtitle?: string,
   previewImage?: string
-): TrashItem {
+): Promise<TrashItem> {
   const now = new Date();
   const expires = new Date(now.getTime() + THIRTY_DAYS_MS);
 
@@ -81,7 +81,7 @@ export function moveToTrash(
     previewImage: previewImage || (type === 'gallery' ? itemData.image : undefined),
     data: itemData,
     deletedAt: now.toISOString(),
-    expiresAt: expires.toISOString()
+    expiresAt: expires.toISOString(),
   };
 
   const current = getStoredTrashItems();
@@ -93,100 +93,95 @@ export function moveToTrash(
     } catch {}
   }
 
-  // Sync to Cloud API
-  fetch('/api/trash', {
+  const res = await fetch('/api/trash', {
     method: 'POST',
+    credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(trashItem)
-  }).catch(() => {});
+    body: JSON.stringify(trashItem),
+  });
+  if (res.status === 401) throw new Error('UNAUTHORIZED');
 
   return trashItem;
 }
 
 export async function restoreItem(trashId: string): Promise<TrashItem | null> {
   const current = getStoredTrashItems();
-  const target = current.find(t => t.id === trashId);
+  const target = current.find((t) => t.id === trashId);
   if (!target) return null;
 
-  // 1. Restore item back to its domain
   if (target.type === 'gallery') {
-    // Un-blacklist if it was blacklisted
     try {
       const deletedArr: string[] = JSON.parse(localStorage.getItem('kumite_deleted_gallery_ids') || '[]');
-      const filtered = deletedArr.filter(id => String(id) !== String(target.originalId));
+      const filtered = deletedArr.filter((id) => String(id) !== String(target.originalId));
       localStorage.setItem('kumite_deleted_gallery_ids', JSON.stringify(filtered));
 
-      // If it was a custom added gallery photo, re-add to custom list & cloud
-      const customGal: GalleryItem[] = JSON.parse(localStorage.getItem('kumite_custom_gallery') || '[]');
-      if (!customGal.some(c => String(c.id) === String(target.originalId))) {
-        customGal.unshift(target.data);
-        localStorage.setItem('kumite_custom_gallery', JSON.stringify(customGal));
-      }
-
-      // Re-create in cloud gallery
-      fetch('/api/gallery', {
+      const res = await fetch('/api/gallery', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(target.data)
-      }).catch(() => {});
+        body: JSON.stringify(target.data),
+      });
+      if (res.status === 401) throw new Error('UNAUTHORIZED');
     } catch (e) {
+      if (e instanceof Error && e.message === 'UNAUTHORIZED') throw e;
       console.error('Error restoring gallery item:', e);
     }
   } else if (target.type === 'review') {
     try {
-      const storedReviews: Testimonial[] = JSON.parse(localStorage.getItem('user_submitted_reviews') || '[]');
-      if (!storedReviews.some(r => String(r.id) === String(target.originalId))) {
-        storedReviews.unshift(target.data);
-        localStorage.setItem('user_submitted_reviews', JSON.stringify(storedReviews));
-      }
-
-      // Re-create in cloud reviews
-      fetch('/api/reviews', {
+      const idNum = Number(target.originalId);
+      const isBuiltIn = Number.isFinite(idNum) && idNum > 0 && idNum < 30000;
+      const res = await fetch('/api/reviews', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(target.data)
-      }).catch(() => {});
+        body: JSON.stringify({ ...target.data, isCustom: !isBuiltIn }),
+      });
+      if (res.status === 401) throw new Error('UNAUTHORIZED');
     } catch (e) {
+      if (e instanceof Error && e.message === 'UNAUTHORIZED') throw e;
       console.error('Error restoring review:', e);
     }
   } else if (target.type === 'submission') {
     try {
       const storedSubs: FormSubmission[] = JSON.parse(localStorage.getItem('kumite_form_submissions') || '[]');
-      if (!storedSubs.some(s => String(s.id) === String(target.originalId))) {
+      if (!storedSubs.some((s) => String(s.id) === String(target.originalId))) {
         storedSubs.unshift(target.data);
         localStorage.setItem('kumite_form_submissions', JSON.stringify(storedSubs));
       }
 
-      // Re-create in cloud submissions
-      fetch('/api/submissions', {
+      const res = await fetch('/api/submissions', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(target.data)
-      }).catch(() => {});
+        body: JSON.stringify(target.data),
+      });
+      if (res.status === 401) throw new Error('UNAUTHORIZED');
     } catch (e) {
+      if (e instanceof Error && e.message === 'UNAUTHORIZED') throw e;
       console.error('Error restoring submission:', e);
     }
   }
 
-  // 2. Remove from trash
-  const updated = current.filter(t => t.id !== trashId);
+  const updated = current.filter((t) => t.id !== trashId);
   if (typeof window !== 'undefined') {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     } catch {}
   }
 
-  fetch(`/api/trash?id=${encodeURIComponent(trashId)}`, {
-    method: 'DELETE'
-  }).catch(() => {});
+  const delRes = await fetch(`/api/trash?id=${encodeURIComponent(trashId)}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+  if (delRes.status === 401) throw new Error('UNAUTHORIZED');
 
   return target;
 }
 
 export async function permanentlyDeleteItem(trashId: string): Promise<void> {
   const current = getStoredTrashItems();
-  const target = current.find(t => t.id === trashId);
-  const updated = current.filter(t => t.id !== trashId);
+  const target = current.find((t) => t.id === trashId);
+  const updated = current.filter((t) => t.id !== trashId);
 
   if (typeof window !== 'undefined') {
     try {
@@ -194,19 +189,17 @@ export async function permanentlyDeleteItem(trashId: string): Promise<void> {
     } catch {}
   }
 
-  try {
-    await fetch(`/api/trash?id=${encodeURIComponent(trashId)}`, {
-      method: 'DELETE'
-    });
-  } catch {}
+  const res = await fetch(`/api/trash?id=${encodeURIComponent(trashId)}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+  if (res.status === 401) throw new Error('UNAUTHORIZED');
 
-  // If it's a gallery item, also ensure deleted from cloud gallery
   if (target && target.type === 'gallery') {
-    try {
-      await fetch(`/api/gallery?id=${encodeURIComponent(target.originalId)}`, {
-        method: 'DELETE'
-      });
-    } catch {}
+    await fetch(`/api/gallery?id=${encodeURIComponent(target.originalId)}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
   }
 }
 
@@ -217,11 +210,11 @@ export async function emptyTrash(): Promise<void> {
     } catch {}
   }
 
-  try {
-    await fetch('/api/trash?clearAll=true', {
-      method: 'DELETE'
-    });
-  } catch {}
+  const res = await fetch('/api/trash?clearAll=true', {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+  if (res.status === 401) throw new Error('UNAUTHORIZED');
 }
 
 export function getDaysRemaining(expiresAt: string): number {

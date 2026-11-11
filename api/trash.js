@@ -1,32 +1,35 @@
 import { getCloudData, saveCloudData } from './_kv.js';
+import { setApiHeaders, requireAdmin } from './_auth.js';
 
 const TRASH_KEY = 'kumite_trash_items';
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
 function pruneExpired(items) {
   const now = Date.now();
-  return (Array.isArray(items) ? items : []).filter(item => {
-    if (!item.expiresAt) return true;
+  return (Array.isArray(items) ? items : []).filter((item) => {
+    if (!item?.expiresAt) return true;
     const exp = new Date(item.expiresAt).getTime();
-    return exp > now;
+    return Number.isFinite(exp) && exp > now;
   });
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  setApiHeaders(req, res);
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
+
+  // Every trash endpoint is strictly Admin-only
+  const session = await requireAdmin(req, res);
+  if (!session) return;
 
   try {
     // GET: Fetch trash items (auto-prunes items older than 30 days)
     if (req.method === 'GET') {
       const raw = await getCloudData(TRASH_KEY, []);
       const pruned = pruneExpired(raw);
-      if (pruned.length !== raw.length) {
+      if (pruned.length !== (Array.isArray(raw) ? raw.length : 0)) {
         await saveCloudData(TRASH_KEY, pruned);
       }
       return res.status(200).json({ success: true, items: pruned });
@@ -35,8 +38,8 @@ export default async function handler(req, res) {
     // POST: Move item to trash
     if (req.method === 'POST') {
       const item = req.body;
-      if (!item || !item.id || !item.type) {
-        return res.status(400).json({ message: 'Invalid trash item format' });
+      if (!item || !item.id || !['gallery', 'review', 'submission'].includes(item.type)) {
+        return res.status(400).json({ success: false, message: 'Nederīgs atkritnes vienuma formāts.' });
       }
 
       const now = new Date();
@@ -45,12 +48,12 @@ export default async function handler(req, res) {
       const trashRecord = {
         ...item,
         deletedAt: item.deletedAt || now.toISOString(),
-        expiresAt: item.expiresAt || expires.toISOString()
+        expiresAt: item.expiresAt || expires.toISOString(),
       };
 
       const raw = await getCloudData(TRASH_KEY, []);
       const pruned = pruneExpired(raw);
-      const filtered = pruned.filter(i => i.id !== trashRecord.id);
+      const filtered = pruned.filter((i) => String(i.id) !== String(trashRecord.id));
       const updated = [trashRecord, ...filtered];
 
       await saveCloudData(TRASH_KEY, updated);
@@ -59,7 +62,8 @@ export default async function handler(req, res) {
 
     // DELETE: Permanently delete one item or clear entire trash
     if (req.method === 'DELETE') {
-      const { id, clearAll } = req.query || req.body || {};
+      const clearAll = req.query?.clearAll ?? req.body?.clearAll;
+      const id = req.query?.id ?? req.body?.id;
 
       if (clearAll === 'true' || clearAll === true) {
         await saveCloudData(TRASH_KEY, []);
@@ -67,18 +71,19 @@ export default async function handler(req, res) {
       }
 
       if (!id) {
-        return res.status(400).json({ message: 'ID is required to delete item' });
+        return res.status(400).json({ success: false, message: 'ID ir obligāts.' });
       }
 
       const raw = await getCloudData(TRASH_KEY, []);
-      const updated = raw.filter(item => String(item.id) !== String(id));
+      const updated = (Array.isArray(raw) ? raw : []).filter((item) => String(item.id) !== String(id));
       await saveCloudData(TRASH_KEY, updated);
 
       return res.status(200).json({ success: true, items: updated });
     }
 
-    return res.status(405).json({ message: 'Method Not Allowed' });
+    return res.status(405).json({ success: false, message: 'Method Not Allowed' });
   } catch (error) {
-    return res.status(500).json({ message: 'Server error', error: String(error) });
+    console.error('Trash API error:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
   }
 }
