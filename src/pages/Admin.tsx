@@ -9,7 +9,7 @@ import {
 import { 
   getDynamicTestimonials, 
   fetchCloudTestimonials, 
-  getDynamicGalleryItems,
+  getDynamicGalleryItemsAsync,
   fetchCloudGalleryItems 
 } from '../data';
 import { 
@@ -47,7 +47,6 @@ import {
   Loader2,
   ShieldCheck
 } from 'lucide-react';
-import { m } from 'motion/react';
 import { Logo } from '../components/Logo';
 import { useDialogModal } from '../hooks/useDialogModal';
 
@@ -141,8 +140,10 @@ export default function Admin() {
     setIsRefreshing(true);
     setSubmissions(getStoredSubmissions());
     setReviews(getDynamicTestimonials());
-    setGalleryItems(getDynamicGalleryItems());
     setTrashItems(getStoredTrashItems());
+    getDynamicGalleryItemsAsync().then((items) => {
+      setGalleryItems((prev) => (prev.length === 0 ? items : prev));
+    });
 
     try {
       const [cloudSubs, cloudRevs, cloudGal, cloudTrash] = await Promise.all([
@@ -689,11 +690,7 @@ export default function Admin() {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#0a0a0c] flex items-center justify-center p-4 font-sans text-white relative">
-        <m.div 
-          initial={{ opacity: 0, scale: 0.95 }} 
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-[#111827] border-2 border-slate-800 p-6 sm:p-8 rounded-2xl shadow-2xl max-w-md w-full relative z-10"
-        >
+        <div className="bg-[#111827] border-2 border-slate-800 p-6 sm:p-8 rounded-2xl shadow-2xl max-w-md w-full relative z-10 animate-fadeIn">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center p-3 bg-red-600/20 rounded-full text-[#f87171] mb-3">
               <Logo variant="dark" className="w-10 h-10" />
@@ -795,14 +792,14 @@ export default function Admin() {
               <button
                 type="submit"
                 disabled={authBusy}
-                className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white font-heading text-lg uppercase tracking-wider py-3.5 rounded-lg font-bold transition-all transform active:scale-95 shadow-lg border border-white flex items-center justify-center space-x-2 cursor-pointer"
+                className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white font-heading text-lg uppercase tracking-wider py-3.5 rounded-lg font-bold transition-all active:scale-[0.98] shadow-lg border border-white flex items-center justify-center space-x-2 cursor-pointer"
               >
                 {authBusy ? <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" /> : <Lock className="w-5 h-5" aria-hidden="true" />}
                 <span>Ieiet vadības panelī</span>
               </button>
             </form>
           )}
-        </m.div>
+        </div>
       </div>
     );
   }
@@ -1231,7 +1228,7 @@ export default function Admin() {
                       alt={item.title}
                       loading="lazy"
                       decoding="async"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
                     />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-2">
                       <span className="bg-white/90 text-slate-900 p-2 rounded-full shadow">

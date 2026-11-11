@@ -99,20 +99,19 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
       aria-labelledby={headingId}
       className="m-auto p-0 bg-[#0a0a0c] text-white rounded-2xl shadow-2xl max-w-lg w-[calc(100%-1.5rem)] border-2 border-slate-800 max-h-[90dvh] overflow-y-auto"
     >
-      {isOpen && (
-        <div className="relative p-5 sm:p-8 animate-fadeIn">
+      <div className="relative p-5 sm:p-8">
           <button
             type="button"
             onClick={onClose}
             aria-label="Aizvērt pieteikuma logu"
-            className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center absolute top-3 right-3 text-slate-200 hover:text-white rounded-full bg-[#1e293b] hover:bg-[#dc2626] transition-transform transform hover:scale-105 active:scale-95 cursor-pointer"
+            className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center absolute top-3 right-3 text-slate-200 hover:text-white rounded-full bg-[#1e293b] hover:bg-[#dc2626] transition-all hover:scale-[1.04] active:scale-[0.97] cursor-pointer"
           >
             <X className="w-5 h-5" aria-hidden="true" />
           </button>
 
           {submitted ? (
             <div role="status" aria-live="polite" className="text-center py-12 space-y-4">
-              <CheckCircle className="w-16 h-16 text-[#f87171] mx-auto animate-bounce" aria-hidden="true" />
+              <CheckCircle className="w-16 h-16 text-[#f87171] mx-auto animate-softPop" aria-hidden="true" />
               <h2 id={headingId} className="text-2xl sm:text-3xl font-heading text-white uppercase font-bold tracking-wide">
                 Paldies par pieteikumu!
               </h2>
@@ -253,7 +252,7 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
                   <button
                     type="submit"
                     disabled={!gdprConsent || isSubmitting}
-                    className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white font-heading text-lg sm:text-xl uppercase tracking-widest px-6 py-4 rounded-lg font-bold flex items-center justify-center space-x-2 transition-all transform hover:scale-[1.02] active:scale-95 shadow-xl border-2 border-white disabled:cursor-not-allowed cursor-pointer"
+                    className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white font-heading text-lg sm:text-xl uppercase tracking-widest px-6 py-4 rounded-lg font-bold flex items-center justify-center space-x-2 transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-xl border-2 border-white disabled:cursor-not-allowed cursor-pointer"
                   >
                     {isSubmitting ? (
                       <>
@@ -271,8 +270,7 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
               </form>
             </div>
           )}
-        </div>
-      )}
+      </div>
     </dialog>
   );
 }

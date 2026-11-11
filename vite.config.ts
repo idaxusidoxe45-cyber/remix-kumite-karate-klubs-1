@@ -20,10 +20,16 @@ export default defineConfig(() => {
       minify: 'esbuild' as const,
       rollupOptions: {
         output: {
-          manualChunks: {
-            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-            'vendor-icons': ['lucide-react'],
-            'vendor-motion': ['motion/react'],
+          manualChunks(id) {
+            if (/[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/.test(id)) {
+              return 'vendor-react';
+            }
+            if (/[\\/]node_modules[\\/]lucide-react[\\/]/.test(id)) {
+              return 'vendor-icons';
+            }
+            if (/[\\/]node_modules[\\/](motion|motion-dom|motion-utils|framer-motion)[\\/]/.test(id)) {
+              return 'vendor-motion';
+            }
           },
         },
       },

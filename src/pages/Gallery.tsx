@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useId } from 'react';
 import { GalleryItem } from '../types';
-import { getDynamicGalleryItems, fetchCloudGalleryItems } from '../data';
+import { getDynamicGalleryItemsAsync, fetchCloudGalleryItems } from '../data';
 import LightboxModal from '../components/LightboxModal';
 import { CheckCircle, AlertCircle } from 'lucide-react';
-import { m } from 'motion/react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
 import { sendFormToEmail } from '../services/emailService';
 import { formatLatvianPhoneNumber, isValidLatvianPhoneNumber } from '../utils/phone';
@@ -15,10 +14,19 @@ interface GalleryProps {
 export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProps) {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
-  const [allGalleryItems, setAllGalleryItems] = useState<GalleryItem[]>(() => getDynamicGalleryItems());
+  const [allGalleryItems, setAllGalleryItems] = useState<GalleryItem[]>([]);
 
   useEffect(() => {
-    fetchCloudGalleryItems().then((items) => setAllGalleryItems(items));
+    let active = true;
+    getDynamicGalleryItemsAsync().then((fallbackItems) => {
+      if (active) setAllGalleryItems((prev) => (prev.length === 0 ? fallbackItems : prev));
+    });
+    fetchCloudGalleryItems().then((items) => {
+      if (active) setAllGalleryItems(items);
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   const [formName, setFormName] = useState('');
@@ -126,6 +134,10 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
       <section className="relative bg-[#0a0a0c] text-white py-20 lg:py-28 overflow-hidden border-b-8 border-[#dc2626]">
         <img
           src="/assets_gallery/trenini/karate-web-17.webp"
+          srcSet="/assets_gallery/trenini/karate-web-17-800w.webp 800w, /assets_gallery/trenini/karate-web-17.webp 1600w"
+          sizes="100vw"
+          width={1600}
+          height={1066}
           alt=""
           aria-hidden="true"
           loading="eager"
@@ -134,7 +146,7 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
           className="absolute inset-0 w-full h-full object-cover opacity-45 filter grayscale pointer-events-none select-none"
         />
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <m.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <div className="hero-enter">
             <span className="text-xs sm:text-sm uppercase tracking-widest text-[#f87171] font-heading font-bold block mb-2">
               Kumite Karate Klubs
             </span>
@@ -144,7 +156,7 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
             <p className="text-slate-200 max-w-xl text-base font-sans">
               Atved bērnu uz bezmaksas izmēģinājuma treniņu! Atstāj savu vārdu un telefona numuru un mēs ar tevi sazināsimies.
             </p>
-          </m.div>
+          </div>
         </div>
       </section>
 
@@ -256,7 +268,7 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
                     <button
                       type="submit"
                       disabled={!formGdpr || formSubmitting}
-                      className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-xl border-2 border-white cursor-pointer"
+                      className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-xl border-2 border-white cursor-pointer"
                     >
                       {formSubmitting ? 'Sūta...' : 'Nosūtīt'}
                     </button>
@@ -278,7 +290,7 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
                 type="button"
                 aria-pressed={activeCategory === cat.key}
                 onClick={() => handleCategoryChange(cat.key)}
-                className={`min-h-[44px] font-heading text-xs sm:text-base uppercase tracking-wider px-4 py-2 sm:px-6 sm:py-2.5 rounded-full font-bold transition-colors duration-200 cursor-pointer ${
+                className={`min-h-[44px] font-heading text-xs sm:text-base uppercase tracking-wider px-4 py-2 sm:px-6 sm:py-2.5 rounded-full font-bold transition-all active:scale-[0.98] cursor-pointer ${
                   activeCategory === cat.key
                     ? 'bg-[#dc2626] text-white shadow-md border-2 border-[#0a0a0c]'
                     : 'bg-white text-[#0a0a0c] hover:bg-slate-100 border border-slate-300'
@@ -289,12 +301,9 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
             ))}
           </div>
 
-          <m.div
+          <div
             key={activeCategory}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.18, ease: 'easeOut' }}
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 p-1 sm:p-4 content-visibility-auto"
+            className="animate-fadeIn grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 p-1 sm:p-4 content-visibility-auto"
           >
             {filteredItems.map((item, idx) => (
               <InteractiveRepelCard
@@ -314,9 +323,9 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
                     alt={item.title}
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="w-full h-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200 flex items-end p-3 sm:p-4">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3 sm:p-4">
                     <div>
                       <p className="text-white font-semibold text-xs sm:text-base leading-tight">
                         {item.title}
@@ -329,7 +338,7 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
                 </button>
               </InteractiveRepelCard>
             ))}
-          </m.div>
+          </div>
         </div>
       </section>
 

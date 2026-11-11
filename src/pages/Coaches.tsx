@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Award, GraduationCap, ZoomIn } from 'lucide-react';
-import { m } from 'motion/react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
 import LightboxModal from '../components/LightboxModal';
 
@@ -102,6 +101,10 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
       <section className="relative bg-[#0a0a0c] text-white py-20 lg:py-28 overflow-hidden border-b-8 border-[#dc2626]">
         <img
           src="/assets_coaches/marikanikolajs-52-scaled.webp"
+          srcSet="/assets_coaches/marikanikolajs-52-800w.webp 800w, /assets_coaches/marikanikolajs-52-scaled.webp 1707w"
+          sizes="100vw"
+          width={1707}
+          height={2560}
           alt=""
           aria-hidden="true"
           loading="eager"
@@ -110,7 +113,7 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
           className="absolute inset-0 w-full h-full object-cover opacity-45 filter grayscale pointer-events-none select-none"
         />
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <m.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <div className="hero-enter">
             <span className="text-xs sm:text-sm uppercase tracking-widest text-[#f87171] font-heading font-bold block mb-2">
               Vairāk • Ātrāk • Spēcīgāk
             </span>
@@ -120,24 +123,18 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
             <button
               type="button"
               onClick={openTrialModal}
-              className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg sm:text-xl uppercase tracking-widest px-8 py-3.5 font-bold transition-all transform hover:scale-105 active:scale-95 shadow-xl border-2 border-white rounded-lg cursor-pointer"
+              className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg sm:text-xl uppercase tracking-widest px-8 py-3.5 font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-xl border-2 border-white rounded-lg cursor-pointer"
             >
               Pievienojies šodien
             </button>
-          </m.div>
+          </div>
         </div>
       </section>
 
       {/* Coach Nikolajs Bodrovs Profile */}
       <section className="py-24 bg-[#ffffff]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.1 }}
-            transition={{ duration: 0.5 }}
-            className="text-center max-w-3xl mx-auto mb-16"
-          >
+          <div className="scroll-reveal text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-4xl sm:text-6xl font-heading text-[#0f172a] uppercase font-bold tracking-wide mb-4">
               Nikolajs Bodrovs
             </h2>
@@ -153,7 +150,7 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
                 Treneris Nikolajs uzskata, ka karatē disciplinēja viņu, kas turpmāk viņam palīdzēja ne tikai sasniegt rezultātus sportā, bet arī dzīvē!
               </p>
             </div>
-          </m.div>
+          </div>
 
           {/* Education & Achievements Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch mb-20">
@@ -227,7 +224,7 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
                       alt={photo.title}
                       loading="lazy"
                       decoding="async"
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="w-full h-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03]"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3 sm:p-4">
                       <div className="w-full flex items-end justify-between gap-2">
@@ -255,15 +252,11 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
       {/* Video section */}
       <section className="py-24 bg-[#f8fafc] border-t border-slate-200 content-visibility-auto">
         <div className="max-w-4xl mx-auto px-4 text-center space-y-8">
-          <h2 className="text-3xl sm:text-4xl font-heading text-[#0f172a] uppercase font-bold tracking-wide">
+          <h2 className="scroll-reveal text-3xl sm:text-4xl font-heading text-[#0f172a] uppercase font-bold tracking-wide">
             Iepazīsti mūsu kluba atmosfēru
           </h2>
           <InteractiveRepelCard maxShift={14} maxRotate={6}>
-            <m.div
-              whileHover={{ scale: 1.025, y: -4 }}
-              transition={{ duration: 0.3 }}
-              className="rounded-xl overflow-hidden shadow-2xl bg-black aspect-video relative flex items-center justify-center border-4 border-slate-900 hover:border-[#dc2626] transition-all duration-300 hover:shadow-red-600/30"
-            >
+            <div className="scroll-reveal rounded-xl overflow-hidden shadow-2xl bg-black aspect-video relative flex items-center justify-center border-4 border-slate-900 hover:border-[#dc2626] transition-all duration-300 hover:shadow-red-600/30">
               <video
                 controls
                 playsInline
@@ -277,12 +270,12 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
                 <source src="/assets_video/kumite-video.mp4" type="video/mp4" />
                 Jūsu pārlūks neatbalsta video atskaņošanu.
               </video>
-            </m.div>
+            </div>
           </InteractiveRepelCard>
           <button
             type="button"
             onClick={openTrialModal}
-            className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-xl uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 rounded-lg font-bold shadow-xl transition-all transform hover:scale-105 active:scale-95 border-2 border-white cursor-pointer"
+            className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-xl uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 rounded-lg font-bold shadow-xl transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] border-2 border-white cursor-pointer"
           >
             Pievienojies mūsu karatē ģimenei
           </button>

@@ -24,6 +24,13 @@ export default function LightboxModal({
 }: LightboxModalProps) {
   const { dialogProps } = useDialogModal(Boolean(item), onClose);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const [renderedItem, setRenderedItem] = React.useState<GalleryItem | null>(item);
+
+  useEffect(() => {
+    if (item) {
+      setRenderedItem(item);
+    }
+  }, [item]);
 
   useEffect(() => {
     if (!item) return;
@@ -72,7 +79,8 @@ export default function LightboxModal({
     }
   };
 
-  const imgSrc = item?.fullImage || item?.image || '';
+  const activeItem = item || renderedItem;
+  const imgSrc = activeItem?.fullImage || activeItem?.image || '';
   const hasCounter =
     typeof currentIndex === 'number' &&
     typeof totalCount === 'number' &&
@@ -81,10 +89,10 @@ export default function LightboxModal({
   return (
     <dialog
       {...dialogProps}
-      aria-label={item?.title || 'Attēla priekšskatījums'}
+      aria-label={activeItem?.title || 'Attēla priekšskatījums'}
       className="m-auto p-0 w-[calc(100%-1.5rem)] max-w-5xl max-h-[92dvh] bg-[#0a0a0c] text-white rounded-2xl border border-slate-800 shadow-2xl overflow-hidden"
     >
-      {item && (
+      {activeItem && (
         <div
           className="relative flex flex-col items-center justify-center p-4 sm:p-6 max-h-[92dvh]"
           onTouchStart={handleTouchStart}
@@ -102,7 +110,7 @@ export default function LightboxModal({
               type="button"
               onClick={onClose}
               aria-label="Aizvērt attēlu"
-              className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center text-slate-200 hover:text-white rounded-full bg-slate-800/90 hover:bg-[#dc2626] border border-slate-700 transition-colors cursor-pointer"
+              className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center text-slate-200 hover:text-white rounded-full bg-slate-800/90 hover:bg-[#dc2626] border border-slate-700 transition-all hover:scale-[1.04] active:scale-[0.97] cursor-pointer"
             >
               <X className="w-6 h-6" aria-hidden="true" />
             </button>
@@ -114,7 +122,7 @@ export default function LightboxModal({
                 type="button"
                 onClick={onPrev}
                 aria-label="Iepriekšējais attēls"
-                className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 text-white bg-black/70 hover:bg-[#dc2626] rounded-full border border-white/20 transition-colors z-10 cursor-pointer"
+                className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 text-white bg-black/70 hover:bg-[#dc2626] rounded-full border border-white/20 transition-all hover:scale-[1.04] active:scale-[0.97] z-10 cursor-pointer"
               >
                 <ChevronLeft className="w-7 h-7" aria-hidden="true" />
               </button>
@@ -122,7 +130,7 @@ export default function LightboxModal({
 
             <img
               src={imgSrc}
-              alt={item.title || 'Kumite Karate'}
+              alt={activeItem.title || 'Kumite Karate'}
               decoding="async"
               className="max-h-[68dvh] max-w-full object-contain rounded-lg shadow-2xl border border-slate-800 select-none"
             />
@@ -132,16 +140,16 @@ export default function LightboxModal({
                 type="button"
                 onClick={onNext}
                 aria-label="Nākamais attēls"
-                className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 text-white bg-black/70 hover:bg-[#dc2626] rounded-full border border-white/20 transition-colors z-10 cursor-pointer"
+                className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 text-white bg-black/70 hover:bg-[#dc2626] rounded-full border border-white/20 transition-all hover:scale-[1.04] active:scale-[0.97] z-10 cursor-pointer"
               >
                 <ChevronRight className="w-7 h-7" aria-hidden="true" />
               </button>
             )}
           </div>
 
-          {(item.caption || item.title) && (
+          {(activeItem.caption || activeItem.title) && (
             <p className="text-slate-100 font-heading tracking-wide text-base sm:text-lg font-bold mt-3 text-center px-2">
-              {item.caption || item.title}
+              {activeItem.caption || activeItem.title}
             </p>
           )}
         </div>

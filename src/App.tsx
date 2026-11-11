@@ -1,6 +1,5 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
-import { LazyMotion, domAnimation, MotionConfig } from 'motion/react';
 import { PageTab } from './types';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -121,20 +120,14 @@ export default function App() {
 
   if (isAdminRoute) {
     return (
-      <MotionConfig reducedMotion="user">
-        <LazyMotion features={domAnimation} strict>
-          <Suspense fallback={<PageLoader />}>
-            <Admin />
-          </Suspense>
-        </LazyMotion>
-      </MotionConfig>
+      <Suspense fallback={<PageLoader />}>
+        <Admin />
+      </Suspense>
     );
   }
 
   return (
-    <MotionConfig reducedMotion="user">
-      <LazyMotion features={domAnimation} strict>
-        <div className="min-h-screen flex flex-col bg-[#ffffff] text-[#0f172a] font-sans selection:bg-[#dc2626] selection:text-white relative overflow-x-clip">
+    <div className="min-h-screen flex flex-col bg-[#ffffff] text-[#0f172a] font-sans selection:bg-[#dc2626] selection:text-white relative overflow-x-clip">
           <a href="#main-content" className="visually-hidden skip-link">
             Pāriet uz galveno saturu
           </a>
@@ -151,7 +144,8 @@ export default function App() {
           />
 
           <main id="main-content" tabIndex={-1} className="flex-grow relative z-10 focus:outline-none">
-            <Suspense fallback={<PageLoader />}>
+            <div key={location.pathname} className="page-enter">
+              <Suspense fallback={<PageLoader />}>
               <Routes>
                 <Route
                   path="/"
@@ -191,7 +185,8 @@ export default function App() {
                 />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
-            </Suspense>
+              </Suspense>
+            </div>
           </main>
 
           <Footer />
@@ -216,7 +211,5 @@ export default function App() {
 
           <CookieBanner />
         </div>
-      </LazyMotion>
-    </MotionConfig>
   );
 }

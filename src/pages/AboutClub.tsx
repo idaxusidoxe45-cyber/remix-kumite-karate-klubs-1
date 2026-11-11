@@ -9,7 +9,6 @@ import {
   fetchCloudTestimonials,
 } from '../data';
 import { Star } from 'lucide-react';
-import { m } from 'motion/react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
 import AccordionItem from '../components/AccordionItem';
 
@@ -58,6 +57,10 @@ export default function AboutClub({
       <section className="relative bg-[#0a0a0c] text-white py-20 lg:py-28 overflow-hidden border-b-8 border-[#dc2626]">
         <img
           src="/assets_gallery/trenini/karate-web-17.webp"
+          srcSet="/assets_gallery/trenini/karate-web-17-800w.webp 800w, /assets_gallery/trenini/karate-web-17.webp 1600w"
+          sizes="100vw"
+          width={1600}
+          height={1066}
           alt=""
           aria-hidden="true"
           loading="eager"
@@ -66,7 +69,7 @@ export default function AboutClub({
           className="absolute inset-0 w-full h-full object-cover opacity-45 filter grayscale pointer-events-none select-none"
         />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <m.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <div className="hero-enter">
             <span className="text-xs sm:text-sm uppercase tracking-widest text-[#f87171] font-heading font-bold block mb-2">
               Kopš 2023
             </span>
@@ -77,11 +80,11 @@ export default function AboutClub({
               href="https://wa.link/y3zuwq"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto min-h-[48px] text-center inline-flex items-center justify-center bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-xl uppercase tracking-wider px-6 sm:px-8 py-3.5 font-bold transition-all transform hover:scale-105 active:scale-95 rounded-lg border-2 border-white shadow-xl"
+              className="w-full sm:w-auto min-h-[48px] text-center inline-flex items-center justify-center bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-xl uppercase tracking-wider px-6 sm:px-8 py-3.5 font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] rounded-lg border-2 border-white shadow-xl"
             >
               Uzdod jautājumu
             </a>
-          </m.div>
+          </div>
         </div>
       </section>
 
@@ -100,13 +103,7 @@ export default function AboutClub({
       {/* Main Club Info */}
       <section className="py-24 bg-[#ffffff]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.1 }}
-            transition={{ duration: 0.5 }}
-            className="space-y-6"
-          >
+          <div className="scroll-reveal space-y-6">
             <h2 className="text-3xl sm:text-5xl font-heading text-[#0f172a] font-bold uppercase tracking-wide">
               Mūsu Klubs
             </h2>
@@ -129,12 +126,12 @@ export default function AboutClub({
               <button
                 type="button"
                 onClick={openTrialModal}
-                className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg sm:text-xl uppercase tracking-widest px-8 py-4 rounded-lg font-bold shadow-xl transition-all transform hover:scale-105 active:scale-95 border-2 border-white cursor-pointer"
+                className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg sm:text-xl uppercase tracking-widest px-8 py-4 rounded-lg font-bold shadow-xl transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] border-2 border-white cursor-pointer"
               >
                 Pievienojies mūsu karatē ģimenei
               </button>
             </div>
-          </m.div>
+          </div>
         </div>
       </section>
 
@@ -158,7 +155,7 @@ export default function AboutClub({
                       e.stopPropagation();
                       setCurrentTab('coaches');
                     }}
-                    className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-lg border-2 border-white cursor-pointer relative z-20"
+                    className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-lg border-2 border-white cursor-pointer relative z-20"
                   >
                     Vairāk par treneri
                   </button>
@@ -318,14 +315,7 @@ export default function AboutClub({
               .filter((t) => t.status === 'published')
               .map((t, idx) => (
                 <InteractiveRepelCard key={t.id} maxShift={14} maxRotate={6}>
-                  <m.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    whileHover={{ y: -6, scale: 1.02 }}
-                    viewport={{ once: true, amount: 0.1 }}
-                    transition={{ duration: 0.3, delay: idx * 0.06 }}
-                    className="bg-white rounded-xl p-8 border border-slate-200 shadow-md flex flex-col justify-between h-full hover:shadow-xl hover:border-[#dc2626] transition-all"
-                  >
+                  <div className="scroll-reveal bg-white rounded-xl p-8 border border-slate-200 shadow-md flex flex-col justify-between h-full hover:-translate-y-1 hover:shadow-xl hover:border-[#dc2626] transition-all duration-300">
                     <div className="space-y-4">
                       <div className="flex text-amber-500 space-x-1" aria-label={`Vērtējums ${t.rating || 5} no 5 zvaigznēm`}>
                         {[...Array(t.rating || 5)].map((_, i) => (
@@ -342,7 +332,7 @@ export default function AboutClub({
                       </p>
                       {t.role && <span className="text-xs text-slate-600 font-sans">{t.role}</span>}
                     </div>
-                  </m.div>
+                  </div>
                 </InteractiveRepelCard>
               ))}
           </div>
@@ -352,7 +342,7 @@ export default function AboutClub({
               <button
                 type="button"
                 onClick={openReviewModal}
-                className="w-full sm:w-auto min-h-[48px] inline-block bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-md border-2 border-white cursor-pointer"
+                className="w-full sm:w-auto min-h-[48px] inline-block bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-md border-2 border-white cursor-pointer"
               >
                 Atstāt atsauksmi
               </button>

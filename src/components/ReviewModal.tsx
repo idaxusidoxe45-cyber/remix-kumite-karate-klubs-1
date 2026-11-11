@@ -98,12 +98,11 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
       aria-labelledby={headingId}
       className="m-auto p-0 w-[calc(100%-1.5rem)] max-w-lg bg-[#0a0a0c] border-2 border-slate-800 rounded-2xl shadow-2xl text-white max-h-[90dvh] overflow-y-auto"
     >
-      {isOpen && (
-        <div className="relative p-5 sm:p-8 animate-fadeIn">
+      <div className="relative p-5 sm:p-8">
           <button
             type="button"
             onClick={onClose}
-            className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center absolute top-3 right-3 text-slate-200 hover:text-white transition-colors rounded-full bg-slate-800/90 hover:bg-[#dc2626] cursor-pointer"
+            className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center absolute top-3 right-3 text-slate-200 hover:text-white transition-all hover:scale-[1.04] active:scale-[0.97] rounded-full bg-slate-800/90 hover:bg-[#dc2626] cursor-pointer"
             aria-label="Aizvērt atsauksmes logu"
           >
             <X className="w-5 h-5" aria-hidden="true" />
@@ -111,7 +110,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
 
           {submitted ? (
             <div role="status" aria-live="polite" className="py-8 text-center space-y-4">
-              <CheckCircle className="w-16 h-16 text-[#f87171] mx-auto animate-bounce" aria-hidden="true" />
+              <CheckCircle className="w-16 h-16 text-[#f87171] mx-auto animate-softPop" aria-hidden="true" />
               <h2 id={headingId} className="text-2xl font-heading font-bold uppercase tracking-wide text-white">
                 Paldies par atsauksmi!
               </h2>
@@ -185,10 +184,10 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
                       onClick={() => setRating(star)}
                       aria-label={`${star} no 5 zvaigznēm`}
                       aria-pressed={rating === star}
-                      className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-lg hover:bg-slate-800/70 transition-transform active:scale-110 cursor-pointer"
+                      className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-lg hover:bg-slate-800/70 transition-all hover:scale-[1.06] active:scale-[0.96] cursor-pointer"
                     >
                       <Star
-                        className={`w-6 h-6 ${
+                        className={`w-6 h-6 transition-colors ${
                           star <= rating
                             ? 'text-yellow-400 fill-yellow-400'
                             : 'text-slate-500'
@@ -227,14 +226,14 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
                 <button
                   type="button"
                   onClick={onClose}
-                  className="min-h-[44px] px-5 py-2.5 rounded-lg border border-slate-600 text-slate-200 hover:bg-slate-800 text-xs sm:text-sm font-heading uppercase font-bold cursor-pointer"
+                  className="min-h-[44px] px-5 py-2.5 rounded-lg border border-slate-600 text-slate-200 hover:bg-slate-800 text-xs sm:text-sm font-heading uppercase font-bold transition-all active:scale-[0.98] cursor-pointer"
                 >
                   Atcelt
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="min-h-[44px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white font-heading text-xs sm:text-sm uppercase tracking-widest px-6 py-2.5 rounded-lg font-bold transition-all shadow-lg border border-white/20 inline-flex items-center justify-center space-x-1.5 disabled:cursor-not-allowed cursor-pointer"
+                  className="min-h-[44px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white font-heading text-xs sm:text-sm uppercase tracking-widest px-6 py-2.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 active:scale-[0.98] shadow-lg border border-white/20 inline-flex items-center justify-center space-x-1.5 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {isSubmitting ? (
                     <>
@@ -248,8 +247,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
               </div>
             </form>
           )}
-        </div>
-      )}
+      </div>
     </dialog>
   );
 }

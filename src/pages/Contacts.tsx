@@ -1,6 +1,5 @@
 import React, { useState, useId } from 'react';
 import { MapPin, Phone, Mail, Clock, CheckCircle, Loader2, AlertCircle } from 'lucide-react';
-import { m } from 'motion/react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
 import { sendFormToEmail } from '../services/emailService';
 import { formatLatvianPhoneNumber, isValidLatvianPhoneNumber } from '../utils/phone';
@@ -100,6 +99,10 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
       <section className="relative bg-[#0a0a0c] text-white py-20 lg:py-28 overflow-hidden border-b-8 border-[#dc2626]">
         <img
           src="/assets_gallery/trenini/karate-web-17.webp"
+          srcSet="/assets_gallery/trenini/karate-web-17-800w.webp 800w, /assets_gallery/trenini/karate-web-17.webp 1600w"
+          sizes="100vw"
+          width={1600}
+          height={1066}
           alt=""
           aria-hidden="true"
           loading="eager"
@@ -108,7 +111,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
           className="absolute inset-0 w-full h-full object-cover opacity-45 filter grayscale pointer-events-none select-none"
         />
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <m.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <div className="hero-enter">
             <span className="text-xs sm:text-sm uppercase tracking-widest text-[#f87171] font-heading font-bold block mb-2">
               Kumite Karate Klubs
             </span>
@@ -118,11 +121,11 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
             <button
               type="button"
               onClick={openTrialModal}
-              className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg sm:text-xl uppercase tracking-widest px-8 py-3.5 font-bold transition-all transform hover:scale-105 active:scale-95 shadow-xl border-2 border-white rounded-lg cursor-pointer"
+              className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg sm:text-xl uppercase tracking-widest px-8 py-3.5 font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-xl border-2 border-white rounded-lg cursor-pointer"
             >
               Pievienojies mums
             </button>
-          </m.div>
+          </div>
         </div>
       </section>
 
@@ -138,7 +141,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                 </h2>
                 {submitted ? (
                   <div role="status" aria-live="polite" className="text-center py-12 space-y-4">
-                    <CheckCircle className="w-16 h-16 text-[#f87171] mx-auto animate-bounce" aria-hidden="true" />
+                    <CheckCircle className="w-16 h-16 text-[#f87171] mx-auto animate-softPop" aria-hidden="true" />
                     <h3 className="text-3xl font-heading text-white uppercase font-bold">
                       Paldies par ziņu!
                     </h3>
@@ -268,7 +271,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                       <button
                         type="submit"
                         disabled={!gdprConsent || isSubmitting}
-                        className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white font-heading text-xl uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-xl border-2 border-white flex items-center justify-center space-x-2 disabled:cursor-not-allowed cursor-pointer"
+                        className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white font-heading text-xl uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-xl border-2 border-white flex items-center justify-center space-x-2 disabled:cursor-not-allowed cursor-pointer"
                       >
                         {isSubmitting ? (
                           <>
@@ -344,7 +347,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
 
           {/* Map & Waze Link */}
           <InteractiveRepelCard maxShift={10} maxRotate={4}>
-            <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 text-center space-y-6 shadow-md content-visibility-auto">
+            <div className="scroll-reveal bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 text-center space-y-6 shadow-md content-visibility-auto">
               <h2 className="text-3xl font-heading text-[#0f172a] uppercase font-bold tracking-wide">
                 Kā mūs atrast
               </h2>
@@ -362,10 +365,10 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                     height={284}
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-72 sm:h-80 object-cover transition-transform duration-500"
+                    className="w-full h-72 sm:h-80 object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.02]"
                   />
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-4">
-                    <span className="min-h-[48px] inline-flex items-center justify-center bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-sm sm:text-xl uppercase tracking-wider px-5 sm:px-8 py-3 sm:py-4 rounded-xl shadow-2xl font-bold transition-all transform group-hover:scale-105 active:scale-95 border-2 border-white text-center">
+                    <span className="min-h-[48px] inline-flex items-center justify-center bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-sm sm:text-xl uppercase tracking-wider px-5 sm:px-8 py-3 sm:py-4 rounded-xl shadow-2xl font-bold transition-all group-hover:-translate-y-0.5 group-hover:scale-[1.02] active:scale-[0.98] border-2 border-white text-center">
                       Atvērt Waze navigāciju
                     </span>
                   </div>

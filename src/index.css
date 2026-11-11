@@ -57,16 +57,77 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
 }
 
-/* Native modal dialog containment without mutating body scroll state */
+:root {
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  --default-transition-duration: 280ms;
+  --default-transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Native top-layer modal dialogs with smooth entry/exit transitions */
+dialog {
+  opacity: 0;
+  transition-property: opacity, transform, overlay, display;
+  transition-duration: 340ms;
+  transition-timing-function: var(--ease-smooth);
+  transition-behavior: allow-discrete;
+}
+
+dialog[open] {
+  opacity: 1;
+}
+
+@starting-style {
+  dialog[open] {
+    opacity: 0;
+  }
+}
+
+dialog::backdrop {
+  background-color: rgba(10, 10, 12, 0);
+  backdrop-filter: blur(0px);
+  overflow: hidden;
+  overscroll-behavior: contain;
+  transition-property: background-color, backdrop-filter, overlay, display;
+  transition-duration: 340ms;
+  transition-timing-function: var(--ease-smooth);
+  transition-behavior: allow-discrete;
+}
+
+dialog[open]::backdrop {
+  background-color: rgba(10, 10, 12, 0.78);
+  backdrop-filter: blur(4px);
+}
+
+@starting-style {
+  dialog[open]::backdrop {
+    background-color: rgba(10, 10, 12, 0);
+    backdrop-filter: blur(0px);
+  }
+}
+
 dialog:modal {
   overscroll-behavior: contain;
 }
 
-dialog::backdrop {
-  background-color: rgba(10, 10, 12, 0.78);
-  backdrop-filter: blur(4px);
-  overflow: hidden;
-  overscroll-behavior: contain;
+@media (prefers-reduced-motion: no-preference) {
+  dialog {
+    transform: translate3d(0, 12px, 0) scale(0.975);
+  }
+  dialog[open] {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  @starting-style {
+    dialog[open] {
+      transform: translate3d(0, 12px, 0) scale(0.975);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog,
+  dialog::backdrop {
+    transition-duration: 150ms;
+  }
 }
 
 /* Validation outline shown only after user interaction */
@@ -110,32 +171,151 @@ dialog::backdrop {
   background-size: 32px 32px;
 }
 
-/* Custom animations */
+/* Custom silky GPU compositor animations */
 @keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-8px) rotate(2deg); }
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(0, -8px, 0) rotate(1.5deg); }
 }
 
 @keyframes pulse-slow {
-  0%, 100% { opacity: 0.7; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.03); }
-}
-
-.animate-pulse-slow {
-  animation: pulse-slow 8s ease-in-out infinite;
+  0%, 100% { opacity: 0.65; transform: scale(1); }
+  50% { opacity: 0.95; transform: scale(1.03); }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.98) translateY(6px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+  from { opacity: 0; transform: translate3d(0, 8px, 0) scale(0.985); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes softPop {
+  from { opacity: 0; transform: scale(0.86); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes heroEnter {
+  from { opacity: 0.94; transform: translate3d(0, 10px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes pageEnter {
+  from { opacity: 0.94; transform: translate3d(0, 6px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes smoothScrollReveal {
+  from { opacity: 0.08; transform: translate3d(0, 16px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
 .animate-fadeIn {
-  animation: fadeIn 0.22s ease-out both;
+  animation: fadeIn 340ms var(--ease-smooth) both;
+}
+
+.animate-softPop {
+  animation: softPop 460ms var(--ease-smooth) both;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-float {
+    animation: float 7s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 9s ease-in-out infinite;
+  }
+
+  .hero-enter {
+    animation: heroEnter 480ms var(--ease-smooth) both;
+  }
+
+  .page-enter {
+    animation: pageEnter 340ms var(--ease-smooth) both;
+  }
+
+  @supports ((animation-timeline: view()) and (animation-range: entry)) {
+    .scroll-reveal {
+      animation: smoothScrollReveal 1s linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 24%;
+    }
+  }
+}
+
+/* Mobile nav drawer & accessible FAQ accordion collapsible grids */
+.drawer-grid,
+.accordion-grid {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+  transition-property: grid-template-rows, opacity, visibility;
+  transition-duration: 380ms, 300ms, 380ms;
+  transition-timing-function: var(--ease-smooth), ease-out, step-end;
+}
+
+.drawer-grid[data-open="true"],
+.accordion-grid[data-open="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+  transition-timing-function: var(--ease-smooth), ease-out, step-start;
+}
+
+.drawer-inner,
+.accordion-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.drawer-content,
+.accordion-content {
+  transform: translate3d(0, -8px, 0);
+  transition: transform 380ms var(--ease-smooth);
+}
+
+.drawer-grid[data-open="true"] .drawer-content,
+.accordion-grid[data-open="true"] .accordion-content {
+  transform: translate3d(0, 0, 0);
+}
+
+/* Desktop hover dropdown menu */
+.dropdown-menu {
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, 6px, 0) scale(0.985);
+  transition-property: opacity, transform, visibility;
+  transition-duration: 280ms, 280ms, 280ms;
+  transition-timing-function: var(--ease-smooth), var(--ease-smooth), step-end;
+}
+
+.dropdown-menu[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+  transform: translate3d(0, 0, 0) scale(1);
+  transition-timing-function: var(--ease-smooth), var(--ease-smooth), step-start;
+}
+
+/* Cookie consent banner entry/exit */
+.cookie-banner {
+  opacity: 1;
+  transition: opacity 340ms var(--ease-smooth), transform 340ms var(--ease-smooth);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cookie-banner {
+    transform: translate3d(0, 0, 0);
+  }
+  @starting-style {
+    .cookie-banner {
+      opacity: 0;
+      transform: translate3d(0, 24px, 0);
+    }
+  }
+  .cookie-banner[data-closing="true"] {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+    pointer-events: none;
+  }
 }
 
 /* Custom scrollbar */
@@ -187,10 +367,25 @@ html {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-fadeIn,
+  .animate-softPop {
+    animation-duration: 160ms;
+  }
+  .drawer-grid,
+  .accordion-grid,
+  .dropdown-menu {
+    transition-duration: 160ms;
+  }
+  .drawer-content,
+  .accordion-content,
+  .dropdown-menu {
+    transform: none;
+  }
+  .cookie-banner[data-closing="true"] {
+    opacity: 0;
+    pointer-events: none;
   }
 }

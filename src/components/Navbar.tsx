@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef, useId } from 'react';
 import { Link } from 'react-router-dom';
 import { PageTab } from '../types';
-import { Menu, X, Facebook, Instagram, Youtube, ChevronDown } from 'lucide-react';
-import { m, AnimatePresence } from 'motion/react';
+import { Facebook, Instagram, Youtube, ChevronDown } from 'lucide-react';
 import { Logo } from './Logo';
 
 interface NavbarProps {
@@ -74,7 +73,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
             >
               <Logo
                 variant="dark"
-                className="w-8 h-8 xs:w-9 xs:h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 group-hover:scale-105 transition-transform shadow-lg flex-shrink-0"
+                className="w-8 h-8 xs:w-9 xs:h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 group-hover:scale-[1.03] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-lg flex-shrink-0"
               />
               <div className="flex flex-col justify-center flex-shrink-0">
                 <span className="font-heading text-xs xs:text-sm sm:text-base md:text-lg lg:text-base xl:text-lg font-bold tracking-wider text-white group-hover:text-[#f87171] transition-colors leading-snug block uppercase whitespace-nowrap">
@@ -124,7 +123,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                       >
                         <span>{item.label}</span>
                         <ChevronDown
-                          className={`w-4 h-4 transition-transform duration-200 ${
+                          className={`w-4 h-4 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                             aboutDropdownOpen ? 'rotate-180' : ''
                           }`}
                           aria-hidden="true"
@@ -137,43 +136,38 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                         )}
                       </button>
 
-                      <AnimatePresence>
-                        {aboutDropdownOpen && (
-                          <m.div
-                            id={aboutMenuId}
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 8 }}
-                            transition={{ duration: 0.16 }}
-                            className="absolute top-full left-0 w-48 bg-[#0a0a0c] shadow-xl rounded-b-lg border-t-2 border-[#dc2626] border-x border-b border-[#1e293b] py-1.5 z-50"
-                          >
-                            <Link
-                              to="/about"
-                              aria-current={currentTab === 'about' ? 'page' : undefined}
-                              onClick={() => setAboutDropdownOpen(false)}
-                              className={`block w-full text-left px-4 py-3 text-sm font-heading tracking-wider transition-colors ${
-                                currentTab === 'about'
-                                  ? 'bg-[#1e293b] text-[#f87171] font-bold border-l-4 border-[#dc2626]'
-                                  : 'hover:bg-[#1e293b] text-slate-100 hover:text-[#f87171]'
-                              }`}
-                            >
-                              PAR KLUBU
-                            </Link>
-                            <Link
-                              to="/coaches"
-                              aria-current={currentTab === 'coaches' ? 'page' : undefined}
-                              onClick={() => setAboutDropdownOpen(false)}
-                              className={`block w-full text-left px-4 py-3 text-sm font-heading tracking-wider transition-colors ${
-                                currentTab === 'coaches'
-                                  ? 'bg-[#1e293b] text-[#f87171] font-bold border-l-4 border-[#dc2626]'
-                                  : 'hover:bg-[#1e293b] text-slate-100 hover:text-[#f87171]'
-                              }`}
-                            >
-                              TRENERI
-                            </Link>
-                          </m.div>
-                        )}
-                      </AnimatePresence>
+                      <div
+                        id={aboutMenuId}
+                        data-open={aboutDropdownOpen ? 'true' : 'false'}
+                        aria-hidden={!aboutDropdownOpen}
+                        {...(!aboutDropdownOpen ? { inert: true } : {})}
+                        className="dropdown-menu absolute top-full left-0 w-48 bg-[#0a0a0c] shadow-xl rounded-b-lg border-t-2 border-[#dc2626] border-x border-b border-[#1e293b] py-1.5 z-50"
+                      >
+                        <Link
+                          to="/about"
+                          aria-current={currentTab === 'about' ? 'page' : undefined}
+                          onClick={() => setAboutDropdownOpen(false)}
+                          className={`block w-full text-left px-4 py-3 text-sm font-heading tracking-wider transition-colors ${
+                            currentTab === 'about'
+                              ? 'bg-[#1e293b] text-[#f87171] font-bold border-l-4 border-[#dc2626]'
+                              : 'hover:bg-[#1e293b] text-slate-100 hover:text-[#f87171]'
+                          }`}
+                        >
+                          PAR KLUBU
+                        </Link>
+                        <Link
+                          to="/coaches"
+                          aria-current={currentTab === 'coaches' ? 'page' : undefined}
+                          onClick={() => setAboutDropdownOpen(false)}
+                          className={`block w-full text-left px-4 py-3 text-sm font-heading tracking-wider transition-colors ${
+                            currentTab === 'coaches'
+                              ? 'bg-[#1e293b] text-[#f87171] font-bold border-l-4 border-[#dc2626]'
+                              : 'hover:bg-[#1e293b] text-slate-100 hover:text-[#f87171]'
+                          }`}
+                        >
+                          TRENERI
+                        </Link>
+                      </div>
                     </div>
                   );
                 }
@@ -210,7 +204,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Kumite Karate Klubs Facebook profils"
-                  className="w-9 h-9 rounded bg-[#1e293b] hover:bg-[#1877F2] text-white flex items-center justify-center transition-all transform hover:scale-110 active:scale-90"
+                  className="w-9 h-9 rounded bg-[#1e293b] hover:bg-[#1877F2] text-white flex items-center justify-center transition-all hover:scale-[1.04] active:scale-[0.97]"
                   title="Facebook"
                 >
                   <Facebook className="w-4 h-4" aria-hidden="true" />
@@ -220,7 +214,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Kumite Karate Klubs Instagram profils"
-                  className="w-9 h-9 rounded bg-[#1e293b] hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] text-white flex items-center justify-center transition-all transform hover:scale-110 active:scale-90"
+                  className="w-9 h-9 rounded bg-[#1e293b] hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] text-white flex items-center justify-center transition-all hover:scale-[1.04] active:scale-[0.97]"
                   title="Instagram"
                 >
                   <Instagram className="w-4 h-4" aria-hidden="true" />
@@ -230,7 +224,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Kumite Karate Klubs YouTube kanāls"
-                  className="w-9 h-9 rounded bg-[#1e293b] hover:bg-[#dc2626] text-white flex items-center justify-center transition-all transform hover:scale-110 active:scale-90"
+                  className="w-9 h-9 rounded bg-[#1e293b] hover:bg-[#dc2626] text-white flex items-center justify-center transition-all hover:scale-[1.04] active:scale-[0.97]"
                   title="YouTube"
                 >
                   <Youtube className="w-4 h-4" aria-hidden="true" />
@@ -240,7 +234,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
               <button
                 type="button"
                 onClick={openTrialModal}
-                className="min-h-[44px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading tracking-wider px-3.5 xl:px-4 py-2 rounded shadow-lg border border-[#ef4444] transition-all transform hover:scale-105 active:scale-95 text-xs xl:text-sm uppercase font-semibold whitespace-nowrap cursor-pointer"
+                className="min-h-[44px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading tracking-wider px-3.5 xl:px-4 py-2 rounded shadow-lg border border-[#ef4444] transition-all hover:-translate-y-0.5 active:scale-[0.98] text-xs xl:text-sm uppercase font-semibold whitespace-nowrap cursor-pointer"
               >
                 Bezmaksas treniņš
               </button>
@@ -251,7 +245,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
               <button
                 type="button"
                 onClick={openTrialModal}
-                className="min-h-[44px] bg-[#dc2626] hover:bg-[#b91c1c] text-white text-xs sm:text-sm font-heading tracking-wider px-3 sm:px-4 py-2 rounded-lg uppercase font-bold shadow-md border border-red-500/50 transition-all active:scale-95 whitespace-nowrap cursor-pointer"
+                className="min-h-[44px] bg-[#dc2626] hover:bg-[#b91c1c] text-white text-xs sm:text-sm font-heading tracking-wider px-3 sm:px-4 py-2 rounded-lg uppercase font-bold shadow-md border border-red-500/50 transition-all active:scale-[0.98] whitespace-nowrap cursor-pointer"
               >
                 Pieteikties
               </button>
@@ -261,29 +255,40 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                 aria-expanded={mobileMenuOpen}
                 aria-controls={mobileMenuId}
                 aria-label={mobileMenuOpen ? 'Aizvērt navigācijas izvēlni' : 'Atvērt navigācijas izvēlni'}
-                className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-lg text-white bg-[#1e293b] hover:bg-[#dc2626] border border-slate-700/80 transition-colors duration-150 active:scale-95 shadow-sm flex-shrink-0 cursor-pointer"
+                className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-lg text-white bg-[#1e293b] hover:bg-[#dc2626] border border-slate-700/80 transition-all active:scale-[0.96] shadow-sm flex-shrink-0 cursor-pointer"
               >
-                {mobileMenuOpen ? (
-                  <X className="w-6 h-6" aria-hidden="true" />
-                ) : (
-                  <Menu className="w-6 h-6" aria-hidden="true" />
-                )}
+                <span aria-hidden="true" className="w-5 h-4 flex flex-col justify-center items-center gap-[5px]">
+                  <span
+                    className={`block w-5 h-[2px] rounded-full bg-current transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                      mobileMenuOpen ? 'translate-y-[7px] rotate-45' : ''
+                    }`}
+                  />
+                  <span
+                    className={`block w-5 h-[2px] rounded-full bg-current transition-all duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                      mobileMenuOpen ? 'opacity-0 scale-x-0' : 'opacity-100 scale-x-100'
+                    }`}
+                  />
+                  <span
+                    className={`block w-5 h-[2px] rounded-full bg-current transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                      mobileMenuOpen ? '-translate-y-[7px] -rotate-45' : ''
+                    }`}
+                  />
+                </span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Mobile Drawer */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <m.div
-              id={mobileMenuId}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.18, ease: 'easeOut' }}
-              className="lg:hidden bg-[#0a0a0c] border-b border-[#1e293b] px-4 pt-2 pb-6 space-y-1.5 shadow-2xl max-h-[85vh] overflow-y-auto"
-            >
+        {/* Smooth GPU Mobile Drawer */}
+        <div
+          id={mobileMenuId}
+          data-open={mobileMenuOpen ? 'true' : 'false'}
+          aria-hidden={!mobileMenuOpen}
+          {...(!mobileMenuOpen ? { inert: true } : {})}
+          className="lg:hidden drawer-grid bg-[#0a0a0c] shadow-2xl"
+        >
+          <div className="drawer-inner">
+            <div className="drawer-content border-t border-b border-[#1e293b] px-4 pt-2 pb-6 space-y-1.5 max-h-[85vh] overflow-y-auto">
               <Link
                 to="/"
                 aria-current={currentTab === 'home' ? 'page' : undefined}
@@ -363,7 +368,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Kumite Karate Klubs Facebook profils"
-                  className="w-11 h-11 inline-flex items-center justify-center bg-[#1e293b] hover:bg-[#1877F2] text-white rounded-lg transition-all active:scale-95"
+                  className="w-11 h-11 inline-flex items-center justify-center bg-[#1e293b] hover:bg-[#1877F2] text-white rounded-lg transition-all hover:scale-[1.04] active:scale-[0.97]"
                 >
                   <Facebook className="w-5 h-5" aria-hidden="true" />
                 </a>
@@ -372,7 +377,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Kumite Karate Klubs Instagram profils"
-                  className="w-11 h-11 inline-flex items-center justify-center bg-[#1e293b] text-white rounded-lg hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] transition-all active:scale-95"
+                  className="w-11 h-11 inline-flex items-center justify-center bg-[#1e293b] text-white rounded-lg hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] transition-all hover:scale-[1.04] active:scale-[0.97]"
                 >
                   <Instagram className="w-5 h-5" aria-hidden="true" />
                 </a>
@@ -381,14 +386,14 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Kumite Karate Klubs YouTube kanāls"
-                  className="w-11 h-11 inline-flex items-center justify-center bg-[#1e293b] text-white rounded-lg hover:bg-[#dc2626] transition-all active:scale-95"
+                  className="w-11 h-11 inline-flex items-center justify-center bg-[#1e293b] text-white rounded-lg hover:bg-[#dc2626] transition-all hover:scale-[1.04] active:scale-[0.97]"
                 >
                   <Youtube className="w-5 h-5" aria-hidden="true" />
                 </a>
               </div>
-            </m.div>
-          )}
-        </AnimatePresence>
+            </div>
+          </div>
+        </div>
       </nav>
     </header>
   );

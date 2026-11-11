@@ -8,7 +8,6 @@ import {
   fetchCloudGalleryItems,
 } from '../data';
 import { CheckCircle, ArrowRight, Star, MapPin, Phone, Mail, AlertCircle } from 'lucide-react';
-import { m } from 'motion/react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
 import { Logo } from '../components/Logo';
 import YouTubeFacade from '../components/YouTubeFacade';
@@ -135,7 +134,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
 
   useEffect(() => {
     fetchCloudTestimonials().then((revs) => setTestimonials(revs));
-    fetchCloudGalleryItems().then((items) => setGalleryList(items));
+    fetchCloudGalleryItems({ previewOnly: true }).then((items) => setGalleryList(items));
   }, []);
 
   const previewGallery = galleryList.slice(0, 3);
@@ -151,6 +150,10 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
         />
         <img
           src="/assets_gallery/trenini/karate-web-17.webp"
+          srcSet="/assets_gallery/trenini/karate-web-17-800w.webp 800w, /assets_gallery/trenini/karate-web-17.webp 1600w"
+          sizes="100vw"
+          width={1600}
+          height={1066}
           alt=""
           aria-hidden="true"
           loading="eager"
@@ -160,12 +163,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
         />
 
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center lg:text-left max-w-3xl"
-          >
+          <div className="hero-enter text-center lg:text-left max-w-3xl">
             <div className="flex items-center justify-center lg:justify-start space-x-2.5 mb-5 flex-wrap gap-y-2">
               <Logo variant="dark" className="w-8 h-8 sm:w-10 sm:h-10 shadow-lg flex-shrink-0" />
               <span className="inline-flex items-center bg-[#1e293b]/90 border border-slate-700/80 px-3 py-1 rounded-full text-[11px] sm:text-xs uppercase tracking-wider text-[#f87171] font-heading font-bold shadow-sm">
@@ -181,39 +179,29 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 sm:gap-4 w-full">
-              <m.button
+              <button
                 type="button"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
                 onClick={openTrialModal}
-                className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-lg uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 font-bold transition-all shadow-xl rounded-xl border border-red-500 hover:border-red-400 cursor-pointer"
+                className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-lg uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-xl rounded-xl border border-red-500 hover:border-red-400 cursor-pointer"
               >
                 Piesakies bezmaksas nodarbībai
-              </m.button>
-              <m.button
+              </button>
+              <button
                 type="button"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
                 onClick={() => setCurrentTab('about')}
-                className="w-full sm:w-auto min-h-[48px] bg-[#1e293b]/90 hover:bg-[#334155] text-white font-heading text-base sm:text-lg uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 font-bold transition-all rounded-xl border border-slate-700 shadow-md cursor-pointer"
+                className="w-full sm:w-auto min-h-[48px] bg-[#1e293b]/90 hover:bg-[#334155] text-white font-heading text-base sm:text-lg uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] rounded-xl border border-slate-700 shadow-md cursor-pointer"
               >
                 Uzzini vairāk
-              </m.button>
+              </button>
             </div>
-          </m.div>
+          </div>
         </div>
       </section>
 
       {/* Age Groups Section */}
       <section className="py-24 bg-[#f8fafc] border-b border-slate-200 content-visibility-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.1 }}
-            transition={{ duration: 0.5 }}
-            className="text-center max-w-2xl mx-auto mb-16"
-          >
+          <div className="scroll-reveal text-center max-w-2xl mx-auto mb-16">
             <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#dc2626] font-bold">
               Karatē Bērniem un Jauniešiem
             </span>
@@ -221,7 +209,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
               Grupu sadalījums pēc vecuma
             </h2>
             <div className="w-24 h-1 bg-[#dc2626] mx-auto mt-4 rounded-full" />
-          </m.div>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
@@ -247,13 +235,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                 maxRotate={6}
                 onClick={() => setCurrentTab('schedule')}
               >
-                <m.div
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.1 }}
-                  transition={{ duration: 0.45, delay: idx * 0.1 }}
-                  className="bg-white rounded-2xl shadow-lg p-8 border-t-8 border-[#dc2626] text-center border-x border-b border-slate-200 h-full flex flex-col justify-between hover:shadow-xl transition-shadow"
-                >
+                <div className="scroll-reveal bg-white rounded-2xl shadow-lg p-8 border-t-8 border-[#dc2626] text-center border-x border-b border-slate-200 h-full flex flex-col justify-between hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
                   <div>
                     <span className="inline-block bg-[#0f172a] text-white font-heading text-lg font-bold px-5 py-1.5 rounded-full mb-5 shadow-sm">
                       {group.age}
@@ -274,7 +256,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                     <span>Skatīt grafiku</span>
                     <ArrowRight className="w-5 h-5 ml-1 transform group-hover:translate-x-1 transition-transform" aria-hidden="true" />
                   </button>
-                </m.div>
+                </div>
               </InteractiveRepelCard>
             ))}
           </div>
@@ -285,13 +267,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
       <section className="py-24 bg-[#0a0a0c] text-white border-y-4 border-[#dc2626] content-visibility-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <m.div
-              initial={{ opacity: 0, x: -24 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.1 }}
-              transition={{ duration: 0.5 }}
-              className="space-y-6"
-            >
+            <div className="scroll-reveal space-y-6">
               <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#60a5fa] font-bold">
                 Bezmaksas izmēģinājums
               </span>
@@ -321,18 +297,12 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                   <span className="font-medium">Apmeklē pirmo treniņu pilnīgi bez maksas!</span>
                 </div>
               </div>
-            </m.div>
+            </div>
 
-            <m.div
-              initial={{ opacity: 0, x: 24 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.1 }}
-              transition={{ duration: 0.5 }}
-              className="bg-[#111827] p-6 sm:p-8 rounded-2xl shadow-2xl border-2 border-slate-800"
-            >
+            <div className="scroll-reveal bg-[#111827] p-6 sm:p-8 rounded-2xl shadow-2xl border-2 border-slate-800">
               {formSubmitted ? (
                 <div role="status" aria-live="polite" className="text-center py-12 space-y-4">
-                  <CheckCircle className="w-16 h-16 text-[#f87171] mx-auto animate-bounce" aria-hidden="true" />
+                  <CheckCircle className="w-16 h-16 text-[#f87171] mx-auto animate-softPop" aria-hidden="true" />
                   <h3 className="text-3xl font-heading text-white font-bold uppercase">
                     Pieteikums nosūtīts!
                   </h3>
@@ -435,13 +405,13 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                   <button
                     type="submit"
                     disabled={!formGdpr || formSubmitting}
-                    className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-lg sm:text-xl uppercase tracking-widest py-4 rounded-lg font-bold transition-all transform hover:scale-[1.02] active:scale-95 shadow-xl border-2 border-white cursor-pointer"
+                    className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-lg sm:text-xl uppercase tracking-widest py-4 rounded-lg font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-xl border-2 border-white cursor-pointer"
                   >
                     {formSubmitting ? 'Sūta...' : 'Nosūtīt pieteikumu'}
                   </button>
                 </form>
               )}
-            </m.div>
+            </div>
           </div>
         </div>
       </section>
@@ -450,12 +420,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
       <section className="py-24 bg-[#ffffff] content-visibility-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
-            <m.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.1 }}
-              transition={{ duration: 0.5 }}
-            >
+            <div className="scroll-reveal">
               <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#dc2626] font-bold">
                 Pievienojies ģimenei
               </span>
@@ -477,26 +442,20 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                 <button
                   type="button"
                   onClick={() => setCurrentTab('about')}
-                  className="min-h-[48px] w-full sm:w-auto bg-[#0a0a0c] hover:bg-[#dc2626] text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-md cursor-pointer"
+                  className="min-h-[48px] w-full sm:w-auto bg-[#0a0a0c] hover:bg-[#dc2626] text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-md cursor-pointer"
                 >
                   Uzzināt vairāk par klubu
                 </button>
               </div>
-            </m.div>
+            </div>
 
             <div className="w-full">
-              <m.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.1 }}
-                transition={{ duration: 0.35 }}
-                className="rounded-2xl overflow-hidden shadow-2xl bg-black border-4 border-[#dc2626]"
-              >
+              <div className="scroll-reveal rounded-2xl overflow-hidden shadow-2xl bg-black border-4 border-[#dc2626]">
                 <YouTubeFacade
                   videoId="B4dpn-buHYk"
                   title="UZ STARTA LĪNIJAS #19 | KARATE"
                 />
-              </m.div>
+              </div>
             </div>
           </div>
         </div>
@@ -525,33 +484,27 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {previewGallery.map((item, idx) => (
+            {previewGallery.map((item) => (
               <InteractiveRepelCard
                 key={item.id}
                 maxShift={12}
                 maxRotate={6}
                 onClick={() => setCurrentTab('gallery')}
               >
-                <m.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.1 }}
-                  transition={{ duration: 0.45, delay: idx * 0.08 }}
-                  className="group cursor-pointer relative overflow-hidden rounded-xl shadow-md bg-white aspect-[4/3] border border-slate-200 h-full hover:border-[#dc2626] transition-colors"
-                >
+                <div className="scroll-reveal group cursor-pointer relative overflow-hidden rounded-xl shadow-md bg-white aspect-[4/3] border border-slate-200 h-full hover:border-[#dc2626] transition-colors duration-300">
                   <img
                     src={item.image}
                     alt={item.title}
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0c]/90 via-transparent to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex items-end p-6">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0c]/90 via-transparent to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
                     <p className="text-white font-heading uppercase tracking-wider text-xl font-bold">
                       {item.caption}
                     </p>
                   </div>
-                </m.div>
+                </div>
               </InteractiveRepelCard>
             ))}
           </div>
@@ -575,16 +528,9 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
             {testimonials
               .filter((t) => t.status === 'published')
               .slice(0, 3)
-              .map((t, idx) => (
+              .map((t) => (
                 <InteractiveRepelCard key={t.id} maxShift={14} maxRotate={6}>
-                  <m.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    whileHover={{ y: -6, scale: 1.02 }}
-                    viewport={{ once: true, amount: 0.1 }}
-                    transition={{ duration: 0.3, delay: idx * 0.08 }}
-                    className="bg-white rounded-2xl p-8 border border-slate-200 shadow-md flex flex-col justify-between h-full hover:shadow-xl hover:border-[#dc2626] transition-all"
-                  >
+                  <div className="scroll-reveal bg-white rounded-2xl p-8 border border-slate-200 shadow-md flex flex-col justify-between h-full hover:-translate-y-1 hover:shadow-xl hover:border-[#dc2626] transition-all duration-300">
                     <div className="space-y-4">
                       <div className="flex text-amber-500 space-x-1" aria-label={`Vērtējums ${t.rating || 5} no 5 zvaigznēm`}>
                         {[...Array(t.rating || 5)].map((_, i) => (
@@ -601,7 +547,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                       </p>
                       {t.role && <span className="text-xs text-slate-600 font-sans">{t.role}</span>}
                     </div>
-                  </m.div>
+                  </div>
                 </InteractiveRepelCard>
               ))}
           </div>
@@ -610,7 +556,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
             <button
               type="button"
               onClick={() => navigate('/about#atsauksmes')}
-              className="min-h-[48px] w-full sm:w-auto inline-block bg-[#0a0a0c] hover:bg-[#dc2626] text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-md cursor-pointer"
+              className="min-h-[48px] w-full sm:w-auto inline-block bg-[#0a0a0c] hover:bg-[#dc2626] text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-md cursor-pointer"
             >
               Lasīt visas atsauksmes
             </button>
@@ -618,7 +564,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
               <button
                 type="button"
                 onClick={openReviewModal}
-                className="min-h-[48px] w-full sm:w-auto inline-block bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-md border-2 border-white cursor-pointer"
+                className="min-h-[48px] w-full sm:w-auto inline-block bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-md border-2 border-white cursor-pointer"
               >
                 Atstāt atsauksmi
               </button>
@@ -667,7 +613,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
             <div className="bg-[#111827] p-6 sm:p-8 rounded-2xl shadow-xl border-2 border-slate-800">
               {contactSubmitted ? (
                 <div role="status" aria-live="polite" className="text-center py-12 space-y-4">
-                  <CheckCircle className="w-16 h-16 text-[#f87171] mx-auto animate-bounce" aria-hidden="true" />
+                  <CheckCircle className="w-16 h-16 text-[#f87171] mx-auto animate-softPop" aria-hidden="true" />
                   <h3 className="text-3xl font-heading text-white font-bold uppercase">
                     Ziņa nosūtīta!
                   </h3>
@@ -767,7 +713,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                     <button
                       type="submit"
                       disabled={!contactGdpr || contactSubmitting}
-                      className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-lg border-2 border-white cursor-pointer"
+                      className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-lg border-2 border-white cursor-pointer"
                     >
                       {contactSubmitting ? 'Sūta...' : 'Nosūtīt'}
                     </button>

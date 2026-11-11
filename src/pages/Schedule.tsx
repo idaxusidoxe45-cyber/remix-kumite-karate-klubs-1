@@ -1,7 +1,6 @@
 import React from 'react';
 import { SCHEDULE_GROUPS } from '../data';
 import { Calendar, Clock, Facebook, Instagram, Youtube, ArrowRight } from 'lucide-react';
-import { m } from 'motion/react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
 
 interface ScheduleProps {
@@ -15,6 +14,10 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
       <section className="relative bg-[#0a0a0c] text-white py-20 lg:py-28 overflow-hidden border-b-8 border-[#dc2626]">
         <img
           src="/assets_gallery/trenini/karate-web-17.webp"
+          srcSet="/assets_gallery/trenini/karate-web-17-800w.webp 800w, /assets_gallery/trenini/karate-web-17.webp 1600w"
+          sizes="100vw"
+          width={1600}
+          height={1066}
           alt=""
           aria-hidden="true"
           loading="eager"
@@ -23,7 +26,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
           className="absolute inset-0 w-full h-full object-cover opacity-45 filter grayscale pointer-events-none select-none"
         />
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <m.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <div className="hero-enter">
             <span className="text-xs sm:text-sm uppercase tracking-widest text-[#f87171] font-heading font-bold block mb-2">
               Kumite Karate Klubs
             </span>
@@ -33,18 +36,18 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
             <button
               type="button"
               onClick={openTrialModal}
-              className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-xl uppercase tracking-wider px-6 sm:px-8 py-3.5 font-bold transition-all transform hover:scale-105 active:scale-95 shadow-xl border-2 border-white rounded-lg text-center cursor-pointer"
+              className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-xl uppercase tracking-wider px-6 sm:px-8 py-3.5 font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-xl border-2 border-white rounded-lg text-center cursor-pointer"
             >
               Pieteikties bezmaksas nodarbībai
             </button>
-          </m.div>
+          </div>
         </div>
       </section>
 
       {/* Schedule Groups Grid */}
       <section className="py-24 bg-[#ffffff]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="scroll-reveal text-center max-w-2xl mx-auto mb-16">
             <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#dc2626] font-bold">
               Nodarbību laiki
             </span>
@@ -55,15 +58,9 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {SCHEDULE_GROUPS.map((group, idx) => (
+            {SCHEDULE_GROUPS.map((group) => (
               <InteractiveRepelCard key={group.id} maxShift={12} maxRotate={6}>
-                <m.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.1 }}
-                  transition={{ duration: 0.45, delay: idx * 0.08 }}
-                  className="bg-white rounded-2xl shadow-lg overflow-hidden border border-slate-200 flex flex-col justify-between hover:border-[#dc2626] transition-colors h-full"
-                >
+                <div className="scroll-reveal bg-white rounded-2xl shadow-lg overflow-hidden border border-slate-200 flex flex-col justify-between hover:border-[#dc2626] hover:shadow-xl transition-all h-full">
                   <div>
                     <div className="h-48 overflow-hidden relative">
                       <img
@@ -100,13 +97,13 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
                     <button
                       type="button"
                       onClick={openTrialModal}
-                      className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-xl uppercase tracking-wider py-3.5 rounded-lg font-bold transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center space-x-2 shadow-lg border border-white cursor-pointer"
+                      className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-xl uppercase tracking-wider py-3.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] flex items-center justify-center space-x-2 shadow-lg border border-white cursor-pointer"
                     >
                       <span>Pieteikties grupā</span>
                       <ArrowRight className="w-5 h-5" aria-hidden="true" />
                     </button>
                   </div>
-                </m.div>
+                </div>
               </InteractiveRepelCard>
             ))}
           </div>
@@ -128,7 +125,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Kumite Karate Klubs Facebook profils"
-              className="w-12 h-12 rounded-lg bg-[#1e293b] hover:bg-[#1d4ed8] text-white flex items-center justify-center transition-all transform hover:scale-110 active:scale-90 shadow-lg border border-slate-700"
+              className="w-12 h-12 rounded-lg bg-[#1e293b] hover:bg-[#1d4ed8] text-white flex items-center justify-center transition-all hover:scale-[1.04] active:scale-[0.97] shadow-lg border border-slate-700"
               title="Facebook"
             >
               <Facebook className="w-6 h-6" aria-hidden="true" />
@@ -138,7 +135,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Kumite Karate Klubs Instagram profils"
-              className="w-12 h-12 rounded-lg bg-[#1e293b] hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] text-white flex items-center justify-center transition-all transform hover:scale-110 active:scale-90 shadow-lg border border-slate-700"
+              className="w-12 h-12 rounded-lg bg-[#1e293b] hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] text-white flex items-center justify-center transition-all hover:scale-[1.04] active:scale-[0.97] shadow-lg border border-slate-700"
               title="Instagram"
             >
               <Instagram className="w-6 h-6" aria-hidden="true" />
@@ -148,7 +145,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Kumite Karate Klubs YouTube kanāls"
-              className="w-12 h-12 rounded-lg bg-[#1e293b] hover:bg-[#dc2626] text-white flex items-center justify-center transition-all transform hover:scale-110 active:scale-90 shadow-lg border border-slate-700"
+              className="w-12 h-12 rounded-lg bg-[#1e293b] hover:bg-[#dc2626] text-white flex items-center justify-center transition-all hover:scale-[1.04] active:scale-[0.97] shadow-lg border border-slate-700"
               title="YouTube"
             >
               <Youtube className="w-6 h-6" aria-hidden="true" />
