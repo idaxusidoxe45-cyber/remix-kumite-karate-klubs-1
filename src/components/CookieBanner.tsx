@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Shield } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { m, AnimatePresence } from 'motion/react';
 
 export default function CookieBanner() {
   const [visible, setVisible] = useState(false);
@@ -20,7 +20,9 @@ export default function CookieBanner() {
   return (
     <AnimatePresence>
       {visible && (
-        <motion.div
+        <m.aside
+          role="region"
+          aria-label="Sīkdatņu izmantošanas paziņojums"
           initial={{ opacity: 0, y: 100 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 100 }}
@@ -29,39 +31,41 @@ export default function CookieBanner() {
         >
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-2">
-              <Shield className="w-4 h-4 text-[#dc2626] flex-shrink-0" />
-              <h3 className="font-heading text-sm sm:text-base font-bold text-white tracking-wider uppercase">
+              <Shield className="w-4 h-4 text-[#f87171] flex-shrink-0" aria-hidden="true" />
+              <h2 className="font-heading text-sm sm:text-base font-bold text-white tracking-wider uppercase">
                 Sīkdatnes un privātums
-              </h3>
+              </h2>
             </div>
             <button
+              type="button"
               onClick={() => handleDismiss(false)}
-              className="text-slate-400 hover:text-white p-1 rounded-md hover:bg-slate-800/60 transition-colors"
+              className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center text-slate-300 hover:text-white rounded-md hover:bg-slate-800/60 transition-colors cursor-pointer"
               aria-label="Aizvērt"
             >
-              <X className="w-4 h-4" />
+              <X className="w-4 h-4" aria-hidden="true" />
             </button>
           </div>
-          <p className="text-xs sm:text-sm leading-relaxed mb-3 text-slate-300 font-sans">
+          <p className="text-xs sm:text-sm leading-relaxed mb-3 text-slate-200 font-sans">
             Mēs izmantojam sīkdatnes, lai nodrošinātu labāku vietnes darbību un analizētu satiksmi. Nospiežot "Apstiprināt", jūs piekrītat sīkdatņu izmantošanai.
           </p>
           <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={() => handleDismiss(false)}
-              className="flex-1 bg-[#1e293b] border border-slate-700 hover:bg-slate-800 text-xs font-bold py-2 px-3 rounded-lg text-slate-300 transition-all active:scale-95 text-center"
+              className="flex-1 min-h-[44px] bg-[#1e293b] border border-slate-600 hover:bg-slate-800 text-xs sm:text-sm font-bold py-2.5 px-3 rounded-lg text-slate-100 transition-all active:scale-95 text-center cursor-pointer"
             >
               Noraidīt
             </button>
             <button
+              type="button"
               onClick={() => handleDismiss(true)}
-              className="flex-1 bg-[#dc2626] hover:bg-[#b91c1c] text-xs font-bold py-2 px-3 rounded-lg text-white transition-all active:scale-95 shadow-md border border-red-500/50 text-center"
+              className="flex-1 min-h-[44px] bg-[#dc2626] hover:bg-[#b91c1c] text-xs sm:text-sm font-bold py-2.5 px-3 rounded-lg text-white transition-all active:scale-95 shadow-md border border-red-500/50 text-center cursor-pointer"
             >
               Apstiprināt
             </button>
           </div>
-        </motion.div>
+        </m.aside>
       )}
     </AnimatePresence>
   );
 }
-

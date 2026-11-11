@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useId } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { m, AnimatePresence } from 'motion/react';
 
 interface AccordionItemProps {
   title: React.ReactNode;
@@ -19,28 +19,36 @@ export default function AccordionItem({
   onToggle,
   children,
   className = "bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden transition-all",
-  headerClassName = "w-full flex items-center justify-between p-5 text-left font-heading text-xl font-bold text-[#0a0a0c] hover:bg-slate-50 transition-colors cursor-pointer",
+  headerClassName = "w-full min-h-[48px] flex items-center justify-between p-5 text-left font-heading text-xl font-bold text-[#0a0a0c] hover:bg-slate-50 transition-colors cursor-pointer",
   contentClassName = "px-5 pb-5 pt-2 border-t border-slate-200 bg-slate-50",
 }: AccordionItemProps) {
+  const panelId = useId();
+
   return (
     <div className={className}>
       <button
         type="button"
         onClick={onToggle}
+        aria-expanded={isOpen}
+        aria-controls={panelId}
         className={headerClassName}
       >
         <span>{title}</span>
-        <motion.div
+        <m.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.3, ease: 'easeInOut' }}
           className="flex-shrink-0 ml-2"
         >
-          <ChevronDown className={`w-6 h-6 transition-colors ${isOpen ? 'text-[#dc2626]' : 'text-slate-400'}`} />
-        </motion.div>
+          <ChevronDown
+            className={`w-6 h-6 transition-colors ${isOpen ? 'text-[#dc2626]' : 'text-slate-600'}`}
+            aria-hidden="true"
+          />
+        </m.div>
       </button>
       <AnimatePresence initial={false}>
         {isOpen && (
-          <motion.div
+          <m.div
+            id={panelId}
             key="content"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
@@ -51,7 +59,7 @@ export default function AccordionItem({
             <div className={contentClassName}>
               {children}
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

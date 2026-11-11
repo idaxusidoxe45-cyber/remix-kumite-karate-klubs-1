@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
+import React, { useState, useEffect, useRef } from 'react';
+import { m, useMotionValue, useSpring, useTransform } from 'motion/react';
 
 interface InteractiveRepelCardProps {
   key?: React.Key;
@@ -38,6 +38,8 @@ function DesktopRepelCard({
 }: InteractiveRepelCardProps) {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+  const rectRef = useRef<DOMRect | null>(null);
+  const rafRef = useRef<number | null>(null);
 
   const springConfig = { damping: 22, stiffness: 280, mass: 0.4 };
   const x = useSpring(mouseX, springConfig);
@@ -46,26 +48,56 @@ function DesktopRepelCard({
   const rotateX = useTransform(y, [-maxShift, maxShift], [maxRotate, -maxRotate]);
   const rotateY = useTransform(x, [-maxShift, maxShift], [-maxRotate, maxRotate]);
 
+  useEffect(() => {
+    return () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
+  }, []);
+
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    rectRef.current = e.currentTarget.getBoundingClientRect();
+  };
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
+    const clientX = e.clientX;
+    const clientY = e.clientY;
+    const target = e.currentTarget;
 
-    const normX = (e.clientX - centerX) / (rect.width / 2);
-    const normY = (e.clientY - centerY) / (rect.height / 2);
+    if (rafRef.current !== null) return;
 
-    mouseX.set(-normX * maxShift);
-    mouseY.set(-normY * maxShift);
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null;
+      const rect = rectRef.current || target.getBoundingClientRect();
+      rectRef.current = rect;
+      if (!rect.width || !rect.height) return;
+
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const normX = Math.max(-1, Math.min(1, (clientX - centerX) / (rect.width / 2)));
+      const normY = Math.max(-1, Math.min(1, (clientY - centerY) / (rect.height / 2)));
+
+      mouseX.set(-normX * maxShift);
+      mouseY.set(-normY * maxShift);
+    });
   };
 
   const handleMouseLeave = () => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+    rectRef.current = null;
     mouseX.set(0);
     mouseY.set(0);
   };
 
   return (
-    <motion.div
+    <m.div
       onClick={onClick}
+      onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       whileHover={{ scale: 1.02, y: -3 }}
@@ -78,10 +110,10 @@ function DesktopRepelCard({
         perspective: 1000,
         transformStyle: 'preserve-3d',
       }}
-      className={`will-change-transform ${onClick ? 'cursor-pointer' : ''} ${className}`}
+      className={`hover:will-change-transform ${onClick ? 'cursor-pointer' : ''} ${className}`}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -101,4 +133,3 @@ export default function InteractiveRepelCard(props: InteractiveRepelCardProps) {
 
   return <DesktopRepelCard {...props} />;
 }
-
