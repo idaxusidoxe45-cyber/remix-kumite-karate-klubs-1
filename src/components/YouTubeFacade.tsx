@@ -52,8 +52,8 @@ export default function YouTubeFacade({
         loading="lazy"
         decoding="async"
         onError={() => {
-          if (thumbSrc !== '/assets_gallery/trenini/karate-web-21.webp') {
-            setThumbSrc('/assets_gallery/trenini/karate-web-21.webp');
+          if (thumbSrc !== '/assets_gallery/trenini/karate-web-21-1.webp') {
+            setThumbSrc('/assets_gallery/trenini/karate-web-21-1.webp');
           }
         }}
         className="w-full h-full object-cover opacity-85 group-hover:opacity-95 group-hover:scale-[1.02] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"

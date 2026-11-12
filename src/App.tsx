@@ -4,13 +4,15 @@ import { PageTab } from './types';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import CookieBanner from './components/CookieBanner';
+import RouteSeo from './components/RouteSeo';
+import type { PreloadedPagesMap } from './routePreload';
 
-const Home = lazy(() => import('./pages/Home'));
-const AboutClub = lazy(() => import('./pages/AboutClub'));
-const Coaches = lazy(() => import('./pages/Coaches'));
-const Schedule = lazy(() => import('./pages/Schedule'));
-const Gallery = lazy(() => import('./pages/Gallery'));
-const Contacts = lazy(() => import('./pages/Contacts'));
+const LazyHome = lazy(() => import('./pages/Home'));
+const LazyAboutClub = lazy(() => import('./pages/AboutClub'));
+const LazyCoaches = lazy(() => import('./pages/Coaches'));
+const LazySchedule = lazy(() => import('./pages/Schedule'));
+const LazyGallery = lazy(() => import('./pages/Gallery'));
+const LazyContacts = lazy(() => import('./pages/Contacts'));
 const Admin = lazy(() => import('./pages/Admin'));
 
 const TrialModal = lazy(() => import('./components/TrialModal'));
@@ -42,7 +44,11 @@ function ScrollToTop() {
   return null;
 }
 
-export default function App() {
+interface AppProps {
+  preloadedPages?: PreloadedPagesMap;
+}
+
+export default function App({ preloadedPages }: AppProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [trialModalOpen, setTrialModalOpen] = useState(false);
@@ -52,6 +58,13 @@ export default function App() {
   const [bgMounted, setBgMounted] = useState(false);
 
   const isAdminRoute = location.pathname.startsWith('/admin');
+
+  const HomeComponent = preloadedPages?.['/'] ?? LazyHome;
+  const AboutComponent = preloadedPages?.['/about'] ?? LazyAboutClub;
+  const CoachesComponent = preloadedPages?.['/coaches'] ?? LazyCoaches;
+  const ScheduleComponent = preloadedPages?.['/schedule'] ?? LazySchedule;
+  const GalleryComponent = preloadedPages?.['/gallery'] ?? LazyGallery;
+  const ContactsComponent = preloadedPages?.['/contacts'] ?? LazyContacts;
 
   const openTrialModal = () => {
     setTrialEverOpened(true);
@@ -63,7 +76,7 @@ export default function App() {
     setReviewModalOpen(true);
   };
 
-  // Defer decorative background mount & secondary route chunk prefetching until idle
+  // Defer decorative desktop background mount & secondary route chunk prefetching until idle
   useEffect(() => {
     if (isAdminRoute) return;
 
@@ -78,10 +91,17 @@ export default function App() {
         : (id: number) => window.clearTimeout(id);
 
     const bgTimer = scheduleIdle(() => {
-      setBgMounted(true);
+      if (window.matchMedia('(min-width: 768px) and (hover: hover) and (pointer: fine)').matches) {
+        setBgMounted(true);
+      }
 
-      const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
-      if (!conn?.saveData) {
+      const conn = (
+        navigator as Navigator & {
+          connection?: { saveData?: boolean; effectiveType?: string };
+        }
+      ).connection;
+      const isSlowConnection = ['slow-2g', '2g', '3g'].includes(conn?.effectiveType ?? '');
+      if (!conn?.saveData && !isSlowConnection) {
         void import('./pages/Schedule');
         void import('./pages/Contacts');
         void import('./pages/Coaches');
@@ -94,12 +114,13 @@ export default function App() {
   }, [isAdminRoute]);
 
   const getTabFromPath = (path: string): PageTab => {
-    if (path === '/about') return 'about';
-    if (path === '/coaches') return 'coaches';
-    if (path === '/schedule') return 'schedule';
-    if (path === '/gallery') return 'gallery';
-    if (path === '/contacts') return 'contacts';
-    if (path.startsWith('/admin')) return 'admin';
+    const clean = path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
+    if (clean === '/about') return 'about';
+    if (clean === '/coaches') return 'coaches';
+    if (clean === '/schedule') return 'schedule';
+    if (clean === '/gallery') return 'gallery';
+    if (clean === '/contacts') return 'contacts';
+    if (clean.startsWith('/admin')) return 'admin';
     return 'home';
   };
 
@@ -120,14 +141,18 @@ export default function App() {
 
   if (isAdminRoute) {
     return (
-      <Suspense fallback={<PageLoader />}>
-        <Admin />
-      </Suspense>
+      <>
+        <RouteSeo />
+        <Suspense fallback={<PageLoader />}>
+          <Admin />
+        </Suspense>
+      </>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#ffffff] text-[#0f172a] font-sans selection:bg-[#dc2626] selection:text-white relative overflow-x-clip">
+          <RouteSeo />
           <a href="#main-content" className="visually-hidden skip-link">
             Pāriet uz galveno saturu
           </a>
@@ -150,7 +175,7 @@ export default function App() {
                 <Route
                   path="/"
                   element={
-                    <Home
+                    <HomeComponent
                       setCurrentTab={setCurrentTab}
                       openTrialModal={openTrialModal}
                       openReviewModal={openReviewModal}
@@ -160,7 +185,7 @@ export default function App() {
                 <Route
                   path="/about"
                   element={
-                    <AboutClub
+                    <AboutComponent
                       setCurrentTab={setCurrentTab}
                       openTrialModal={openTrialModal}
                       openReviewModal={openReviewModal}
@@ -169,19 +194,19 @@ export default function App() {
                 />
                 <Route
                   path="/coaches"
-                  element={<Coaches openTrialModal={openTrialModal} />}
+                  element={<CoachesComponent openTrialModal={openTrialModal} />}
                 />
                 <Route
                   path="/schedule"
-                  element={<Schedule openTrialModal={openTrialModal} />}
+                  element={<ScheduleComponent openTrialModal={openTrialModal} />}
                 />
                 <Route
                   path="/gallery"
-                  element={<Gallery openTrialModal={openTrialModal} />}
+                  element={<GalleryComponent openTrialModal={openTrialModal} />}
                 />
                 <Route
                   path="/contacts"
-                  element={<Contacts openTrialModal={openTrialModal} />}
+                  element={<ContactsComponent openTrialModal={openTrialModal} />}
                 />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>

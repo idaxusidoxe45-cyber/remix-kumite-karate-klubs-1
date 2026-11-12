@@ -85,15 +85,14 @@ export default function DesktopRepelCard({
         onMouseEnter={handleMouseEnter}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        whileHover={{ scale: 1.015, y: -2 }}
-        transition={{ type: 'spring', stiffness: 260, damping: 28 }}
         style={{
           x,
           y,
           rotateX,
           rotateY,
           perspective: 1000,
-          transformStyle: 'preserve-3d',
+          transformStyle: 'flat',
+          backfaceVisibility: 'hidden',
         }}
         className={`hover:will-change-transform ${onClick ? 'cursor-pointer' : ''} ${className}`}
       >

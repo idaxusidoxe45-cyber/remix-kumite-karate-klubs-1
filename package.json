@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
-    "build": "vite build",
+    "build:client": "vite build",
+    "build:ssr": "vite build --ssr src/entry-server.tsx --outDir node_modules/.cache/kumite-ssr",
+    "prerender": "node scripts/prerender.mjs",
+    "build": "npm run build:client && npm run build:ssr && npm run prerender",
     "preview": "vite preview",
     "lint": "tsc --noEmit"
   },

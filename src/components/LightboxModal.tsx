@@ -110,7 +110,7 @@ export default function LightboxModal({
               type="button"
               onClick={onClose}
               aria-label="Aizvērt attēlu"
-              className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center text-slate-200 hover:text-white rounded-full bg-slate-800/90 hover:bg-[#dc2626] border border-slate-700 transition-all hover:scale-[1.04] active:scale-[0.97] cursor-pointer"
+              className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center text-slate-200 hover:text-white rounded-full bg-slate-800/90 hover:bg-[#dc2626] border border-slate-700 transition-colors active:scale-95 cursor-pointer"
             >
               <X className="w-6 h-6" aria-hidden="true" />
             </button>
@@ -122,7 +122,7 @@ export default function LightboxModal({
                 type="button"
                 onClick={onPrev}
                 aria-label="Iepriekšējais attēls"
-                className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 text-white bg-black/70 hover:bg-[#dc2626] rounded-full border border-white/20 transition-all hover:scale-[1.04] active:scale-[0.97] z-10 cursor-pointer"
+                className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 text-white bg-black/70 hover:bg-[#dc2626] rounded-full border border-white/20 transition-colors active:scale-95 z-10 cursor-pointer"
               >
                 <ChevronLeft className="w-7 h-7" aria-hidden="true" />
               </button>
@@ -140,7 +140,7 @@ export default function LightboxModal({
                 type="button"
                 onClick={onNext}
                 aria-label="Nākamais attēls"
-                className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 text-white bg-black/70 hover:bg-[#dc2626] rounded-full border border-white/20 transition-all hover:scale-[1.04] active:scale-[0.97] z-10 cursor-pointer"
+                className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 text-white bg-black/70 hover:bg-[#dc2626] rounded-full border border-white/20 transition-colors active:scale-95 z-10 cursor-pointer"
               >
                 <ChevronRight className="w-7 h-7" aria-hidden="true" />
               </button>

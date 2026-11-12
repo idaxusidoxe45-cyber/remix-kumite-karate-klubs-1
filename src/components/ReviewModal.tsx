@@ -102,7 +102,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
           <button
             type="button"
             onClick={onClose}
-            className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center absolute top-3 right-3 text-slate-200 hover:text-white transition-all hover:scale-[1.04] active:scale-[0.97] rounded-full bg-slate-800/90 hover:bg-[#dc2626] cursor-pointer"
+            className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center absolute top-3 right-3 text-slate-200 hover:text-white transition-colors active:scale-95 rounded-full bg-slate-800/90 hover:bg-[#dc2626] cursor-pointer"
             aria-label="Aizvērt atsauksmes logu"
           >
             <X className="w-5 h-5" aria-hidden="true" />
@@ -233,7 +233,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="min-h-[44px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white font-heading text-xs sm:text-sm uppercase tracking-widest px-6 py-2.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 active:scale-[0.98] shadow-lg border border-white/20 inline-flex items-center justify-center space-x-1.5 disabled:cursor-not-allowed cursor-pointer"
+                  className="min-h-[44px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-xl hover:shadow-red-600/30 disabled:opacity-50 text-white font-heading text-xs sm:text-sm uppercase tracking-widest px-6 py-2.5 rounded-lg font-bold transition-all active:scale-[0.98] shadow-lg border border-white/20 inline-flex items-center justify-center space-x-1.5 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {isSubmitting ? (
                     <>

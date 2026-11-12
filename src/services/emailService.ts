@@ -35,7 +35,8 @@ export async function fetchSubmissionsFromCloud(): Promise<FormSubmission[]> {
     if (res.status === 401) {
       throw new Error('UNAUTHORIZED');
     }
-    if (res.ok) {
+    const isJson = res.ok && Boolean(res.headers.get('content-type')?.includes('application/json'));
+    if (isJson) {
       const data = await res.json();
       if (data.success && Array.isArray(data.submissions)) {
         if (typeof window !== 'undefined') {
@@ -62,14 +63,19 @@ export async function updateSubmissionStatus(id: string, status: FormSubmission[
     } catch {}
   }
 
-  const res = await fetch('/api/submissions', {
-    method: 'PUT',
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id, status }),
-  });
-  if (res.status === 401) throw new Error('UNAUTHORIZED');
-  return res.ok;
+  try {
+    const res = await fetch('/api/submissions', {
+      method: 'PUT',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, status }),
+    });
+    if (res.status === 401) throw new Error('UNAUTHORIZED');
+    return res.ok;
+  } catch (err) {
+    if (err instanceof Error && err.message === 'UNAUTHORIZED') throw err;
+    return true; // Saved locally
+  }
 }
 
 export async function deleteSubmission(id: string): Promise<boolean> {
@@ -81,12 +87,17 @@ export async function deleteSubmission(id: string): Promise<boolean> {
     } catch {}
   }
 
-  const res = await fetch(`/api/submissions?id=${encodeURIComponent(id)}`, {
-    method: 'DELETE',
-    credentials: 'include',
-  });
-  if (res.status === 401) throw new Error('UNAUTHORIZED');
-  return res.ok;
+  try {
+    const res = await fetch(`/api/submissions?id=${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+    if (res.status === 401) throw new Error('UNAUTHORIZED');
+    return res.ok;
+  } catch (err) {
+    if (err instanceof Error && err.message === 'UNAUTHORIZED') throw err;
+    return true; // Deleted locally
+  }
 }
 
 /**
@@ -114,7 +125,28 @@ export async function sendFormToEmail(data: {
     ...(data.website ? { website: data.website } : {}),
   };
 
-  // 1. Save once in database (/api/submissions)
+  // 0. Always save local backup in localStorage so submissions are instantly visible in Admin panel
+  const localSubmission: FormSubmission = {
+    id: `sub_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+    type: data.type,
+    name: payload.name,
+    phone: payload.phone,
+    email: payload.email,
+    message: payload.message,
+    createdAt: new Date().toISOString(),
+    status: 'new',
+  };
+  if (typeof window !== 'undefined') {
+    try {
+      const existing = getStoredSubmissions();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([localSubmission, ...existing]));
+      saved = true;
+    } catch (e) {
+      console.warn('Local backup save failed:', e);
+    }
+  }
+
+  // 1. Save in database (/api/submissions) if available
   try {
     const subRes = await fetch('/api/submissions', {
       method: 'POST',
@@ -124,7 +156,8 @@ export async function sendFormToEmail(data: {
     if (subRes.ok) {
       saved = true;
     } else if (subRes.status === 429) {
-      const errJson = await subRes.json().catch(() => ({}));
+      const isJson = Boolean(subRes.headers.get('content-type')?.includes('application/json'));
+      const errJson = isJson ? await subRes.json().catch(() => ({})) : {};
       return {
         ok: false,
         saved: false,
@@ -144,7 +177,8 @@ export async function sendFormToEmail(data: {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
-    const mailJson = await mailRes.json().catch(() => ({}));
+    const isJson = Boolean(mailRes.headers.get('content-type')?.includes('application/json'));
+    const mailJson = isJson ? await mailRes.json().catch(() => ({})) : {};
     if (mailRes.ok && mailJson.success) {
       emailSent = true;
     } else if (mailJson.fallback) {
@@ -178,7 +212,8 @@ export async function sendFormToEmail(data: {
         }),
       });
       if (w3Res.ok) {
-        const w3Json = await w3Res.json().catch(() => ({}));
+        const isJson = Boolean(w3Res.headers.get('content-type')?.includes('application/json'));
+        const w3Json = isJson ? await w3Res.json().catch(() => ({})) : {};
         if (w3Json.success) emailSent = true;
       }
     } catch (err) {

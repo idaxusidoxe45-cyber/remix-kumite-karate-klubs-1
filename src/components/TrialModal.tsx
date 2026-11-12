@@ -104,7 +104,7 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
             type="button"
             onClick={onClose}
             aria-label="Aizvērt pieteikuma logu"
-            className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center absolute top-3 right-3 text-slate-200 hover:text-white rounded-full bg-[#1e293b] hover:bg-[#dc2626] transition-all hover:scale-[1.04] active:scale-[0.97] cursor-pointer"
+            className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center absolute top-3 right-3 text-slate-200 hover:text-white rounded-full bg-[#1e293b] hover:bg-[#dc2626] transition-colors active:scale-95 cursor-pointer"
           >
             <X className="w-5 h-5" aria-hidden="true" />
           </button>
@@ -252,7 +252,7 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
                   <button
                     type="submit"
                     disabled={!gdprConsent || isSubmitting}
-                    className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white font-heading text-lg sm:text-xl uppercase tracking-widest px-6 py-4 rounded-lg font-bold flex items-center justify-center space-x-2 transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-xl border-2 border-white disabled:cursor-not-allowed cursor-pointer"
+                    className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-2xl hover:shadow-red-600/40 disabled:opacity-50 text-white font-heading text-lg sm:text-xl uppercase tracking-widest px-6 py-4 rounded-lg font-bold flex items-center justify-center space-x-2 transition-all active:scale-[0.98] shadow-xl border-2 border-white disabled:cursor-not-allowed cursor-pointer"
                   >
                     {isSubmitting ? (
                       <>

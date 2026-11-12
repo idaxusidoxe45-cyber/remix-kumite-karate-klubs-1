@@ -1,11 +1,31 @@
 export type PageTab = 'home' | 'about' | 'coaches' | 'schedule' | 'gallery' | 'contacts' | 'admin';
 
+export type AgeGroupFilter = '5-6' | '7-9' | '10+';
+
 export interface ScheduleGroup {
   id: number | string;
   title: string;
   image: string;
   schedule: string[];
   description?: string;
+  ageGroups?: AgeGroupFilter[];
+  ageLabel?: string;
+  dayPattern?: 'mwf' | 'tt';
+}
+
+export interface BeltDetail {
+  id: number;
+  label: string;
+  rank: string;
+  name: string;
+  primaryColor: string;
+  secondaryColor?: string;
+  isApparel?: boolean;
+  focus: string;
+  kihon: string;
+  kata: string;
+  kumite: string;
+  skills: string[];
 }
 
 export interface GalleryItem {

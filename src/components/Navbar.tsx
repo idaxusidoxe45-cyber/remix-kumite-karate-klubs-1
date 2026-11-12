@@ -234,7 +234,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
               <button
                 type="button"
                 onClick={openTrialModal}
-                className="min-h-[44px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading tracking-wider px-3.5 xl:px-4 py-2 rounded shadow-lg border border-[#ef4444] transition-all hover:-translate-y-0.5 active:scale-[0.98] text-xs xl:text-sm uppercase font-semibold whitespace-nowrap cursor-pointer"
+                className="min-h-[44px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 text-white font-heading tracking-wider px-3.5 xl:px-4 py-2 rounded shadow-lg border border-[#ef4444] transition-all active:scale-[0.98] text-xs xl:text-sm uppercase font-semibold whitespace-nowrap cursor-pointer"
               >
                 Bezmaksas treniņš
               </button>

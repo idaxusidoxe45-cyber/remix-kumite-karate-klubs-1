@@ -12,20 +12,14 @@ interface InteractiveRepelCardProps {
 }
 
 function useIsDesktopHover() {
-  const [isDesktop, setIsDesktop] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return (
-      window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
-      !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    );
-  });
+  const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
     const hoverMq = window.matchMedia('(hover: hover) and (pointer: fine)');
     const reducedMq = window.matchMedia('(prefers-reduced-motion: reduce)');
     const handler = () => setIsDesktop(hoverMq.matches && !reducedMq.matches);
 
+    handler();
     hoverMq.addEventListener?.('change', handler);
     reducedMq.addEventListener?.('change', handler);
     return () => {

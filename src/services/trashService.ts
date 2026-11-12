@@ -43,7 +43,8 @@ export async function fetchTrashFromCloud(): Promise<TrashItem[]> {
   try {
     const res = await fetch('/api/trash', { credentials: 'include' });
     if (res.status === 401) throw new Error('UNAUTHORIZED');
-    if (res.ok) {
+    const isJson = res.ok && Boolean(res.headers.get('content-type')?.includes('application/json'));
+    if (isJson) {
       const data = await res.json();
       if (data.success && Array.isArray(data.items)) {
         const valid = filterExpired(data.items as TrashItem[]);

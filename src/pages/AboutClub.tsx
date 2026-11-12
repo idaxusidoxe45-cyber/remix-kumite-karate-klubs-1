@@ -25,9 +25,12 @@ export default function AboutClub({
 }: AboutClubProps) {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [openToggle, setOpenToggle] = useState<number | null>(null);
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(() => getDynamicTestimonials());
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(() =>
+    getDynamicTestimonials({ includeLocal: false })
+  );
 
   useEffect(() => {
+    setTestimonials(getDynamicTestimonials());
     fetchCloudTestimonials().then((revs) => setTestimonials(revs));
   }, []);
 
@@ -313,7 +316,7 @@ export default function AboutClub({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials
               .filter((t) => t.status === 'published')
-              .map((t, idx) => (
+              .map((t) => (
                 <InteractiveRepelCard key={t.id} maxShift={14} maxRotate={6}>
                   <div className="scroll-reveal bg-white rounded-xl p-8 border border-slate-200 shadow-md flex flex-col justify-between h-full hover:-translate-y-1 hover:shadow-xl hover:border-[#dc2626] transition-all duration-300">
                     <div className="space-y-4">

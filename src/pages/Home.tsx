@@ -7,7 +7,19 @@ import {
   fetchCloudTestimonials,
   fetchCloudGalleryItems,
 } from '../data';
-import { CheckCircle, ArrowRight, Star, MapPin, Phone, Mail, AlertCircle } from 'lucide-react';
+import {
+  CheckCircle,
+  ArrowRight,
+  Star,
+  MapPin,
+  Phone,
+  Mail,
+  AlertCircle,
+  Sparkles,
+  Shirt,
+  Smile,
+  ShieldCheck,
+} from 'lucide-react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
 import { Logo } from '../components/Logo';
 import YouTubeFacade from '../components/YouTubeFacade';
@@ -129,10 +141,16 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
     }
   };
 
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(() => getDynamicTestimonials());
-  const [galleryList, setGalleryList] = useState<GalleryItem[]>(() => getDynamicGalleryItems());
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(() =>
+    getDynamicTestimonials({ includeLocal: false })
+  );
+  const [galleryList, setGalleryList] = useState<GalleryItem[]>(() =>
+    getDynamicGalleryItems({ includeLocal: false })
+  );
 
   useEffect(() => {
+    setTestimonials(getDynamicTestimonials());
+    setGalleryList(getDynamicGalleryItems());
     fetchCloudTestimonials().then((revs) => setTestimonials(revs));
     fetchCloudGalleryItems({ previewOnly: true }).then((items) => setGalleryList(items));
   }, []);
@@ -182,14 +200,14 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
               <button
                 type="button"
                 onClick={openTrialModal}
-                className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-lg uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-xl rounded-xl border border-red-500 hover:border-red-400 cursor-pointer"
+                className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-xl hover:shadow-red-600/30 text-white font-heading text-base sm:text-lg uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 font-bold transition-all active:scale-[0.98] shadow-xl rounded-xl border border-red-500 hover:border-red-400 cursor-pointer"
               >
                 Piesakies bezmaksas nodarbībai
               </button>
               <button
                 type="button"
                 onClick={() => setCurrentTab('about')}
-                className="w-full sm:w-auto min-h-[48px] bg-[#1e293b]/90 hover:bg-[#334155] text-white font-heading text-base sm:text-lg uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] rounded-xl border border-slate-700 shadow-md cursor-pointer"
+                className="w-full sm:w-auto min-h-[48px] bg-[#1e293b]/90 hover:bg-[#334155] hover:brightness-110 text-white font-heading text-base sm:text-lg uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 font-bold transition-all active:scale-[0.98] rounded-xl border border-slate-700 shadow-md cursor-pointer"
               >
                 Uzzini vairāk
               </button>
@@ -259,6 +277,114 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                 </div>
               </InteractiveRepelCard>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* "Pirmais treniņš bez stresa" 3-Step Beginner Guide */}
+      <section className="py-20 bg-[#ffffff] border-b border-slate-200 content-visibility-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="scroll-reveal text-center max-w-2xl mx-auto mb-14">
+            <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#dc2626] font-bold">
+              Vienkārši un droši
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-heading text-[#0f172a] font-bold uppercase tracking-wide mt-2">
+              Pirmais treniņš bez stresa
+            </h2>
+            <p className="text-slate-600 font-sans text-base mt-3">
+              Mēs parūpēsimies, lai bērna pirmā pieredze karatē zālē būtu iedvesmojoša, droša un bez jebkāda satraukuma.
+            </p>
+            <div className="w-24 h-1 bg-[#dc2626] mx-auto mt-4 rounded-full" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <InteractiveRepelCard maxShift={12} maxRotate={5}>
+              <div className="scroll-reveal bg-[#f8fafc] rounded-2xl p-8 border border-slate-200 shadow-sm flex flex-col justify-between h-full hover:border-[#dc2626] hover:bg-white hover:shadow-xl transition-all duration-300">
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <span className="w-12 h-12 rounded-2xl bg-[#dc2626] text-white flex items-center justify-center font-heading text-2xl font-bold shadow-md">
+                      1
+                    </span>
+                    <Sparkles className="w-7 h-7 text-[#dc2626]" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-2xl font-heading text-[#0f172a] font-bold uppercase tracking-wide mb-3">
+                    Bezmaksas pieteikums
+                  </h3>
+                  <p className="text-slate-600 text-sm sm:text-base leading-relaxed font-sans mb-4">
+                    Aizpildi īso anketu zemāk vai piezvani pa tālr.{' '}
+                    <a href="tel:+37129177274" className="font-bold text-[#b91c1c] underline">
+                      +371 29177274
+                    </a>
+                    . Mēs atbildēsim un palīdzēsim izvēlēties bērna vecumam un sagatavotībai piemērotāko grupu.
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-slate-200/80 text-xs font-heading uppercase tracking-wider text-slate-500 font-bold">
+                  Nav nepieciešama priekšzināšana
+                </div>
+              </div>
+            </InteractiveRepelCard>
+
+            <InteractiveRepelCard maxShift={12} maxRotate={5}>
+              <div className="scroll-reveal bg-[#f8fafc] rounded-2xl p-8 border border-slate-200 shadow-sm flex flex-col justify-between h-full hover:border-[#2563eb] hover:bg-white hover:shadow-xl transition-all duration-300">
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <span className="w-12 h-12 rounded-2xl bg-[#2563eb] text-white flex items-center justify-center font-heading text-2xl font-bold shadow-md">
+                      2
+                    </span>
+                    <Shirt className="w-7 h-7 text-[#2563eb]" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-2xl font-heading text-[#0f172a] font-bold uppercase tracking-wide mb-3">
+                    Kas jāņem līdzi?
+                  </h3>
+                  <p className="text-slate-600 text-sm sm:text-base leading-relaxed font-sans mb-4">
+                    Kimono pašiem <strong>nav</strong> jāpērk! Pirmā treniņa komplekts ir ļoti vienkāršs:
+                  </p>
+                  <ul className="space-y-2 text-sm text-slate-700 font-sans">
+                    <li className="flex items-center space-x-2">
+                      <span className="w-2 h-2 rounded-full bg-[#2563eb] flex-shrink-0" />
+                      <span>Ērts sporta tērps (sporta krekls, bikses/šorti)</span>
+                    </li>
+                    <li className="flex items-center space-x-2">
+                      <span className="w-2 h-2 rounded-full bg-[#2563eb] flex-shrink-0" />
+                      <span>Čības nokļūšanai no ģērbtuves līdz tatami</span>
+                    </li>
+                    <li className="flex items-center space-x-2">
+                      <span className="w-2 h-2 rounded-full bg-[#2563eb] flex-shrink-0" />
+                      <span>Dzeramā ūdens pudele (nodarbība notiek ar basām kājām)</span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="pt-4 border-t border-slate-200/80 text-xs font-heading uppercase tracking-wider text-slate-500 font-bold">
+                  Kimono iegūst tikai pēc pirmā eksāmena
+                </div>
+              </div>
+            </InteractiveRepelCard>
+
+            <InteractiveRepelCard maxShift={12} maxRotate={5}>
+              <div className="scroll-reveal bg-[#f8fafc] rounded-2xl p-8 border border-slate-200 shadow-sm flex flex-col justify-between h-full hover:border-[#dc2626] hover:bg-white hover:shadow-xl transition-all duration-300">
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <span className="w-12 h-12 rounded-2xl bg-[#0a0a0c] text-white flex items-center justify-center font-heading text-2xl font-bold shadow-md">
+                      3
+                    </span>
+                    <Smile className="w-7 h-7 text-[#0a0a0c]" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-2xl font-heading text-[#0f172a] font-bold uppercase tracking-wide mb-3">
+                    Pirmā tikšanās bez stresa
+                  </h3>
+                  <p className="text-slate-600 text-sm sm:text-base leading-relaxed font-sans mb-4">
+                    Treneris Nikolajs personīgi sagaidīs audzēkni, iepazīstinās ar zāli un bērnu grupu. Nodarbība rit caur spēlēm, koordināciju un drošiem bāzes elementiem.
+                  </p>
+                  <div className="bg-white p-3 rounded-xl border border-slate-200 text-xs text-slate-700 font-sans flex items-center gap-2">
+                    <ShieldCheck className="w-5 h-5 text-[#16a34a] flex-shrink-0" aria-hidden="true" />
+                    <span><strong>Vecākiem atļauts:</strong> varat palikt zālē un skatīties treniņa norisi!</span>
+                  </div>
+                </div>
+                <div className="pt-4 border-t border-slate-200/80 text-xs font-heading uppercase tracking-wider text-slate-500 font-bold">
+                  Bezmaksas auto stāvvieta pie zāles
+                </div>
+              </div>
+            </InteractiveRepelCard>
           </div>
         </div>
       </section>
@@ -405,7 +531,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                   <button
                     type="submit"
                     disabled={!formGdpr || formSubmitting}
-                    className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-lg sm:text-xl uppercase tracking-widest py-4 rounded-lg font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-xl border-2 border-white cursor-pointer"
+                    className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-2xl hover:shadow-red-600/40 disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-lg sm:text-xl uppercase tracking-widest py-4 rounded-lg font-bold transition-all active:scale-[0.98] shadow-xl border-2 border-white cursor-pointer"
                   >
                     {formSubmitting ? 'Sūta...' : 'Nosūtīt pieteikumu'}
                   </button>
@@ -442,7 +568,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                 <button
                   type="button"
                   onClick={() => setCurrentTab('about')}
-                  className="min-h-[48px] w-full sm:w-auto bg-[#0a0a0c] hover:bg-[#dc2626] text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-md cursor-pointer"
+                  className="min-h-[48px] w-full sm:w-auto bg-[#0a0a0c] hover:bg-[#dc2626] hover:brightness-110 text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all active:scale-[0.98] shadow-md cursor-pointer"
                 >
                   Uzzināt vairāk par klubu
                 </button>
@@ -556,7 +682,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
             <button
               type="button"
               onClick={() => navigate('/about#atsauksmes')}
-              className="min-h-[48px] w-full sm:w-auto inline-block bg-[#0a0a0c] hover:bg-[#dc2626] text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-md cursor-pointer"
+              className="min-h-[48px] w-full sm:w-auto inline-block bg-[#0a0a0c] hover:bg-[#dc2626] hover:brightness-110 text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all active:scale-[0.98] shadow-md cursor-pointer"
             >
               Lasīt visas atsauksmes
             </button>
@@ -564,7 +690,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
               <button
                 type="button"
                 onClick={openReviewModal}
-                className="min-h-[48px] w-full sm:w-auto inline-block bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-md border-2 border-white cursor-pointer"
+                className="min-h-[48px] w-full sm:w-auto inline-block bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-xl hover:shadow-red-600/30 text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all active:scale-[0.98] shadow-md border-2 border-white cursor-pointer"
               >
                 Atstāt atsauksmi
               </button>
@@ -713,7 +839,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                     <button
                       type="submit"
                       disabled={!contactGdpr || contactSubmitting}
-                      className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-lg border-2 border-white cursor-pointer"
+                      className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-2xl hover:shadow-red-600/40 disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all active:scale-[0.98] shadow-lg border-2 border-white cursor-pointer"
                     >
                       {contactSubmitting ? 'Sūta...' : 'Nosūtīt'}
                     </button>

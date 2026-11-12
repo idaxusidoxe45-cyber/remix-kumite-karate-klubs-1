@@ -1,13 +1,96 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { SCHEDULE_GROUPS } from '../data';
-import { Calendar, Clock, Facebook, Instagram, Youtube, ArrowRight } from 'lucide-react';
+import type { AgeGroupFilter } from '../types';
+import {
+  Calendar,
+  Clock,
+  Facebook,
+  Instagram,
+  Youtube,
+  ArrowRight,
+  Radio,
+} from 'lucide-react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
 
 interface ScheduleProps {
   openTrialModal: () => void;
 }
 
+const DAY_NAMES_LV = [
+  'Svētdiena',
+  'Pirmdiena',
+  'Otrdiena',
+  'Trešdiena',
+  'Ceturtdiena',
+  'Piektdiena',
+  'Sestdiena',
+];
+
+const SLOT_DAY_UPPER_BY_INDEX: Record<number, string> = {
+  1: 'PIRMDIENA',
+  2: 'OTRDIENA',
+  3: 'TREŠDIENA',
+  4: 'CETURTDIENA',
+  5: 'PIEKTDIENA',
+};
+
 export default function Schedule({ openTrialModal }: ScheduleProps) {
+  const [ageFilter, setAgeFilter] = useState<'all' | AgeGroupFilter>('all');
+  const [dayFilter, setDayFilter] = useState<'all' | 'mwf' | 'tt'>('all');
+  const [todayDayIndex, setTodayDayIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    setTodayDayIndex(new Date().getDay());
+  }, []);
+
+  const filteredGroups = useMemo(() => {
+    return SCHEDULE_GROUPS.filter((group) => {
+      const matchesAge =
+        ageFilter === 'all' || (group.ageGroups ? group.ageGroups.includes(ageFilter) : true);
+      const matchesDay = dayFilter === 'all' || group.dayPattern === dayFilter;
+      return matchesAge && matchesDay;
+    });
+  }, [ageFilter, dayFilter]);
+
+  const todayStatus = useMemo(() => {
+    if (todayDayIndex === null) return null;
+    const dayName = DAY_NAMES_LV[todayDayIndex];
+    if (todayDayIndex === 1 || todayDayIndex === 3 || todayDayIndex === 5) {
+      return {
+        isOpenToday: true,
+        dayName,
+        text: `Šodien (${dayName}) zālē notiek nodarbības: 15:30 – 20:30 (1.–4. grupa)`,
+      };
+    }
+    if (todayDayIndex === 2 || todayDayIndex === 4) {
+      return {
+        isOpenToday: true,
+        dayName,
+        text: `Šodien (${dayName}) zālē notiek nodarbības: 18:00 – 20:15 (5.–6. grupa)`,
+      };
+    }
+    return {
+      isOpenToday: false,
+      dayName,
+      text: `Šodien (${dayName}) zālē ir brīvdiena — nākamie treniņi pirmdien no plkst. 15:30`,
+    };
+  }, [todayDayIndex]);
+
+  const todayUpperPrefix = todayDayIndex !== null ? SLOT_DAY_UPPER_BY_INDEX[todayDayIndex] : undefined;
+
+  const ageFilterOptions: { key: 'all' | AgeGroupFilter; label: string }[] = [
+    { key: 'all', label: 'Visi' },
+    { key: '5-6', label: '5–6 gadi' },
+    { key: '7-9', label: '7–9 gadi' },
+    { key: '10+', label: '10+ gadi' },
+  ];
+
+  const dayFilterOptions: { key: 'all' | 'mwf' | 'tt'; label: string }[] = [
+    { key: 'all', label: 'Visas dienas' },
+    { key: 'mwf', label: 'P · T · Pk' },
+    { key: 'tt', label: 'O · C' },
+  ];
+
   return (
     <div className="bg-[#ffffff] text-[#0f172a]">
       {/* Hero Header */}
@@ -36,7 +119,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
             <button
               type="button"
               onClick={openTrialModal}
-              className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-xl uppercase tracking-wider px-6 sm:px-8 py-3.5 font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-xl border-2 border-white rounded-lg text-center cursor-pointer"
+              className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-xl hover:shadow-red-600/30 text-white font-heading text-base sm:text-xl uppercase tracking-wider px-6 sm:px-8 py-3.5 font-bold transition-all active:scale-[0.98] shadow-xl border-2 border-white rounded-lg text-center cursor-pointer"
             >
               Pieteikties bezmaksas nodarbībai
             </button>
@@ -45,9 +128,9 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
       </section>
 
       {/* Schedule Groups Grid */}
-      <section className="py-24 bg-[#ffffff]">
+      <section className="py-16 sm:py-24 bg-[#ffffff]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="scroll-reveal text-center max-w-2xl mx-auto mb-16">
+          <div className="scroll-reveal text-center max-w-2xl mx-auto mb-10">
             <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#dc2626] font-bold">
               Nodarbību laiki
             </span>
@@ -57,56 +140,183 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
             <div className="w-24 h-1 bg-[#dc2626] mx-auto mt-4 rounded-full" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {SCHEDULE_GROUPS.map((group) => (
-              <InteractiveRepelCard key={group.id} maxShift={12} maxRotate={6}>
-                <div className="scroll-reveal bg-white rounded-2xl shadow-lg overflow-hidden border border-slate-200 flex flex-col justify-between hover:border-[#dc2626] hover:shadow-xl transition-all h-full">
-                  <div>
-                    <div className="h-48 overflow-hidden relative">
-                      <img
-                        src={group.image}
-                        alt={group.title}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-4 left-4 bg-[#dc2626] text-white font-heading text-lg uppercase tracking-wider px-4 py-1.5 rounded-lg font-bold shadow-md border border-white">
-                        {group.title}
+          {/* Live "Šodien zālē" Indicator */}
+          <div
+            role="status"
+            aria-live="polite"
+            className={`mb-8 rounded-2xl border p-4 sm:p-5 flex items-center justify-between gap-4 shadow-xs ${
+              todayStatus === null
+                ? 'bg-[#f8fafc] border-slate-200 text-slate-800'
+                : todayStatus.isOpenToday
+                  ? 'bg-emerald-50/90 border-emerald-300 text-emerald-950'
+                  : 'bg-slate-100 border-slate-300 text-slate-800'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <span
+                aria-hidden="true"
+                className={`w-3.5 h-3.5 rounded-full flex-shrink-0 ${
+                  todayStatus === null
+                    ? 'bg-slate-400'
+                    : todayStatus.isOpenToday
+                      ? 'bg-emerald-500 animate-pulse'
+                      : 'bg-amber-500'
+                }`}
+              />
+              <div>
+                <div className="flex items-center gap-2 text-xs font-heading font-bold uppercase tracking-wider text-[#b91c1c]">
+                  <Radio className="w-3.5 h-3.5" aria-hidden="true" />
+                  <span>Šodien zālē</span>
+                </div>
+                <p className="text-sm sm:text-base font-sans font-semibold mt-0.5">
+                  {todayStatus
+                    ? todayStatus.text
+                    : 'Zāles darba laiks: P, T, Pk (15:30–20:30) un O, C (18:00–20:15)'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Age-Group & Day Filter Toolbar */}
+          <div className="bg-[#f8fafc] border border-slate-200 rounded-2xl p-4 sm:p-5 mb-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-heading font-bold uppercase tracking-wider text-slate-600 mr-1">
+                Vecums:
+              </span>
+              {ageFilterOptions.map((opt) => (
+                <button
+                  key={opt.key}
+                  type="button"
+                  aria-pressed={ageFilter === opt.key}
+                  onClick={() => setAgeFilter(opt.key)}
+                  className={`min-h-[40px] px-4 py-1.5 rounded-full text-xs sm:text-sm font-heading font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                    ageFilter === opt.key
+                      ? 'bg-[#dc2626] text-white shadow-sm border border-[#0a0a0c]'
+                      : 'bg-white text-[#0f172a] hover:bg-slate-100 border border-slate-300'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-heading font-bold uppercase tracking-wider text-slate-600 mr-1">
+                Dienas:
+              </span>
+              {dayFilterOptions.map((opt) => (
+                <button
+                  key={opt.key}
+                  type="button"
+                  aria-pressed={dayFilter === opt.key}
+                  onClick={() => setDayFilter(opt.key)}
+                  className={`min-h-[40px] px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-heading font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                    dayFilter === opt.key
+                      ? 'bg-[#0a0a0c] text-white shadow-sm'
+                      : 'bg-white text-[#0f172a] hover:bg-slate-100 border border-slate-300'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {filteredGroups.length === 0 ? (
+            <div className="bg-[#f8fafc] border border-slate-200 rounded-2xl p-10 text-center space-y-4">
+              <p className="text-slate-700 font-sans text-base">
+                Izvēlētajam vecuma un dienu filtram šobrīd nav atbilstošu grupu.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setAgeFilter('all');
+                  setDayFilter('all');
+                }}
+                className="min-h-[44px] px-6 py-2.5 rounded-lg bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-sm uppercase font-bold tracking-wider cursor-pointer"
+              >
+                Rādīt visas grupas
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredGroups.map((group) => (
+                <InteractiveRepelCard key={group.id} maxShift={12} maxRotate={6}>
+                  <div className="scroll-reveal bg-white rounded-2xl shadow-lg overflow-hidden border border-slate-200 flex flex-col justify-between hover:border-[#dc2626] hover:shadow-xl transition-all h-full">
+                    <div>
+                      <div className="h-48 overflow-hidden relative">
+                        <img
+                          src={group.image}
+                          alt={group.title}
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute top-4 left-4 bg-[#dc2626] text-white font-heading text-lg uppercase tracking-wider px-4 py-1.5 rounded-lg font-bold shadow-md border border-white">
+                          {group.title}
+                        </div>
+                        {group.ageLabel && (
+                          <div className="absolute bottom-3 left-4 bg-[#0a0a0c]/85 text-white text-xs font-sans font-semibold px-3 py-1 rounded-full border border-white/20">
+                            {group.ageLabel}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="p-6 space-y-3">
+                        <h3 className="font-heading text-2xl uppercase tracking-wider text-[#0a0a0c] mb-4 flex items-center font-bold">
+                          <Clock className="w-6 h-6 text-[#dc2626] mr-2" aria-hidden="true" />
+                          <span>Grafiks</span>
+                        </h3>
+                        <ul className="space-y-2.5">
+                          {group.schedule.map((slot, sIdx) => {
+                            const isTodaySlot =
+                              Boolean(todayUpperPrefix) &&
+                              slot.toUpperCase().startsWith(todayUpperPrefix!);
+                            return (
+                              <li
+                                key={sIdx}
+                                className={`flex items-center justify-between gap-2 text-sm p-3 rounded-lg border font-semibold font-sans ${
+                                  isTodaySlot
+                                    ? 'bg-emerald-50 border-emerald-400 text-emerald-950'
+                                    : 'text-slate-800 bg-slate-50 border-slate-200'
+                                }`}
+                              >
+                                <span className="flex items-center">
+                                  <Calendar
+                                    className={`w-4 h-4 mr-2.5 flex-shrink-0 ${
+                                      isTodaySlot ? 'text-emerald-700' : 'text-[#dc2626]'
+                                    }`}
+                                    aria-hidden="true"
+                                  />
+                                  <span>{slot}</span>
+                                </span>
+                                {isTodaySlot && (
+                                  <span className="text-[10px] font-heading font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-600 text-white flex-shrink-0">
+                                    Šodien
+                                  </span>
+                                )}
+                              </li>
+                            );
+                          })}
+                        </ul>
                       </div>
                     </div>
-                    <div className="p-6 space-y-3">
-                      <h3 className="font-heading text-2xl uppercase tracking-wider text-[#0a0a0c] mb-4 flex items-center font-bold">
-                        <Clock className="w-6 h-6 text-[#dc2626] mr-2" aria-hidden="true" />
-                        <span>Grafiks</span>
-                      </h3>
-                      <ul className="space-y-2.5">
-                        {group.schedule.map((slot, sIdx) => (
-                          <li
-                            key={sIdx}
-                            className="flex items-center text-sm text-slate-800 bg-slate-50 p-3 rounded-lg border border-slate-200 font-semibold font-sans"
-                          >
-                            <Calendar className="w-4 h-4 text-[#dc2626] mr-2.5 flex-shrink-0" aria-hidden="true" />
-                            <span>{slot}</span>
-                          </li>
-                        ))}
-                      </ul>
+
+                    <div className="p-6 pt-0">
+                      <button
+                        type="button"
+                        onClick={openTrialModal}
+                        className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-xl hover:shadow-red-600/30 text-white font-heading text-xl uppercase tracking-wider py-3.5 rounded-lg font-bold transition-all active:scale-[0.98] flex items-center justify-center space-x-2 shadow-lg border border-white cursor-pointer"
+                      >
+                        <span>Pieteikties grupā</span>
+                        <ArrowRight className="w-5 h-5" aria-hidden="true" />
+                      </button>
                     </div>
                   </div>
-
-                  <div className="p-6 pt-0">
-                    <button
-                      type="button"
-                      onClick={openTrialModal}
-                      className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-xl uppercase tracking-wider py-3.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] flex items-center justify-center space-x-2 shadow-lg border border-white cursor-pointer"
-                    >
-                      <span>Pieteikties grupā</span>
-                      <ArrowRight className="w-5 h-5" aria-hidden="true" />
-                    </button>
-                  </div>
-                </div>
-              </InteractiveRepelCard>
-            ))}
-          </div>
+                </InteractiveRepelCard>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

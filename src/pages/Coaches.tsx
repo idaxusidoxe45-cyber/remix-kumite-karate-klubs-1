@@ -111,6 +111,7 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
           decoding="sync"
           fetchPriority="high"
           className="absolute inset-0 w-full h-full object-cover opacity-45 filter grayscale pointer-events-none select-none"
+          style={{ objectPosition: 'center 20%' }}
         />
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="hero-enter">
@@ -263,7 +264,6 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
                 width={1280}
                 height={720}
                 preload="none"
-                {...({ loading: 'lazy' } as Record<string, string>)}
                 poster="/assets_coaches/img_1820-scaled.webp"
                 className="w-full h-full object-cover"
               >
