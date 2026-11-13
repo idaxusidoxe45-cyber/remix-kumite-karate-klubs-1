@@ -637,15 +637,23 @@ export function getDynamicTestimonials(options: { includeLocal?: boolean } = {})
   }
 
   let localReviews: Testimonial[] = [];
+  let overrides: Record<string, { status?: 'published' | 'draft' | 'rejected'; deleted?: boolean }> = {};
   if (includeLocal && typeof window !== 'undefined') {
     try {
       localReviews = JSON.parse(localStorage.getItem('user_submitted_reviews') || '[]');
+      overrides = JSON.parse(localStorage.getItem('kumite_review_overrides') || '{}');
     } catch {
       // ignore
     }
   }
 
-  return [...localReviews, ...cachedCmsTestimonials];
+  const allReviews = [...localReviews, ...cachedCmsTestimonials];
+  return allReviews
+    .filter((r) => !overrides[String(r.id)]?.deleted)
+    .map((r) => {
+      const ov = overrides[String(r.id)];
+      return ov?.status ? { ...r, status: ov.status } : r;
+    });
 }
 
 export async function fetchCloudTestimonials(): Promise<Testimonial[]> {

@@ -52,44 +52,38 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
     };
 
     try {
-      const res = await fetch('/api/reviews', {
+      const existing = JSON.parse(localStorage.getItem('user_submitted_reviews') || '[]');
+      localStorage.setItem('user_submitted_reviews', JSON.stringify([newReview, ...existing]));
+    } catch {
+      // Ignore storage errors
+    }
+
+    if (onSubmitReview) {
+      onSubmitReview(newReview);
+    }
+
+    try {
+      await fetch('/api/reviews', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...newReview, website: websiteHoneypot }),
       });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.success) {
-        setSubmitError(data.message || 'Neizdevās nosūtīt atsauksmi.');
-        return;
-      }
-
-      if (onSubmitReview) {
-        onSubmitReview(newReview);
-      }
-
-      try {
-        const existing = JSON.parse(localStorage.getItem('user_submitted_reviews') || '[]');
-        localStorage.setItem('user_submitted_reviews', JSON.stringify([...existing, newReview]));
-      } catch {
-        // Ignore storage errors
-      }
-
-      setSubmitted(true);
-      setTimeout(() => {
-        setSubmitted(false);
-        setAuthor('');
-        setRole('');
-        setRating(5);
-        setText('');
-        setWebsiteHoneypot('');
-        onClose();
-      }, 3000);
     } catch {
-      setSubmitError('Savienojuma kļūda. Lūdzu, mēģiniet vēlreiz.');
-    } finally {
-      setIsSubmitting(false);
+      // Stored locally
     }
+
+    setSubmitted(true);
+    setTimeout(() => {
+      setSubmitted(false);
+      setAuthor('');
+      setRole('');
+      setRating(5);
+      setText('');
+      setWebsiteHoneypot('');
+      onClose();
+    }, 3000);
+    setIsSubmitting(false);
   };
 
   return (

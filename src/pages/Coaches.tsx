@@ -98,23 +98,23 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
   return (
     <div className="bg-[#ffffff] text-[#0f172a]">
       {/* Hero Header */}
-      <section className="relative bg-[#0a0a0c] text-white py-20 lg:py-28 overflow-hidden border-b-8 border-[#dc2626]">
+      <section className="relative bg-[#0a0a0c] text-white py-24 sm:py-28 lg:py-36 min-h-[440px] sm:min-h-[480px] flex items-center overflow-hidden border-b-8 border-[#dc2626]">
         <img
           src="/assets_coaches/marikanikolajs-52-scaled.webp"
           srcSet="/assets_coaches/marikanikolajs-52-800w.webp 800w, /assets_coaches/marikanikolajs-52-scaled.webp 1707w"
           sizes="100vw"
           width={1707}
           height={2560}
-          alt=""
-          aria-hidden="true"
+          alt="Treneris Nikolajs Bodrovs"
           loading="eager"
           decoding="sync"
           fetchPriority="high"
-          className="absolute inset-0 w-full h-full object-cover opacity-45 filter grayscale pointer-events-none select-none"
-          style={{ objectPosition: 'center 20%' }}
+          className="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none select-none"
+          style={{ objectPosition: 'center 38%' }}
         />
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="hero-enter">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0c]/90 via-[#0a0a0c]/60 to-transparent pointer-events-none" />
+        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="hero-enter max-w-2xl">
             <span className="text-xs sm:text-sm uppercase tracking-widest text-[#f87171] font-heading font-bold block mb-2">
               Vairāk • Ātrāk • Spēcīgāk
             </span>
@@ -124,7 +124,7 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
             <button
               type="button"
               onClick={openTrialModal}
-              className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg sm:text-xl uppercase tracking-widest px-8 py-3.5 font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-xl border-2 border-white rounded-lg cursor-pointer"
+              className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-xl hover:shadow-red-600/30 text-white font-heading text-lg sm:text-xl uppercase tracking-widest px-8 py-3.5 font-bold transition-all active:scale-[0.98] shadow-xl border-2 border-white rounded-lg cursor-pointer"
             >
               Pievienojies šodien
             </button>

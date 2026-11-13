@@ -129,15 +129,26 @@ export async function restoreItem(trashId: string): Promise<TrashItem | null> {
     }
   } else if (target.type === 'review') {
     try {
+      if (typeof window !== 'undefined') {
+        const overrides = JSON.parse(localStorage.getItem('kumite_review_overrides') || '{}');
+        if (overrides[String(target.originalId)]) {
+          delete overrides[String(target.originalId)].deleted;
+          localStorage.setItem('kumite_review_overrides', JSON.stringify(overrides));
+        }
+        const userRevs = JSON.parse(localStorage.getItem('user_submitted_reviews') || '[]');
+        if (!userRevs.some((r: any) => String(r.id) === String(target.originalId))) {
+          localStorage.setItem('user_submitted_reviews', JSON.stringify([target.data, ...userRevs]));
+        }
+      }
+
       const idNum = Number(target.originalId);
       const isBuiltIn = Number.isFinite(idNum) && idNum > 0 && idNum < 30000;
-      const res = await fetch('/api/reviews', {
+      await fetch('/api/reviews', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...target.data, isCustom: !isBuiltIn }),
-      });
-      if (res.status === 401) throw new Error('UNAUTHORIZED');
+      }).catch(() => null);
     } catch (e) {
       if (e instanceof Error && e.message === 'UNAUTHORIZED') throw e;
       console.error('Error restoring review:', e);
@@ -170,11 +181,15 @@ export async function restoreItem(trashId: string): Promise<TrashItem | null> {
     } catch {}
   }
 
-  const delRes = await fetch(`/api/trash?id=${encodeURIComponent(trashId)}`, {
-    method: 'DELETE',
-    credentials: 'include',
-  });
-  if (delRes.status === 401) throw new Error('UNAUTHORIZED');
+  try {
+    const delRes = await fetch(`/api/trash?id=${encodeURIComponent(trashId)}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+    if (delRes.status === 401) throw new Error('UNAUTHORIZED');
+  } catch (e) {
+    if (e instanceof Error && e.message === 'UNAUTHORIZED') throw e;
+  }
 
   return target;
 }

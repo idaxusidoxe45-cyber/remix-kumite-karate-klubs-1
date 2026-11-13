@@ -15,9 +15,6 @@ import {
   Phone,
   Mail,
   AlertCircle,
-  Sparkles,
-  Shirt,
-  Smile,
   ShieldCheck,
 } from 'lucide-react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
@@ -305,7 +302,6 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                     <span className="w-12 h-12 rounded-2xl bg-[#dc2626] text-white flex items-center justify-center font-heading text-2xl font-bold shadow-md">
                       1
                     </span>
-                    <Sparkles className="w-7 h-7 text-[#dc2626]" aria-hidden="true" />
                   </div>
                   <h3 className="text-2xl font-heading text-[#0f172a] font-bold uppercase tracking-wide mb-3">
                     Bezmaksas pieteikums
@@ -331,7 +327,6 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                     <span className="w-12 h-12 rounded-2xl bg-[#2563eb] text-white flex items-center justify-center font-heading text-2xl font-bold shadow-md">
                       2
                     </span>
-                    <Shirt className="w-7 h-7 text-[#2563eb]" aria-hidden="true" />
                   </div>
                   <h3 className="text-2xl font-heading text-[#0f172a] font-bold uppercase tracking-wide mb-3">
                     Kas jāņem līdzi?
@@ -367,7 +362,6 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                     <span className="w-12 h-12 rounded-2xl bg-[#0a0a0c] text-white flex items-center justify-center font-heading text-2xl font-bold shadow-md">
                       3
                     </span>
-                    <Smile className="w-7 h-7 text-[#0a0a0c]" aria-hidden="true" />
                   </div>
                   <h3 className="text-2xl font-heading text-[#0f172a] font-bold uppercase tracking-wide mb-3">
                     Pirmā tikšanās bez stresa
