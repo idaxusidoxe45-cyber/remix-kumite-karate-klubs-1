@@ -118,15 +118,18 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
       ? filteredItems[selectedImageIndex]
       : null;
 
-  const adjacentSrcs =
-    selectedImageIndex !== null && filteredItems.length > 1
-      ? [
-          filteredItems[(selectedImageIndex + 1) % filteredItems.length]?.fullImage ||
-            filteredItems[(selectedImageIndex + 1) % filteredItems.length]?.image,
-          filteredItems[(selectedImageIndex - 1 + filteredItems.length) % filteredItems.length]?.fullImage ||
-            filteredItems[(selectedImageIndex - 1 + filteredItems.length) % filteredItems.length]?.image,
-        ]
-      : undefined;
+  const adjacentSrcs = React.useMemo(() => {
+    if (selectedImageIndex === null || filteredItems.length <= 1) return undefined;
+    const len = filteredItems.length;
+    const srcs: string[] = [];
+    const offsets = [1, -1, 2, -2];
+    for (const offset of offsets) {
+      const target = filteredItems[(selectedImageIndex + offset + len * 2) % len];
+      if (target?.image) srcs.push(target.image);
+      if (target?.fullImage && target.fullImage !== target.image) srcs.push(target.fullImage);
+    }
+    return srcs;
+  }, [selectedImageIndex, filteredItems]);
 
   return (
     <div className="bg-[#ffffff] text-[#0f172a]">
