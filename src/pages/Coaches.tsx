@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Award, GraduationCap, ZoomIn } from 'lucide-react';
+import { Award, GraduationCap } from 'lucide-react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
 import LightboxModal from '../components/LightboxModal';
 
@@ -8,54 +8,14 @@ interface CoachesProps {
 }
 
 const COACH_GALLERY_PHOTOS = [
-  {
-    id: 1,
-    src: '/assets_coaches/ka_00302-edit.webp',
-    title: 'Nikolajs Bodrovs (2 DAN)',
-    caption: 'Karatē paraugdemonstrējums pie jūras',
-  },
-  {
-    id: 2,
-    src: '/assets_coaches/marikanikolajs-52-scaled.webp',
-    title: 'Treneris Nikolajs Bodrovs',
-    caption: 'Portrets',
-  },
-  {
-    id: 3,
-    src: '/assets_coaches/r6__9073-scaled.webp',
-    title: 'Treneris Nikolajs Bodrovs',
-    caption: 'Portrets pie jūras',
-  },
-  {
-    id: 4,
-    src: '/assets_coaches/img_2715-_1_-scaled.webp',
-    title: 'Mūsu kluba kausi un trofejas',
-    caption: 'Karatē čempionātu apbalvojumi',
-  },
-  {
-    id: 5,
-    src: '/assets_coaches/img_5431-1.webp',
-    title: 'Sacensības un turnīri',
-    caption: 'Latvijas un starptautiskie čempionāti',
-  },
-  {
-    id: 6,
-    src: '/assets_coaches/img_1820-scaled.webp',
-    title: 'Treniņu process',
-    caption: 'Darbs ar jaunajiem karatistiem',
-  },
-  {
-    id: 7,
-    src: '/assets_coaches/img_2122-scaled.webp',
-    title: 'Nodarbību vadīšana',
-    caption: 'Individuālā pieeja katram audzēknim',
-  },
-  {
-    id: 8,
-    src: '/assets_coaches/img_5438.webp',
-    title: 'Kumite Karatē Klubs',
-    caption: 'Kluba atmosfēra un komandas gars',
-  },
+  { id: 1, src: '/assets_coaches/ka_00302-edit.webp' },
+  { id: 2, src: '/assets_coaches/marikanikolajs-52-scaled.webp' },
+  { id: 3, src: '/assets_coaches/r6__9073-scaled.webp' },
+  { id: 4, src: '/assets_coaches/img_2715-_1_-scaled.webp' },
+  { id: 5, src: '/assets_coaches/img_5431-1.webp' },
+  { id: 6, src: '/assets_coaches/img_1820-scaled.webp' },
+  { id: 7, src: '/assets_coaches/img_2122-scaled.webp' },
+  { id: 8, src: '/assets_coaches/img_5438.webp' },
 ];
 
 export default function Coaches({ openTrialModal }: CoachesProps) {
@@ -77,11 +37,9 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
     selectedPhotoIndex !== null
       ? {
           id: selectedPhotoIndex,
-          title: COACH_GALLERY_PHOTOS[selectedPhotoIndex].title,
           category: 'trenini' as const,
           image: COACH_GALLERY_PHOTOS[selectedPhotoIndex].src,
           fullImage: COACH_GALLERY_PHOTOS[selectedPhotoIndex].src,
-          caption: COACH_GALLERY_PHOTOS[selectedPhotoIndex].caption,
         }
       : null;
 
@@ -205,9 +163,6 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
               <h2 className="text-3xl font-heading uppercase font-bold text-[#0f172a] tracking-wide">
                 Trenera Fotogalerija
               </h2>
-              <p className="text-slate-600 font-sans text-sm mt-1">
-                Uzklikšķiniet uz jebkuras fotogrāfijas, lai atvērtu to pilnekrāna režīmā
-              </p>
               <div className="w-16 h-1 bg-[#dc2626] mx-auto mt-3 rounded-full" />
             </div>
 
@@ -217,31 +172,17 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
                   <button
                     type="button"
                     onClick={() => setSelectedPhotoIndex(idx)}
-                    aria-label={`Atvērt foto: ${photo.title}`}
+                    aria-label={`Atvērt foto ${idx + 1}`}
                     className="relative w-full text-left overflow-hidden rounded-xl bg-gray-900 border border-slate-200 shadow-md group h-48 sm:h-72 cursor-pointer hover:border-[#dc2626] transition-all block"
                   >
                     <img
                       src={photo.src}
-                      alt={photo.title}
+                      alt="Treneris Nikolajs Bodrovs"
                       loading="lazy"
                       decoding="async"
-                      className="w-full h-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03]"
+                      className="w-full h-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3 sm:p-4">
-                      <div className="w-full flex items-end justify-between gap-2">
-                        <div>
-                          <p className="text-white font-heading text-xs sm:text-base font-bold uppercase">
-                            {photo.title}
-                          </p>
-                          <p className="text-[11px] sm:text-xs text-slate-200 font-sans hidden xs:block">
-                            {photo.caption}
-                          </p>
-                        </div>
-                        <span className="bg-[#dc2626] p-1.5 sm:p-2 rounded-full text-white shadow-lg flex-shrink-0">
-                          <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden="true" />
-                        </span>
-                      </div>
-                    </div>
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 pointer-events-none" />
                   </button>
                 </InteractiveRepelCard>
               ))}
