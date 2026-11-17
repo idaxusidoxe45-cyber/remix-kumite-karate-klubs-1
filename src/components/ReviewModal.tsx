@@ -178,7 +178,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
                   if (submitError) setSubmitError('');
                 }}
                 placeholder="Piem., Jānis Bērziņš"
-                className="w-full min-h-[44px] bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#dc2626]"
+                className="w-full min-h-[44px] bg-[#0a0a0c] border border-slate-600 hover:border-slate-500 rounded-xl px-4 py-2.5 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#2563eb]"
               />
             </div>
 
@@ -194,7 +194,7 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
                 placeholder="Piem., Kārļa tētis"
-                className="w-full min-h-[44px] bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#dc2626]"
+                className="w-full min-h-[44px] bg-[#0a0a0c] border border-slate-600 hover:border-slate-500 rounded-xl px-4 py-2.5 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#2563eb]"
               />
             </div>
 
@@ -210,13 +210,13 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
                     onClick={() => setRating(star)}
                     aria-label={`${star} no 5 zvaigznēm`}
                     aria-pressed={rating === star}
-                    className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-lg hover:bg-slate-800/70 transition-all hover:scale-[1.06] active:scale-[0.94] cursor-pointer"
+                    className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-xl hover:bg-slate-800/70 transition-all hover:scale-[1.06] active:scale-[0.94] cursor-pointer"
                   >
                     <Star
                       className={`w-6 h-6 transition-colors ${
                         star <= rating
-                          ? 'text-yellow-400 fill-yellow-400'
-                          : 'text-slate-500'
+                          ? 'text-[#dc2626] fill-[#dc2626]'
+                          : 'text-slate-600'
                       }`}
                       aria-hidden="true"
                     />
@@ -241,12 +241,12 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
                   if (submitError) setSubmitError('');
                 }}
                 placeholder="Uzrakstiet savu pieredzi un iespaidus..."
-                className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#dc2626]"
+                className="w-full bg-[#0a0a0c] border border-slate-600 hover:border-slate-500 rounded-xl px-4 py-2.5 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#2563eb]"
               />
             </div>
 
             {submitError && (
-              <div role="alert" className="p-3 bg-red-500/20 border border-red-500 text-red-200 rounded-lg text-sm flex items-center space-x-2">
+              <div role="alert" className="p-3 bg-red-500/20 border border-red-500 text-red-200 rounded-xl text-sm flex items-center space-x-2">
                 <AlertCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 <span>{submitError}</span>
               </div>
@@ -256,14 +256,14 @@ export default function ReviewModal({ isOpen, onClose, onSubmitReview }: ReviewM
               <button
                 type="button"
                 onClick={onClose}
-                className="min-h-[44px] px-5 py-2.5 rounded-lg border border-slate-600 text-slate-200 hover:bg-slate-800 text-xs sm:text-sm font-heading uppercase font-bold transition-all active:scale-[0.98] cursor-pointer"
+                className="min-h-[44px] px-5 py-2.5 rounded-xl border border-slate-600 text-slate-200 hover:bg-slate-800 text-xs sm:text-sm font-heading uppercase font-bold transition-all active:scale-[0.98] cursor-pointer"
               >
                 Atcelt
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="min-h-[44px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-xl hover:shadow-red-600/30 disabled:opacity-50 text-white font-heading text-xs sm:text-sm uppercase tracking-widest px-6 py-2.5 rounded-lg font-bold transition-all active:scale-[0.98] shadow-lg border border-white/20 inline-flex items-center justify-center space-x-1.5 disabled:cursor-not-allowed cursor-pointer"
+                className="min-h-[44px] bg-[#dc2626] hover:bg-[#b91c1c] hover:shadow-xl hover:shadow-red-600/25 disabled:opacity-50 text-white font-heading text-xs sm:text-sm uppercase tracking-wider px-6 py-2.5 rounded-xl font-bold transition-all active:scale-[0.98] shadow-lg border border-red-500/30 inline-flex items-center justify-center space-x-1.5 disabled:cursor-not-allowed cursor-pointer"
               >
                 {isSubmitting ? (
                   <>

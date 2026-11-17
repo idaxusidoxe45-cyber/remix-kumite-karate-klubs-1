@@ -197,7 +197,7 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
                     if (submitError) setSubmitError('');
                   }}
                   placeholder="Jūsu vārds"
-                  className="w-full min-h-[44px] bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#dc2626] text-base"
+                  className="w-full min-h-[44px] bg-[#0a0a0c] border border-slate-600 hover:border-slate-500 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#2563eb] text-base"
                 />
               </div>
 
@@ -220,8 +220,8 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
                     aria-invalid={Boolean(phoneError) || undefined}
                     aria-describedby={phoneError ? phoneErrorId : undefined}
                     placeholder="+371 29177274"
-                    className={`w-full min-h-[44px] bg-[#1e293b] border rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#dc2626] text-base font-mono ${
-                      phoneError ? 'border-red-500' : 'border-slate-700'
+                    className={`w-full min-h-[44px] bg-[#0a0a0c] border rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#2563eb] text-base font-mono ${
+                      phoneError ? 'border-red-500' : 'border-slate-600 hover:border-slate-500'
                     }`}
                   />
                 </div>
@@ -242,7 +242,7 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="epasts@epasts.lv"
-                    className="w-full min-h-[44px] bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#dc2626] text-base"
+                    className="w-full min-h-[44px] bg-[#0a0a0c] border border-slate-600 hover:border-slate-500 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#2563eb] text-base"
                   />
                 </div>
               </div>
@@ -265,7 +265,7 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Jūsu ziņa vai bērna vecums..."
-                  className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#dc2626] text-base"
+                  className="w-full bg-[#0a0a0c] border border-slate-600 hover:border-slate-500 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#2563eb] text-base"
                 />
               </div>
 
@@ -288,7 +288,7 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
               </label>
 
               {submitError && (
-                <div role="alert" className="p-3 bg-red-500/20 border border-red-500 text-red-200 rounded-lg text-sm flex items-center space-x-2">
+                <div role="alert" className="p-3 bg-red-500/20 border border-red-500 text-red-200 rounded-xl text-sm flex items-center space-x-2">
                   <AlertCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                   <span>{submitError}</span>
                 </div>
@@ -298,7 +298,7 @@ export default function TrialModal({ isOpen, onClose }: TrialModalProps) {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-2xl hover:shadow-red-600/40 disabled:opacity-50 text-white font-heading text-lg sm:text-xl uppercase tracking-widest px-6 py-4 rounded-lg font-bold flex items-center justify-center space-x-2 transition-all active:scale-[0.98] shadow-xl border-2 border-white disabled:cursor-not-allowed cursor-pointer"
+                  className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:shadow-2xl hover:shadow-red-600/30 disabled:opacity-50 text-white font-heading text-base sm:text-lg uppercase tracking-wider px-6 py-4 rounded-xl font-bold flex items-center justify-center space-x-2 transition-all active:scale-[0.98] shadow-xl border border-red-500/30 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {isSubmitting ? (
                     <>

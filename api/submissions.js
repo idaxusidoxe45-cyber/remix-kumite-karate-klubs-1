@@ -1,7 +1,72 @@
 import { getCloudData, saveCloudData, checkRateLimit } from './_kv.js';
-import { setApiHeaders, requireAdmin, verifySession, getClientIp } from './_auth.js';
+import { setApiHeaders, verifySameOrigin, requireAdmin, verifySession, getClientIp } from './_auth.js';
 
 const SUBMISSIONS_KEY = 'kumite_submissions';
+const NOTIFICATION_EMAIL_KEY = 'kumite_notification_email';
+const MAX_SUBMISSIONS = 500;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function escapeHtml(input) {
+  return String(input || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
+ * Future-ready server-side notification hook.
+ * Currently inactive unless RESEND_API_KEY (or future bot env vars) are configured in Vercel.
+ * All submissions are always persisted for /admin first regardless of external delivery.
+ */
+async function dispatchOptionalNotification(submission) {
+  try {
+    const resendApiKey = (process.env.RESEND_API_KEY || '').trim();
+    if (resendApiKey) {
+      const kvEmail = await getCloudData(NOTIFICATION_EMAIL_KEY, null);
+      const recipient =
+        (typeof kvEmail === 'string' && kvEmail.includes('@') ? kvEmail : '') ||
+        (process.env.NOTIFICATION_EMAIL || '').trim() ||
+        'info@kumitekarate.lv';
+
+      const cleanSubjectName = String(submission.name || '').replace(/[\r\n]+/g, ' ').trim();
+      const subject =
+        submission.type === 'trial'
+          ? `Kumite Karate: Pieteikums treniņam - ${cleanSubjectName}`
+          : `Kumite Karate: Ziņa no mājaslapas - ${cleanSubjectName}`;
+
+      const validReplyTo =
+        submission.email && EMAIL_REGEX.test(submission.email) ? submission.email : undefined;
+
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${resendApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: 'Kumite Karate Klubs <onboarding@resend.dev>',
+          to: [recipient],
+          subject,
+          html: `<p><strong>Vārds:</strong> ${escapeHtml(submission.name)}</p>${
+            submission.phone ? `<p><strong>Tālrunis:</strong> ${escapeHtml(submission.phone)}</p>` : ''
+          }${submission.email ? `<p><strong>E-pasts:</strong> ${escapeHtml(submission.email)}</p>` : ''}${
+            submission.message
+              ? `<p><strong>Ziņa:</strong><br/>${escapeHtml(submission.message).replace(/\r?\n/g, '<br/>')}</p>`
+              : ''
+          }`,
+          ...(validReplyTo ? { reply_to: validReplyTo } : {}),
+        }),
+      });
+    }
+
+    // Extension point for future Telegram / WhatsApp bot integration:
+    // if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) { ... }
+  } catch (err) {
+    console.error('Optional notification dispatch error:', err);
+  }
+}
 
 const DEMO_SUBMISSIONS = [
   {
@@ -35,6 +100,7 @@ export default async function handler(req, res) {
 
     // POST: Public form submission (with honeypot & rate limit) OR Admin restore
     if (req.method === 'POST') {
+      if (!verifySameOrigin(req, res)) return;
       const body = req.body || {};
       const session = await verifySession(req);
 
@@ -74,8 +140,12 @@ export default async function handler(req, res) {
       const submissions = await getCloudData(SUBMISSIONS_KEY, []);
       const baseList = Array.isArray(submissions) ? submissions : [];
       const deduped = baseList.filter((s) => String(s.id) !== String(newSubmission.id));
-      const updated = [newSubmission, ...deduped];
+      const updated = [newSubmission, ...deduped].slice(0, MAX_SUBMISSIONS);
       await saveCloudData(SUBMISSIONS_KEY, updated);
+
+      if (!session) {
+        await dispatchOptionalNotification(newSubmission);
+      }
 
       return res.status(200).json({ success: true, submission: newSubmission });
     }

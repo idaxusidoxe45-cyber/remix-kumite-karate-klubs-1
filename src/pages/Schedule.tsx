@@ -144,7 +144,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
               <button
                 type="button"
                 onClick={openTrialModal}
-                className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-xl hover:shadow-red-600/30 text-white font-heading text-base sm:text-xl uppercase tracking-wider px-6 sm:px-8 py-3.5 font-bold transition-all active:scale-[0.97] shadow-xl border-2 border-white rounded-lg text-center cursor-pointer"
+                className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:shadow-xl hover:shadow-red-600/25 text-white font-heading text-base sm:text-lg uppercase tracking-wider px-6 sm:px-8 py-3.5 font-bold transition-all active:scale-[0.97] shadow-xl border border-red-500/30 rounded-xl text-center cursor-pointer"
               >
                 Pieteikties bezmaksas nodarbībai
               </button>
@@ -226,7 +226,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
                   onClick={() => setAgeFilter(opt.key)}
                   className={`min-h-[44px] px-4 py-1.5 rounded-full text-xs sm:text-sm font-heading font-bold uppercase tracking-wider transition-all active:scale-[0.96] cursor-pointer ${
                     ageFilter === opt.key
-                      ? 'bg-[#dc2626] text-white shadow-md border-2 border-[#0a0a0c]'
+                      ? 'bg-[#dc2626] text-white shadow-md border border-[#dc2626]'
                       : 'bg-white text-[#0f172a] hover:bg-slate-100 border border-slate-300'
                   }`}
                 >
@@ -247,7 +247,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
                   onClick={() => setDayFilter(opt.key)}
                   className={`min-h-[44px] px-4 py-1.5 rounded-full text-xs sm:text-sm font-heading font-bold uppercase tracking-wider transition-all active:scale-[0.96] cursor-pointer ${
                     dayFilter === opt.key
-                      ? 'bg-[#2563eb] text-white shadow-md border-2 border-[#0a0a0c]'
+                      ? 'bg-[#2563eb] text-white shadow-md border border-[#2563eb]'
                       : 'bg-white text-[#0f172a] hover:bg-slate-100 border border-slate-300'
                   }`}
                 >
@@ -293,7 +293,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
                           className="w-full h-full object-cover"
                         />
                         <div
-                          className={`absolute top-4 left-4 text-white font-heading text-lg uppercase tracking-wider px-4 py-1.5 rounded-lg font-bold shadow-md border border-white ${
+                          className={`absolute top-4 left-4 text-white font-heading text-base sm:text-lg uppercase tracking-wider px-3.5 py-1.5 rounded-xl font-bold shadow-md ${
                             group.dayPattern === 'tt' ? 'bg-[#2563eb]' : 'bg-[#dc2626]'
                           }`}
                         >
@@ -355,7 +355,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
                       <button
                         type="button"
                         onClick={openTrialModal}
-                        className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-xl hover:shadow-red-600/30 text-white font-heading text-xl uppercase tracking-wider py-3.5 rounded-lg font-bold transition-all active:scale-[0.97] flex items-center justify-center space-x-2 shadow-lg border border-white cursor-pointer"
+                        className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:shadow-xl hover:shadow-red-600/25 text-white font-heading text-base sm:text-lg uppercase tracking-wider py-3.5 rounded-xl font-bold transition-all active:scale-[0.97] flex items-center justify-center space-x-2 shadow-md border border-red-500/30 cursor-pointer"
                       >
                         <span>Pieteikties grupā</span>
                         <ArrowRight className="w-5 h-5" aria-hidden="true" />
@@ -384,7 +384,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Kumite Karate Klubs Facebook profils"
-              className="w-12 h-12 rounded-lg bg-[#1e293b] hover:bg-[#2563eb] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
+              className="w-12 h-12 rounded-xl bg-[#1e293b] hover:bg-[#2563eb] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
               title="Facebook"
             >
               <Facebook className="w-6 h-6" aria-hidden="true" />
@@ -394,7 +394,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Kumite Karate Klubs Instagram profils"
-              className="w-12 h-12 rounded-lg bg-[#1e293b] hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
+              className="w-12 h-12 rounded-xl bg-[#1e293b] hover:bg-[#dc2626] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
               title="Instagram"
             >
               <Instagram className="w-6 h-6" aria-hidden="true" />
@@ -404,7 +404,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Kumite Karate Klubs YouTube kanāls"
-              className="w-12 h-12 rounded-lg bg-[#1e293b] hover:bg-[#dc2626] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
+              className="w-12 h-12 rounded-xl bg-[#1e293b] hover:bg-[#dc2626] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
               title="YouTube"
             >
               <Youtube className="w-6 h-6" aria-hidden="true" />

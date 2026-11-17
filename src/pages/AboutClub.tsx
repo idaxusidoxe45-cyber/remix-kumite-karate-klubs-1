@@ -79,7 +79,7 @@ export default function AboutClub({
                 href="https://wa.link/y3zuwq"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto min-h-[48px] text-center inline-flex items-center justify-center bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-xl uppercase tracking-wider px-6 sm:px-8 py-3.5 font-bold transition-all hover:-translate-y-0.5 active:scale-[0.97] rounded-lg border-2 border-white shadow-xl"
+                className="w-full sm:w-auto min-h-[48px] text-center inline-flex items-center justify-center bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-lg uppercase tracking-wider px-6 sm:px-8 py-3.5 font-bold transition-all hover:-translate-y-0.5 active:scale-[0.97] rounded-xl border border-red-500/30 shadow-xl"
               >
                 Uzdod jautājumu
               </a>
@@ -127,7 +127,7 @@ export default function AboutClub({
               <button
                 type="button"
                 onClick={openTrialModal}
-                className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg sm:text-xl uppercase tracking-widest px-8 py-4 rounded-lg font-bold shadow-xl transition-all hover:-translate-y-0.5 active:scale-[0.97] border-2 border-white cursor-pointer"
+                className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-lg uppercase tracking-wider px-8 py-4 rounded-xl font-bold shadow-lg shadow-red-600/20 transition-all hover:-translate-y-0.5 active:scale-[0.97] border border-red-500/30 cursor-pointer"
               >
                 Pievienojies mūsu karatē ģimenei
               </button>
@@ -156,7 +156,7 @@ export default function AboutClub({
                       e.stopPropagation();
                       setCurrentTab('coaches');
                     }}
-                    className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 active:scale-[0.97] shadow-lg border-2 border-white cursor-pointer relative z-20"
+                    className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-lg uppercase tracking-wider px-8 py-3.5 rounded-xl font-bold transition-all hover:-translate-y-0.5 active:scale-[0.97] shadow-lg border border-red-500/30 cursor-pointer relative z-20"
                   >
                     Vairāk par treneri
                   </button>
@@ -363,19 +363,19 @@ export default function AboutClub({
             <div className="w-24 h-1 kumite-aka-ao-bar mx-auto mt-4 rounded-full" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {testimonials
               .filter((t) => t.status === 'published')
               .map((t, idx) => (
                 <InteractiveRepelCard key={t.id} maxShift={12} maxRotate={5}>
                   <div
                     data-stagger={String((idx % 3) + 1)}
-                    className={`scroll-reveal bg-white rounded-xl p-7 sm:p-8 border border-slate-200 border-t-4 ${
+                    className={`scroll-reveal bg-white rounded-2xl p-7 sm:p-8 border border-slate-200 border-t-4 ${
                       idx % 2 === 1 ? 'border-t-[#2563eb]' : 'border-t-[#dc2626]'
                     } shadow-md flex flex-col justify-between h-full hover:-translate-y-1 hover:shadow-xl transition-all duration-300`}
                   >
                     <div className="space-y-4">
-                      <div className="flex text-amber-500 space-x-1" aria-label={`Vērtējums ${t.rating || 5} no 5 zvaigznēm`}>
+                      <div className="flex text-[#dc2626] space-x-1" aria-label={`Vērtējums ${t.rating || 5} no 5 zvaigznēm`}>
                         {[...Array(t.rating || 5)].map((_, i) => (
                           <Star key={i} className="w-5 h-5 fill-current" aria-hidden="true" />
                         ))}
@@ -400,7 +400,7 @@ export default function AboutClub({
               <button
                 type="button"
                 onClick={openReviewModal}
-                className="w-full sm:w-auto min-h-[48px] inline-block bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.97] shadow-md border-2 border-white cursor-pointer"
+                className="w-full sm:w-auto min-h-[48px] inline-block bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-lg uppercase tracking-wider px-8 py-3.5 rounded-xl font-bold transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.97] shadow-lg shadow-red-600/20 border border-red-500/30 cursor-pointer"
               >
                 Atstāt atsauksmi
               </button>

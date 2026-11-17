@@ -8,6 +8,17 @@ const SESSION_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days
 
 let cachedProcessSecret = '';
 
+function isAllowedOriginHost(host, reqHost) {
+  return (
+    (reqHost && host === reqHost) ||
+    host === 'kumitekarate.lv' ||
+    host === 'www.kumitekarate.lv' ||
+    (host.startsWith('remix-kumite-karate-klubs-') && host.endsWith('.vercel.app')) ||
+    host === 'localhost' ||
+    host === '127.0.0.1'
+  );
+}
+
 export function setApiHeaders(req, res, { allowCredentials = true } = {}) {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -19,16 +30,7 @@ export function setApiHeaders(req, res, { allowCredentials = true } = {}) {
     try {
       const url = new URL(origin);
       const host = url.hostname.toLowerCase();
-      if (
-        (reqHost && host === reqHost) ||
-        host === 'kumitekarate.lv' ||
-        host === 'www.kumitekarate.lv' ||
-        (host.startsWith('remix-kumite-karate-klubs-') && host.endsWith('.vercel.app')) ||
-        host === 'localhost' ||
-        host === '127.0.0.1'
-      ) {
-        allowed = true;
-      }
+      allowed = isAllowedOriginHost(host, reqHost);
     } catch {
       allowed = false;
     }
@@ -46,7 +48,41 @@ export function setApiHeaders(req, res, { allowCredentials = true } = {}) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 }
 
+export function verifySameOrigin(req, res) {
+  const secFetchSite = String(req.headers['sec-fetch-site'] || '').toLowerCase();
+  if (secFetchSite === 'cross-site') {
+    res.status(403).json({ success: false, message: 'Aizliegts starpvietņu pieprasījums.' });
+    return false;
+  }
+
+  const origin = req.headers.origin;
+  if (origin) {
+    const reqHost = String(req.headers.host || '').split(':')[0].toLowerCase();
+    let allowed = false;
+    try {
+      const host = new URL(origin).hostname.toLowerCase();
+      allowed = isAllowedOriginHost(host, reqHost);
+    } catch {
+      allowed = false;
+    }
+    if (!allowed) {
+      res.status(403).json({ success: false, message: 'Neatļauts pieprasījuma avots.' });
+      return false;
+    }
+  }
+
+  return true;
+}
+
 export function getClientIp(req) {
+  const vercelFwd = req.headers['x-vercel-forwarded-for'];
+  if (typeof vercelFwd === 'string' && vercelFwd.length > 0) {
+    return vercelFwd.split(',')[0].trim();
+  }
+  const realIp = req.headers['x-real-ip'];
+  if (typeof realIp === 'string' && realIp.length > 0) {
+    return realIp.trim();
+  }
   const fwd = req.headers['x-forwarded-for'];
   if (typeof fwd === 'string' && fwd.length > 0) {
     return fwd.split(',')[0].trim();
@@ -216,7 +252,7 @@ export function appendSessionCookie(req, res, token) {
     `${SESSION_COOKIE_NAME}=${encodeURIComponent(token)}`,
     'HttpOnly',
     'Path=/',
-    'SameSite=Lax',
+    'SameSite=Strict',
     `Max-Age=${SESSION_TTL_SECONDS}`,
   ];
   if (isHttps) parts.push('Secure');
@@ -233,7 +269,7 @@ export function clearSessionCookie(req, res) {
     `${SESSION_COOKIE_NAME}=`,
     'HttpOnly',
     'Path=/',
-    'SameSite=Lax',
+    'SameSite=Strict',
     'Max-Age=0',
   ];
   if (isHttps) parts.push('Secure');
@@ -241,6 +277,9 @@ export function clearSessionCookie(req, res) {
 }
 
 export async function requireAdmin(req, res) {
+  if (req.method !== 'GET' && req.method !== 'HEAD' && req.method !== 'OPTIONS') {
+    if (!verifySameOrigin(req, res)) return null;
+  }
   const session = await verifySession(req);
   if (!session) {
     res.status(401).json({ success: false, message: 'Nepieciešama administratora autorizācija.' });

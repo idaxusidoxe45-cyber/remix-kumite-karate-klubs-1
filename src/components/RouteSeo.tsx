@@ -46,18 +46,21 @@ export default function RouteSeo() {
     upsertMeta('name', 'robots', seo.robots);
     upsertCanonical(seo.canonical);
 
+    const liveOgImage =
+      typeof window !== 'undefined' ? `${window.location.origin}/og-banner.jpg` : seo.ogImage;
+
     upsertMeta('property', 'og:type', seo.ogType);
     upsertMeta('property', 'og:url', seo.canonical);
     upsertMeta('property', 'og:title', seo.ogTitle);
     upsertMeta('property', 'og:description', seo.ogDescription);
-    upsertMeta('property', 'og:image', seo.ogImage);
+    upsertMeta('property', 'og:image', liveOgImage);
     upsertMeta('property', 'og:image:alt', seo.ogImageAlt);
 
     upsertMeta('name', 'twitter:card', 'summary_large_image');
     upsertMeta('name', 'twitter:url', seo.canonical);
     upsertMeta('name', 'twitter:title', seo.ogTitle);
     upsertMeta('name', 'twitter:description', seo.ogDescription);
-    upsertMeta('name', 'twitter:image', seo.ogImage);
+    upsertMeta('name', 'twitter:image', liveOgImage);
     upsertMeta('name', 'twitter:image:alt', seo.ogImageAlt);
 
     upsertJsonLd(seo.jsonLd);

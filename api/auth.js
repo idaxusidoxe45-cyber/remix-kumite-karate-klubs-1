@@ -2,6 +2,7 @@ import { getCloudData, saveCloudData, isKvConfigured, checkRateLimit } from './_
 import {
   PASS_HASH_KEY,
   setApiHeaders,
+  verifySameOrigin,
   getClientIp,
   getConfiguredCredential,
   verifyAdminPassword,
@@ -47,6 +48,7 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
+      if (!verifySameOrigin(req, res)) return;
       const action = req.query?.action || req.body?.action || 'login';
 
       if (action === 'logout') {

@@ -168,7 +168,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
               <button
                 type="button"
                 onClick={openTrialModal}
-                className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg sm:text-xl uppercase tracking-widest px-8 py-3.5 font-bold transition-all hover:-translate-y-0.5 active:scale-[0.97] shadow-xl border-2 border-white rounded-lg cursor-pointer"
+                className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-lg uppercase tracking-wider px-8 py-3.5 font-bold transition-all hover:-translate-y-0.5 active:scale-[0.97] shadow-xl border border-red-500/30 rounded-xl cursor-pointer"
               >
                 Pievienojies mums
               </button>
@@ -230,7 +230,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                             if (submitError) setSubmitError('');
                           }}
                           placeholder="Jūsu vārds"
-                          className="w-full min-h-[44px] bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#dc2626]"
+                          className="w-full min-h-[44px] bg-[#0a0a0c] border border-slate-600 hover:border-slate-500 rounded-xl px-4 py-3 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#2563eb]"
                         />
                       </div>
                       <div>
@@ -252,8 +252,8 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                           aria-invalid={Boolean(phoneError) || undefined}
                           aria-describedby={phoneError ? phoneErrorId : undefined}
                           placeholder="+371 29177274"
-                          className={`w-full min-h-[44px] bg-[#1e293b] border rounded-lg px-4 py-3 text-white placeholder-slate-400 text-base font-mono focus:outline-none focus:border-[#dc2626] ${
-                            phoneError ? 'border-red-500' : 'border-slate-700'
+                          className={`w-full min-h-[44px] bg-[#0a0a0c] border rounded-xl px-4 py-3 text-white placeholder-slate-400 text-base font-mono focus:outline-none focus:border-[#2563eb] ${
+                            phoneError ? 'border-red-500' : 'border-slate-600 hover:border-slate-500'
                           }`}
                         />
                       </div>
@@ -287,7 +287,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                           if (submitError) setSubmitError('');
                         }}
                         placeholder="E-pasta adrese"
-                        className="w-full min-h-[44px] bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#dc2626]"
+                        className="w-full min-h-[44px] bg-[#0a0a0c] border border-slate-600 hover:border-slate-500 rounded-xl px-4 py-3 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#2563eb]"
                       />
                     </div>
                     <div>
@@ -309,7 +309,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                           if (submitError) setSubmitError('');
                         }}
                         placeholder="Jūsu ziņa"
-                        className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#dc2626]"
+                        className="w-full bg-[#0a0a0c] border border-slate-600 hover:border-slate-500 rounded-xl px-4 py-3 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#2563eb]"
                       />
                     </div>
                     <label htmlFor="contacts-gdpr" className="flex items-start space-x-3 pt-1 cursor-pointer min-h-[44px]">
@@ -330,7 +330,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                       </span>
                     </label>
                     {submitError && (
-                      <div role="alert" className="p-3 bg-red-500/20 border border-red-500 text-red-200 rounded-lg text-sm flex items-center space-x-2">
+                      <div role="alert" className="p-3 bg-red-500/20 border border-red-500 text-red-200 rounded-xl text-sm flex items-center space-x-2">
                         <AlertCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                         <span>{submitError}</span>
                       </div>
@@ -339,7 +339,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-xl hover:shadow-red-600/30 disabled:opacity-50 text-white font-heading text-xl uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all active:scale-[0.97] shadow-xl border-2 border-white flex items-center justify-center space-x-2 disabled:cursor-not-allowed cursor-pointer"
+                        className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:shadow-xl hover:shadow-red-600/25 disabled:opacity-50 text-white font-heading text-base sm:text-lg uppercase tracking-wider px-8 py-3.5 rounded-xl font-bold transition-all active:scale-[0.97] shadow-lg border border-red-500/30 flex items-center justify-center space-x-2 disabled:cursor-not-allowed cursor-pointer"
                       >
                         {isSubmitting ? (
                           <>
@@ -523,7 +523,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                 </div>
 
                 {/* Public Transit and Parking Details */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-4xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-4xl mx-auto">
                   <div className="bg-[#f8fafc] border border-slate-200 rounded-xl p-5 space-y-2">
                     <div className="flex items-center gap-2.5 text-[#dc2626] font-heading uppercase text-sm font-bold tracking-wider">
                       <Bus className="w-5 h-5 flex-shrink-0" aria-hidden="true" />

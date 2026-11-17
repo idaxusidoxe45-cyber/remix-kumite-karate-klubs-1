@@ -1,7 +1,8 @@
 import { getCloudData, checkRateLimit } from './_kv.js';
-import { setApiHeaders, getClientIp } from './_auth.js';
+import { setApiHeaders, verifySameOrigin, getClientIp } from './_auth.js';
 
 const NOTIFICATION_EMAIL_KEY = 'kumite_notification_email';
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function escapeHtml(input) {
   return String(input || '')
@@ -23,6 +24,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ success: false, message: 'Method Not Allowed' });
   }
 
+  if (!verifySameOrigin(req, res)) return;
+
   try {
     const body = req.body || {};
 
@@ -41,7 +44,10 @@ export default async function handler(req, res) {
       });
     }
 
-    const name = String(body.name || '').trim().slice(0, 120);
+    const name = String(body.name || '')
+      .replace(/[\r\n]+/g, ' ')
+      .trim()
+      .slice(0, 120);
     if (!name) {
       return res.status(400).json({ success: false, message: 'Vārds ir obligāts.' });
     }
@@ -111,7 +117,7 @@ export default async function handler(req, res) {
         to: [recipient],
         subject,
         html: htmlBody,
-        ...(email ? { reply_to: email } : {}),
+        ...(email && EMAIL_REGEX.test(email) ? { reply_to: email } : {}),
       }),
     });
 

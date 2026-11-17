@@ -262,7 +262,7 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
                           if (formError) setFormError('');
                         }}
                         placeholder="Jūsu vārds *"
-                        className="w-full min-h-[44px] bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#dc2626]"
+                        className="w-full min-h-[44px] bg-[#0a0a0c] border border-slate-600 hover:border-slate-500 rounded-xl px-4 py-3 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#2563eb]"
                       />
                     </div>
                     <div>
@@ -286,7 +286,7 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
                         aria-invalid={Boolean(formError) || undefined}
                         aria-describedby={formError ? errorId : undefined}
                         placeholder="+371 29177274 *"
-                        className="w-full min-h-[44px] bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 text-base font-mono focus:outline-none focus:border-[#dc2626]"
+                        className="w-full min-h-[44px] bg-[#0a0a0c] border border-slate-600 hover:border-slate-500 rounded-xl px-4 py-3 text-white placeholder-slate-400 text-base font-mono focus:outline-none focus:border-[#2563eb]"
                       />
                     </div>
                   </div>
@@ -302,7 +302,7 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
                       value={formMessage}
                       onChange={(e) => setFormMessage(e.target.value)}
                       placeholder="Jūsu ziņa vai bērna vecums"
-                      className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#dc2626]"
+                      className="w-full bg-[#0a0a0c] border border-slate-600 hover:border-slate-500 rounded-xl px-4 py-3 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#2563eb]"
                     />
                   </div>
                   <label htmlFor="gallery-trial-gdpr" className="flex items-start space-x-3 pt-1 cursor-pointer min-h-[44px]">
@@ -323,7 +323,7 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
                     </span>
                   </label>
                   {formError && (
-                    <div id={errorId} role="alert" className="p-3 bg-red-500/20 border border-red-500 text-red-200 rounded-lg text-sm flex items-center space-x-2">
+                    <div id={errorId} role="alert" className="p-3 bg-red-500/20 border border-red-500 text-red-200 rounded-xl text-sm flex items-center space-x-2">
                       <AlertCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                       <span>{formError}</span>
                     </div>
@@ -332,7 +332,7 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
                     <button
                       type="submit"
                       disabled={formSubmitting}
-                      className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 active:scale-[0.97] shadow-xl border-2 border-white cursor-pointer"
+                      className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-base sm:text-lg uppercase tracking-wider px-8 py-3.5 rounded-xl font-bold transition-all hover:-translate-y-0.5 active:scale-[0.97] shadow-lg shadow-red-600/20 border border-red-500/30 cursor-pointer"
                     >
                       {formSubmitting ? 'Sūta...' : 'Nosūtīt'}
                     </button>
@@ -356,7 +356,7 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
                 onClick={() => handleCategoryChange(cat.key)}
                 className={`min-h-[44px] font-heading text-xs sm:text-base uppercase tracking-wider px-4 py-2 sm:px-6 sm:py-2.5 rounded-full font-bold transition-all active:scale-[0.96] cursor-pointer ${
                   activeCategory === cat.key
-                    ? 'bg-[#dc2626] text-white shadow-md border-2 border-[#0a0a0c]'
+                    ? 'bg-[#dc2626] text-white shadow-md border border-[#dc2626]'
                     : 'bg-white text-[#0a0a0c] hover:bg-slate-100 hover:border-[#2563eb] border border-slate-300'
                 }`}
               >
@@ -367,7 +367,7 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
 
           <div
             key={activeCategory}
-            className="animate-fadeIn grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 p-1 sm:p-4"
+            className="animate-fadeIn grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 p-1 sm:p-4"
           >
             {displayedItems.map((item, idx) => (
               <InteractiveRepelCard
@@ -380,7 +380,7 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
                   type="button"
                   onClick={() => setSelectedImageIndex(idx)}
                   aria-label={`Atvērt foto: ${item.title}`}
-                  className="relative w-full h-full text-left overflow-hidden rounded-xl bg-gray-900 border border-slate-200 group shadow-lg hover:border-[#2563eb] active:scale-[0.98] transition-all cursor-pointer block"
+                  className="scroll-reveal relative w-full h-full text-left overflow-hidden rounded-xl bg-[#0a0a0c] border border-slate-200 group shadow-lg hover:border-[#2563eb] active:scale-[0.98] transition-all cursor-pointer block"
                 >
                   <img
                     src={item.image}

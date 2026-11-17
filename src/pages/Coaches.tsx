@@ -117,7 +117,7 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
               <button
                 type="button"
                 onClick={openTrialModal}
-                className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-xl hover:shadow-red-600/30 text-white font-heading text-lg sm:text-xl uppercase tracking-widest px-8 py-3.5 font-bold transition-all active:scale-[0.97] shadow-xl border-2 border-white rounded-lg cursor-pointer"
+                className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:shadow-xl hover:shadow-red-600/25 text-white font-heading text-base sm:text-lg uppercase tracking-wider px-8 py-3.5 font-bold transition-all active:scale-[0.97] shadow-xl border border-red-500/30 rounded-xl cursor-pointer"
               >
                 Pievienojies šodien
               </button>
@@ -202,7 +202,7 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
               <div className="w-16 h-1 kumite-aka-ao-bar mx-auto mt-3 rounded-full" />
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
               {COACH_GALLERY_PHOTOS.map((photo, idx) => (
                 <InteractiveRepelCard key={photo.id} maxShift={10} maxRotate={4}>
                   <button
@@ -210,7 +210,7 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
                     data-stagger={String((idx % 4) + 1)}
                     onClick={() => setSelectedPhotoIndex(idx)}
                     aria-label={`Atvērt foto ${idx + 1}`}
-                    className="scroll-reveal relative w-full text-left overflow-hidden rounded-xl bg-gray-900 border border-slate-200 shadow-md group h-48 sm:h-72 cursor-pointer hover:border-[#dc2626] active:scale-[0.98] transition-all block"
+                    className="scroll-reveal relative w-full text-left overflow-hidden rounded-xl bg-[#0a0a0c] border border-slate-200 shadow-md group h-48 sm:h-72 cursor-pointer hover:border-[#dc2626] active:scale-[0.98] transition-all block"
                   >
                     <img
                       src={photo.thumb}
@@ -253,7 +253,7 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
           <button
             type="button"
             onClick={openTrialModal}
-            className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-xl uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 rounded-lg font-bold shadow-xl transition-all hover:-translate-y-0.5 active:scale-[0.97] border-2 border-white cursor-pointer"
+            className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-lg uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold shadow-lg shadow-red-600/20 transition-all hover:-translate-y-0.5 active:scale-[0.97] border border-red-500/30 cursor-pointer"
           >
             Pievienojies mūsu karatē ģimenei
           </button>

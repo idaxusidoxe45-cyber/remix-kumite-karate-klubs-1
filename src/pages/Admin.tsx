@@ -80,6 +80,7 @@ export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [needsSetup, setNeedsSetup] = useState(false);
   const [missingConfig, setMissingConfig] = useState(false);
+  const [hasKv, setHasKv] = useState(false);
   const [setupPassword, setSetupPassword] = useState('');
   const [setupConfirm, setSetupConfirm] = useState('');
   const [showLoginPw, setShowLoginPw] = useState(false);
@@ -174,6 +175,7 @@ export default function Admin() {
           setIsAuthenticated(Boolean(data.authenticated));
           setNeedsSetup(Boolean(data.needsSetup));
           setMissingConfig(Boolean(data.missingConfig));
+          setHasKv(Boolean(data.hasKv));
           if (data.notificationEmail) setTargetEmail(data.notificationEmail);
           return;
         }
@@ -1391,7 +1393,7 @@ export default function Admin() {
                 >
                   <div>
                     <div className="flex items-center justify-between mb-3">
-                      <div className="flex text-amber-500 space-x-1" aria-label={`Vērtējums ${rev.rating || 5} no 5`}>
+                      <div className="flex text-[#dc2626] space-x-1" aria-label={`Vērtējums ${rev.rating || 5} no 5`}>
                         {[...Array(rev.rating || 5)].map((_, i) => (
                           <Star key={i} className="w-4 h-4 fill-current" aria-hidden="true" />
                         ))}
@@ -1533,6 +1535,32 @@ export default function Admin() {
                 {settingsMsg.text}
               </div>
             )}
+
+            <div
+              className={`p-5 sm:p-6 rounded-2xl border space-y-2 ${
+                hasKv
+                  ? 'bg-white border-slate-200 shadow-sm'
+                  : 'bg-[#eff6ff] border-[#2563eb]/40'
+              }`}
+            >
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <h2 className="text-base sm:text-lg font-heading font-bold uppercase tracking-wide text-[#0a0a0c]">
+                  Mākoņa datubāzes statuss
+                </h2>
+                <span
+                  className={`text-xs font-heading font-bold uppercase tracking-wider px-3 py-1 rounded-full ${
+                    hasKv ? 'bg-[#2563eb] text-white' : 'bg-[#dc2626] text-white'
+                  }`}
+                >
+                  {hasKv ? 'Upstash Redis aktīvs' : 'Pagaidu atmiņa (RAM)'}
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-700 font-sans leading-relaxed">
+                {hasKv
+                  ? 'Visi pieteikumi, atsauksmes un galerijas izmaiņas tiek pastāvīgi glabātas Upstash Redis datubāzē.'
+                  : 'Lai pieteikumu un atsauksmju vēsture saglabātos pastāvīgi arī pēc servera dīkstāves, Vercel projektā atveriet Storage → Create Database → Upstash Redis un pievienojiet to šim projektam.'}
+              </p>
+            </div>
 
             <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
               <h2 className="text-xl font-heading font-bold uppercase tracking-wide text-[#0a0a0c]">Paziņojumu e-pasta adrese</h2>

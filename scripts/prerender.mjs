@@ -35,7 +35,15 @@ function serializeJsonLd(data) {
   return JSON.stringify(data).replace(/</g, '\\u003c');
 }
 
+const rawProdHost = (process.env.SITE_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL || '').trim();
+const resolvedAssetOrigin = rawProdHost
+  ? rawProdHost.startsWith('http')
+    ? rawProdHost.replace(/\/+$/, '')
+    : `https://${rawProdHost.replace(/\/+$/, '')}`
+  : '';
+
 function buildHeadTags(seo, modulePreloadHrefs) {
+  const ogImage = resolvedAssetOrigin ? `${resolvedAssetOrigin}/og-banner.jpg` : seo.ogImage;
   const lines = [
     `<title>${escapeHtml(seo.title)}</title>`,
     `<meta name="description" content="${escapeAttr(seo.description)}" />`,
@@ -51,7 +59,7 @@ function buildHeadTags(seo, modulePreloadHrefs) {
     `<meta property="og:url" content="${escapeAttr(seo.canonical)}" />`,
     `<meta property="og:title" content="${escapeAttr(seo.ogTitle)}" />`,
     `<meta property="og:description" content="${escapeAttr(seo.ogDescription)}" />`,
-    `<meta property="og:image" content="${escapeAttr(seo.ogImage)}" />`,
+    `<meta property="og:image" content="${escapeAttr(ogImage)}" />`,
     `<meta property="og:image:width" content="1200" />`,
     `<meta property="og:image:height" content="630" />`,
     `<meta property="og:image:type" content="image/jpeg" />`,
@@ -64,12 +72,11 @@ function buildHeadTags(seo, modulePreloadHrefs) {
     `<meta name="twitter:url" content="${escapeAttr(seo.canonical)}" />`,
     `<meta name="twitter:title" content="${escapeAttr(seo.ogTitle)}" />`,
     `<meta name="twitter:description" content="${escapeAttr(seo.ogDescription)}" />`,
-    `<meta name="twitter:image" content="${escapeAttr(seo.ogImage)}" />`,
+    `<meta name="twitter:image" content="${escapeAttr(ogImage)}" />`,
     `<meta name="twitter:image:alt" content="${escapeAttr(seo.ogImageAlt)}" />`,
     ``,
     `<!-- Schema.org Structured Data -->`,
     `<script id="schema-org-jsonld" type="application/ld+json">${serializeJsonLd(seo.jsonLd)}</script>`,
-    `<link rel="preload" as="image" href="/logo.png" />`,
   ];
 
   if (seo.preloadHero) {

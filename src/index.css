@@ -1,5 +1,42 @@
 @import "tailwindcss";
 
+/* Self-hosted Variable Fonts (latin + Latvian latin-ext, zero external Google Fonts RTT) */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 600 900;
+  font-display: swap;
+  src: url('/fonts/montserrat-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 600 900;
+  font-display: swap;
+  src: url('/fonts/montserrat-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fonts/plus-jakarta-sans-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fonts/plus-jakarta-sans-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 @theme {
   --breakpoint-xs: 24rem;
 }
@@ -183,9 +220,29 @@ dialog:modal {
   line-height: 1.15;
 }
 
+/* Fluid responsive display typography (max <= 2.5x min to honor 200% browser zoom) */
+.fluid-hero-title {
+  font-size: clamp(1.75rem, 1.15rem + 2.6vw, 3.75rem);
+  line-height: 1.12;
+}
+
+.fluid-section-title {
+  font-size: clamp(1.75rem, 1.3rem + 1.7vw, 3rem);
+  line-height: 1.16;
+}
+
 /* Kumite Red (Aka) & Blue (Ao) championship divider stripe */
 .kumite-aka-ao-bar {
   background: linear-gradient(90deg, #dc2626 0%, #dc2626 48%, #2563eb 52%, #2563eb 100%);
+}
+
+@media (forced-colors: active) {
+  .kumite-aka-ao-bar {
+    background: CanvasText;
+  }
+  .scroll-progress-bar {
+    background: Highlight;
+  }
 }
 
 /* Top scroll reading indicator */

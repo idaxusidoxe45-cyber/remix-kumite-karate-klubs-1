@@ -271,7 +271,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
               </span>
             </div>
 
-            <h1 className="hero-stagger-2 text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-heading text-white uppercase tracking-tight font-extrabold leading-tight mb-4 sm:mb-5 break-words">
+            <h1 className="hero-stagger-2 fluid-hero-title font-heading text-white uppercase tracking-tight font-extrabold mb-4 sm:mb-5 break-words">
               Izmēģini karatē nodarbības un palīdzi savam bērnam kļūt pārliecinātākam
             </h1>
             <p className="hero-stagger-2 text-sm sm:text-base md:text-lg text-slate-200 font-sans mb-7 sm:mb-9 leading-relaxed max-w-2xl mx-auto lg:mx-0">
@@ -305,13 +305,13 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
             <span className="text-xs sm:text-sm uppercase font-heading tracking-[0.16em] sm:tracking-[0.3em] text-[#2563eb] font-bold">
               Karatē Bērniem un Jauniešiem
             </span>
-            <h2 className="text-3xl sm:text-5xl font-heading text-[#0f172a] font-bold uppercase tracking-wide mt-2">
+            <h2 className="fluid-section-title font-heading text-[#0f172a] font-bold uppercase tracking-wide mt-2">
               Grupu sadalījums pēc vecuma
             </h2>
             <div className="w-24 h-1 kumite-aka-ao-bar mx-auto mt-4 rounded-full stripe-draw" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {ageGroupCards.map((group, idx) => (
               <InteractiveRepelCard
                 key={group.age}
@@ -366,7 +366,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
             <div className="w-24 h-1 kumite-aka-ao-bar mx-auto mt-4 rounded-full" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             <InteractiveRepelCard maxShift={10} maxRotate={4}>
               <div data-stagger="1" className="scroll-reveal bg-[#f8fafc] rounded-2xl p-7 sm:p-8 border border-slate-200 shadow-sm flex flex-col justify-between h-full hover:border-[#dc2626] hover:bg-white hover:shadow-xl transition-all duration-300">
                 <div>
@@ -534,7 +534,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                         if (formError) setFormError('');
                       }}
                       placeholder="Jūsu vārds"
-                      className="w-full min-h-[44px] bg-[#0a0a0c] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#dc2626] text-base"
+                      className="w-full min-h-[44px] bg-[#0a0a0c] border border-slate-600 hover:border-slate-500 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#2563eb] text-base"
                     />
                   </div>
                   <div>
@@ -561,7 +561,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                       aria-invalid={Boolean(formError) || undefined}
                       aria-describedby={formError ? trialErrorId : undefined}
                       placeholder="+371 29177274"
-                      className="w-full min-h-[44px] bg-[#0a0a0c] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#dc2626] text-base font-mono"
+                      className="w-full min-h-[44px] bg-[#0a0a0c] border border-slate-600 hover:border-slate-500 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#2563eb] text-base font-mono"
                     />
                   </div>
                   <div>
@@ -579,7 +579,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                       value={formMessage}
                       onChange={(e) => setFormMessage(e.target.value)}
                       placeholder="Jūsu ziņa vai bērna vecums..."
-                      className="w-full bg-[#0a0a0c] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#dc2626] text-base"
+                      className="w-full bg-[#0a0a0c] border border-slate-600 hover:border-slate-500 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#2563eb] text-base"
                     />
                   </div>
                   <label htmlFor="home-trial-gdpr" className="flex items-start space-x-3 pt-1 cursor-pointer min-h-[44px]">
@@ -600,7 +600,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                     </span>
                   </label>
                   {formError && (
-                    <div id={trialErrorId} role="alert" className="p-3 bg-red-500/20 border border-red-500 text-red-200 rounded-lg text-sm flex items-center space-x-2">
+                    <div id={trialErrorId} role="alert" className="p-3 bg-red-500/20 border border-red-500 text-red-200 rounded-xl text-sm flex items-center space-x-2">
                       <AlertCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                       <span>{formError}</span>
                     </div>
@@ -608,7 +608,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                   <button
                     type="submit"
                     disabled={formSubmitting}
-                    className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-2xl hover:shadow-red-600/40 disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-lg sm:text-xl uppercase tracking-widest py-4 rounded-lg font-bold transition-all active:scale-[0.97] shadow-xl border-2 border-white cursor-pointer"
+                    className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:shadow-2xl hover:shadow-red-600/30 disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-base sm:text-lg uppercase tracking-wider py-4 rounded-xl font-bold transition-all active:scale-[0.97] shadow-xl border border-red-500/30 cursor-pointer"
                   >
                     {formSubmitting ? 'Sūta...' : 'Nosūtīt pieteikumu'}
                   </button>
@@ -645,7 +645,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                 <button
                   type="button"
                   onClick={() => setCurrentTab('about')}
-                  className="min-h-[48px] w-full sm:w-auto bg-[#0a0a0c] hover:bg-[#2563eb] text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all active:scale-[0.97] shadow-md cursor-pointer"
+                  className="min-h-[48px] w-full sm:w-auto bg-[#0a0a0c] hover:bg-[#2563eb] text-white font-heading text-base sm:text-lg uppercase tracking-wider px-8 py-3.5 rounded-xl font-bold transition-all active:scale-[0.97] shadow-md cursor-pointer"
                 >
                   Uzzināt vairāk par klubu
                 </button>
@@ -686,7 +686,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {previewGallery.map((item, idx) => (
               <InteractiveRepelCard
                 key={item.id}
@@ -732,7 +732,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
             <div className="w-24 h-1 kumite-aka-ao-bar mx-auto mt-4 rounded-full" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {testimonials
               .filter((t) => t.status === 'published')
               .slice(0, 3)
@@ -745,7 +745,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                     } shadow-md flex flex-col justify-between h-full hover:-translate-y-1 hover:shadow-xl transition-all duration-300`}
                   >
                     <div className="space-y-4">
-                      <div className="flex text-amber-500 space-x-1" aria-label={`Vērtējums ${t.rating || 5} no 5 zvaigznēm`}>
+                      <div className="flex text-[#dc2626] space-x-1" aria-label={`Vērtējums ${t.rating || 5} no 5 zvaigznēm`}>
                         {[...Array(t.rating || 5)].map((_, i) => (
                           <Star key={i} className="w-5 h-5 fill-current" aria-hidden="true" />
                         ))}
@@ -769,7 +769,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
             <button
               type="button"
               onClick={() => navigate('/about#atsauksmes')}
-              className="min-h-[48px] w-full sm:w-auto inline-block bg-[#0a0a0c] hover:bg-[#2563eb] text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all active:scale-[0.97] shadow-md cursor-pointer"
+              className="min-h-[48px] w-full sm:w-auto inline-block bg-[#0a0a0c] hover:bg-[#2563eb] text-white font-heading text-base sm:text-lg uppercase tracking-wider px-8 py-3.5 rounded-xl font-bold transition-all active:scale-[0.97] shadow-md cursor-pointer"
             >
               Lasīt visas atsauksmes
             </button>
@@ -777,7 +777,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
               <button
                 type="button"
                 onClick={openReviewModal}
-                className="min-h-[48px] w-full sm:w-auto inline-block bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-xl hover:shadow-red-600/30 text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all active:scale-[0.97] shadow-md border-2 border-white cursor-pointer"
+                className="min-h-[48px] w-full sm:w-auto inline-block bg-[#dc2626] hover:bg-[#b91c1c] hover:shadow-xl hover:shadow-red-600/25 text-white font-heading text-base sm:text-lg uppercase tracking-wider px-8 py-3.5 rounded-xl font-bold transition-all active:scale-[0.97] shadow-lg border border-red-500/30 cursor-pointer"
               >
                 Atstāt atsauksmi
               </button>
@@ -866,7 +866,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                         if (contactError) setContactError('');
                       }}
                       placeholder="Vārds"
-                      className="w-full min-h-[44px] bg-[#0a0a0c] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#dc2626] text-base"
+                      className="w-full min-h-[44px] bg-[#0a0a0c] border border-slate-600 hover:border-slate-500 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#2563eb] text-base"
                     />
                   </div>
                   <div>
@@ -895,7 +895,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                       aria-invalid={Boolean(contactError) || undefined}
                       aria-describedby={contactError ? contactErrorId : undefined}
                       placeholder="E-pasta adrese"
-                      className="w-full min-h-[44px] bg-[#0a0a0c] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#dc2626] text-base"
+                      className="w-full min-h-[44px] bg-[#0a0a0c] border border-slate-600 hover:border-slate-500 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#2563eb] text-base"
                     />
                   </div>
                   <div>
@@ -917,7 +917,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                         if (contactError) setContactError('');
                       }}
                       placeholder="Jūsu ziņa"
-                      className="w-full bg-[#0a0a0c] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#dc2626] text-base"
+                      className="w-full bg-[#0a0a0c] border border-slate-600 hover:border-slate-500 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#2563eb] text-base"
                     />
                   </div>
                   <label htmlFor="home-contact-gdpr" className="flex items-start space-x-3 pt-1 cursor-pointer min-h-[44px]">
@@ -938,7 +938,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                     </span>
                   </label>
                   {contactError && (
-                    <div id={contactErrorId} role="alert" className="p-3 bg-red-500/20 border border-red-500 text-red-200 rounded-lg text-sm flex items-center space-x-2">
+                    <div id={contactErrorId} role="alert" className="p-3 bg-red-500/20 border border-red-500 text-red-200 rounded-xl text-sm flex items-center space-x-2">
                       <AlertCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                       <span>{contactError}</span>
                     </div>
@@ -947,7 +947,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                     <button
                       type="submit"
                       disabled={contactSubmitting}
-                      className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-2xl hover:shadow-red-600/40 disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all active:scale-[0.97] shadow-lg border-2 border-white cursor-pointer"
+                      className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:shadow-2xl hover:shadow-red-600/30 disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-base sm:text-lg uppercase tracking-wider px-8 py-3.5 rounded-xl font-bold transition-all active:scale-[0.97] shadow-lg border border-red-500/30 cursor-pointer"
                     >
                       {contactSubmitting ? 'Sūta...' : 'Nosūtīt'}
                     </button>

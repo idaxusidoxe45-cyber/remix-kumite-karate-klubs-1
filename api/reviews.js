@@ -1,8 +1,9 @@
 import { getCloudData, saveCloudData, checkRateLimit } from './_kv.js';
-import { setApiHeaders, requireAdmin, verifySession, getClientIp } from './_auth.js';
+import { setApiHeaders, verifySameOrigin, requireAdmin, verifySession, getClientIp } from './_auth.js';
 
 const REVIEWS_KEY = 'kumite_reviews';
 const REVIEWS_OVERRIDES_KEY = 'kumite_reviews_overrides';
+const MAX_CUSTOM_REVIEWS = 300;
 
 export default async function handler(req, res) {
   setApiHeaders(req, res);
@@ -47,6 +48,7 @@ export default async function handler(req, res) {
 
     // POST: Public submits draft (rate-limited + honeypot) OR Admin adds/restores
     if (req.method === 'POST') {
+      if (!verifySameOrigin(req, res)) return;
       const session = await verifySession(req);
       const body = req.body || {};
 
@@ -103,7 +105,7 @@ export default async function handler(req, res) {
       let updated = Array.isArray(reviews) ? reviews : [];
       if (!isBuiltInId || body.isCustom) {
         const deduped = updated.filter((r) => String(r.id) !== idStr);
-        updated = [newReview, ...deduped];
+        updated = [newReview, ...deduped].slice(0, MAX_CUSTOM_REVIEWS);
         await saveCloudData(REVIEWS_KEY, updated);
       }
 

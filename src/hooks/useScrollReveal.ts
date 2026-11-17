@@ -53,22 +53,9 @@ export function useScrollReveal(routeKey: string) {
       });
     }
 
-    // 2. IntersectionObserver reveal fallback when native View Timelines are unavailable (e.g., iOS Safari < 26)
+    // 2. IntersectionObserver + MutationObserver fallback when native View Timelines are unavailable (e.g., iOS Safari < 26)
     if (!supportsNativeScrollTimeline() && 'IntersectionObserver' in window) {
       root.dataset.jsReveal = '1';
-
-      const targets = Array.from(document.querySelectorAll<HTMLElement>('.scroll-reveal'));
-      const viewportH = window.innerHeight || 800;
-
-      // Immediately reveal anything already visible or above the fold so nothing ever flashes blank
-      for (const el of targets) {
-        const rect = el.getBoundingClientRect();
-        if (rect.top < viewportH * 0.96) {
-          el.classList.add('is-visible');
-        } else {
-          el.classList.remove('is-visible');
-        }
-      }
 
       const observer = new IntersectionObserver(
         (entries) => {
@@ -85,13 +72,42 @@ export function useScrollReveal(routeKey: string) {
         }
       );
 
-      for (const el of targets) {
-        if (!el.classList.contains('is-visible')) {
+      const observedSet = new WeakSet<Element>();
+      const registerTarget = (el: HTMLElement) => {
+        if (observedSet.has(el)) return;
+        observedSet.add(el);
+        const viewportH = window.innerHeight || 800;
+        const rect = el.getBoundingClientRect();
+        if (rect.top < viewportH * 0.96) {
+          el.classList.add('is-visible');
+        } else {
+          el.classList.remove('is-visible');
           observer.observe(el);
         }
+      };
+
+      for (const el of document.querySelectorAll<HTMLElement>('.scroll-reveal')) {
+        registerTarget(el);
+      }
+
+      let mutationObserver: MutationObserver | null = null;
+      if ('MutationObserver' in window && document.body) {
+        mutationObserver = new MutationObserver((mutations) => {
+          for (const mutation of mutations) {
+            mutation.addedNodes.forEach((node) => {
+              if (!(node instanceof HTMLElement)) return;
+              if (node.classList.contains('scroll-reveal')) {
+                registerTarget(node);
+              }
+              node.querySelectorAll<HTMLElement>('.scroll-reveal').forEach(registerTarget);
+            });
+          }
+        });
+        mutationObserver.observe(document.body, { childList: true, subtree: true });
       }
 
       cleanups.push(() => {
+        mutationObserver?.disconnect();
         observer.disconnect();
         delete root.dataset.jsReveal;
       });

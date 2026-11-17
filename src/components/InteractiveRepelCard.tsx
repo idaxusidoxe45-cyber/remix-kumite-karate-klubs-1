@@ -32,12 +32,20 @@ export default function InteractiveRepelCard({
     const update = () => {
       canTiltRef.current = hoverMq.matches && !reducedMq.matches;
     };
+    const invalidateRect = () => {
+      rectRef.current = null;
+    };
+
     update();
     hoverMq.addEventListener?.('change', update);
     reducedMq.addEventListener?.('change', update);
+    window.addEventListener('scroll', invalidateRect, { passive: true });
+    window.addEventListener('resize', invalidateRect, { passive: true });
     return () => {
       hoverMq.removeEventListener?.('change', update);
       reducedMq.removeEventListener?.('change', update);
+      window.removeEventListener('scroll', invalidateRect);
+      window.removeEventListener('resize', invalidateRect);
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
     };
   }, []);

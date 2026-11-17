@@ -7,7 +7,7 @@
     { "source": "/gallery", "destination": "/gallery/index.html" },
     { "source": "/contacts", "destination": "/contacts/index.html" },
     {
-      "source": "/((?!assets_gallery|assets_coaches|assets_video|api|.*\\..*).*)",
+      "source": "/((?!assets_gallery|assets_coaches|assets_video|fonts|api|.*\\..*).*)",
       "destination": "/index.html"
     }
   ],
@@ -23,7 +23,7 @@
         { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'sha256-BlnjmLJHp4T7q3uuti6RaC8nfkWi5zny17/5225Ata4='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' blob: https:; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://youtube.com; connect-src 'self' https://api.web3forms.com https://api.cloudinary.com; object-src 'none'; base-uri 'none'; frame-ancestors 'self'; form-action 'self' https://api.web3forms.com"
+          "value": "default-src 'self'; script-src 'self' 'sha256-BlnjmLJHp4T7q3uuti6RaC8nfkWi5zny17/5225Ata4='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' blob: https:; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://youtube.com; connect-src 'self' https://api.cloudinary.com; object-src 'none'; base-uri 'none'; frame-ancestors 'self'; form-action 'self'"
         }
       ]
     },
@@ -61,6 +61,12 @@
     },
     {
       "source": "/assets_video/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/fonts/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]

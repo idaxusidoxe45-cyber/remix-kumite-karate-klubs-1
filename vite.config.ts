@@ -40,7 +40,7 @@ export default defineConfig(({ isSsrBuild }) => {
       },
     },
     build: {
-      target: 'esnext',
+      target: ['es2020', 'safari15', 'chrome90', 'firefox90', 'edge90'],
       cssCodeSplit: true,
       sourcemap: false,
       minify: isSsrBuild ? false : ('esbuild' as const),
@@ -59,9 +59,6 @@ export default defineConfig(({ isSsrBuild }) => {
                 }
                 if (/[\\/]node_modules[\\/]lucide-react[\\/]/.test(id)) {
                   return 'vendor-icons';
-                }
-                if (/[\\/]node_modules[\\/](motion|motion-dom|motion-utils|framer-motion)[\\/]/.test(id)) {
-                  return 'vendor-motion';
                 }
               },
             },

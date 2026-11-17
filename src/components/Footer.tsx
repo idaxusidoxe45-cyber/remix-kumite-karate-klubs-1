@@ -27,7 +27,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Kumite Karate Klubs Facebook profils"
-              className="w-11 h-11 rounded-lg bg-[#1e293b] hover:bg-[#2563eb] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
+              className="w-11 h-11 rounded-xl bg-[#1e293b] hover:bg-[#2563eb] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
               title="Facebook"
             >
               <Facebook className="w-5 h-5" aria-hidden="true" />
@@ -37,7 +37,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Kumite Karate Klubs Instagram profils"
-              className="w-11 h-11 rounded-lg bg-[#1e293b] hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
+              className="w-11 h-11 rounded-xl bg-[#1e293b] hover:bg-[#dc2626] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
               title="Instagram"
             >
               <Instagram className="w-5 h-5" aria-hidden="true" />
@@ -47,7 +47,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Kumite Karate Klubs YouTube kanāls"
-              className="w-11 h-11 rounded-lg bg-[#1e293b] hover:bg-[#dc2626] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
+              className="w-11 h-11 rounded-xl bg-[#1e293b] hover:bg-[#dc2626] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
               title="YouTube"
             >
               <Youtube className="w-5 h-5" aria-hidden="true" />
@@ -67,7 +67,7 @@ export default function Footer() {
           </p>
           <Link
             to="/admin"
-            className="min-h-[44px] inline-flex items-center px-3 rounded-lg text-slate-300 hover:text-white hover:bg-[#1e293b] transition-colors uppercase font-heading tracking-widest font-bold text-[11px]"
+            className="min-h-[44px] inline-flex items-center px-3 rounded-xl text-slate-300 hover:text-white hover:bg-[#1e293b] transition-colors uppercase font-heading tracking-wider font-bold text-[11px]"
           >
             Vadības panelis (CMS)
           </Link>
