@@ -5,10 +5,17 @@
 }
 
 @layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5.5rem;
+    scroll-padding-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
   body {
     background-color: #ffffff;
     color: #0f172a;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    font-size-adjust: from-font;
     line-height: 1.6;
     word-wrap: break-word;
     overflow-wrap: break-word;
@@ -16,6 +23,14 @@
 
   h1, h2, h3, h4, h5, h6 {
     text-wrap: balance;
+  }
+
+  p, li, blockquote {
+    text-wrap: pretty;
+  }
+
+  :where(a, code) {
+    overflow-wrap: anywhere;
   }
 
   :focus-visible {
@@ -39,8 +54,8 @@
 
 .skip-link:focus-visible {
   position: fixed;
-  top: 0.75rem;
-  left: 0.75rem;
+  top: max(0.75rem, env(safe-area-inset-top, 0px));
+  left: max(0.75rem, env(safe-area-inset-left, 0px));
   width: auto;
   height: auto;
   padding: 0.75rem 1.25rem;
@@ -62,13 +77,20 @@
   --ease-jelly: cubic-bezier(0.34, 1.45, 0.64, 1);
   --default-transition-duration: 280ms;
   --default-transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  --target-size: 24px;
+}
+
+@media (pointer: coarse) {
+  :root {
+    --target-size: 44px;
+  }
 }
 
 /* Native top-layer modal dialogs with smooth entry/exit transitions */
 dialog {
   opacity: 0;
   transition-property: opacity, transform, overlay, display;
-  transition-duration: 340ms;
+  transition-duration: 320ms;
   transition-timing-function: var(--ease-smooth);
   transition-behavior: allow-discrete;
 }
@@ -89,13 +111,13 @@ dialog::backdrop {
   overflow: hidden;
   overscroll-behavior: contain;
   transition-property: background-color, backdrop-filter, overlay, display;
-  transition-duration: 340ms;
+  transition-duration: 320ms;
   transition-timing-function: var(--ease-smooth);
   transition-behavior: allow-discrete;
 }
 
 dialog[open]::backdrop {
-  background-color: rgba(10, 10, 12, 0.78);
+  background-color: rgba(10, 10, 12, 0.8);
   backdrop-filter: blur(4px);
 }
 
@@ -112,14 +134,14 @@ dialog:modal {
 
 @media (prefers-reduced-motion: no-preference) {
   dialog {
-    transform: translate3d(0, 12px, 0) scale(0.975);
+    transform: translate3d(0, 14px, 0) scale(0.975);
   }
   dialog[open] {
     transform: translate3d(0, 0, 0) scale(1);
   }
   @starting-style {
     dialog[open] {
-      transform: translate3d(0, 12px, 0) scale(0.975);
+      transform: translate3d(0, 14px, 0) scale(0.975);
     }
   }
 }
@@ -140,61 +162,92 @@ dialog:modal {
   }
 }
 
-/* Crisp, Modern Heading Font */
+/* Typography with font-size-adjust for zero webfont-swap CLS */
 .font-heading {
-  font-family: 'Montserrat', 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Montserrat', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-size-adjust: from-font;
   letter-spacing: 0.02em;
 }
 
 .font-sans {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-size-adjust: from-font;
 }
 
-/* Hero Display Heading (bold, crisp, clean) */
 .heading-poster {
-  font-family: 'Montserrat', 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Montserrat', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-size-adjust: from-font;
   text-transform: uppercase;
   letter-spacing: 0.02em;
   font-weight: 800;
   line-height: 1.15;
 }
 
-/* Background texture overlays in Red, Black, White theme with subtle blue accent */
-.bg-parchment {
-  background-color: #f8fafc;
-  background-image: radial-gradient(rgba(220, 38, 38, 0.08) 1px, transparent 0);
-  background-size: 24px 24px;
+/* Kumite Red (Aka) & Blue (Ao) championship divider stripe */
+.kumite-aka-ao-bar {
+  background: linear-gradient(90deg, #dc2626 0%, #dc2626 48%, #2563eb 52%, #2563eb 100%);
 }
 
-.bg-sumi-dark {
-  background-color: #0a0a0c;
-  background-image: radial-gradient(rgba(220, 38, 38, 0.12) 1px, transparent 0);
-  background-size: 32px 32px;
+/* Top scroll reading indicator */
+.scroll-progress-bar {
+  transform-origin: left center;
+  transform: scaleX(var(--scroll-progress, 0));
+  background: linear-gradient(90deg, #dc2626 0%, #ef4444 50%, #2563eb 100%);
 }
 
-/* Custom silky GPU compositor animations */
-@keyframes float {
-  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-  50% { transform: translate3d(0, -8px, 0) rotate(1.5deg); }
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll(root)) {
+    @keyframes scrollProgressGrow {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+    .scroll-progress-bar {
+      animation: scrollProgressGrow linear both;
+      animation-timeline: scroll(root);
+    }
+  }
 }
 
-@keyframes pulse-slow {
-  0%, 100% { opacity: 0.65; transform: scale(1); }
-  50% { opacity: 0.95; transform: scale(1.03); }
+/* Interactive Card 3D Tilt (Desktop pointer) & Touch Press (Mobile/Tablet) */
+.repel-card {
+  transform: perspective(1000px) translate3d(var(--tx, 0px), var(--ty, 0px), 0) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 360ms var(--ease-smooth);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .repel-card:hover {
+    will-change: transform;
+  }
+}
+
+/* GPU-composited animations visible across iPhone, Android, Tablets & Windows */
+@keyframes emberFloat {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  50% { transform: translate3d(12px, -22px, 0) rotate(120deg) scale(1.12); }
+}
+
+@keyframes orbBreathe {
+  0%, 100% { transform: translate3d(var(--bg-px, 0px), var(--bg-py, 0px), 0) scale(1); opacity: 0.28; }
+  50% { transform: translate3d(var(--bg-px, 0px), var(--bg-py, 0px), 0) scale(1.07); opacity: 0.42; }
+}
+
+@keyframes orbBreatheAlt {
+  0%, 100% { transform: translate3d(calc(var(--bg-px, 0px) * -0.7), calc(var(--bg-py, 0px) * -0.7), 0) scale(1); opacity: 0.24; }
+  50% { transform: translate3d(calc(var(--bg-px, 0px) * -0.7), calc(var(--bg-py, 0px) * -0.7), 0) scale(1.09); opacity: 0.38; }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translate3d(0, 8px, 0) scale(0.985); }
+  from { opacity: 0; transform: translate3d(0, 10px, 0) scale(0.985); }
   to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
 }
 
 @keyframes softPop {
-  from { opacity: 0; transform: scale(0.86); }
+  from { opacity: 0; transform: scale(0.84); }
   to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes heroEnter {
-  from { opacity: 0.94; transform: translate3d(0, 10px, 0); }
+  from { opacity: 0.92; transform: translate3d(0, 12px, 0); }
   to { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
@@ -203,42 +256,118 @@ dialog:modal {
   to { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
+@keyframes stripeSweep {
+  from { transform: scaleX(0); opacity: 0.4; }
+  to { transform: scaleX(1); opacity: 1; }
+}
+
 @keyframes smoothScrollReveal {
-  from { opacity: 0.08; transform: translate3d(0, 16px, 0); }
-  to { opacity: 1; transform: translate3d(0, 0, 0); }
+  from { opacity: 0.05; transform: translate3d(0, 22px, 0) scale(0.982); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
 }
 
 .animate-fadeIn {
-  animation: fadeIn 340ms var(--ease-smooth) both;
+  animation: fadeIn 360ms var(--ease-smooth) both;
 }
 
 .animate-softPop {
-  animation: softPop 460ms var(--ease-smooth) both;
+  animation: softPop 460ms var(--ease-jelly) both;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .animate-float {
-    animation: float 7s ease-in-out infinite;
+  .ambient-orb-primary {
+    animation: orbBreathe 9s ease-in-out infinite;
   }
 
-  .animate-pulse-slow {
-    animation: pulse-slow 9s ease-in-out infinite;
+  .ambient-orb-secondary {
+    animation: orbBreatheAlt 11s ease-in-out infinite;
+  }
+
+  .ambient-spark {
+    animation-name: emberFloat;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+
+  .ambient-layer[data-paused="true"] .ambient-orb-primary,
+  .ambient-layer[data-paused="true"] .ambient-orb-secondary,
+  .ambient-layer[data-paused="true"] .ambient-spark {
+    animation-play-state: paused;
   }
 
   .hero-enter {
-    animation: heroEnter 480ms var(--ease-smooth) both;
+    animation: heroEnter 340ms var(--ease-smooth) both;
+  }
+
+  .hero-stagger-1 {
+    animation: heroEnter 300ms var(--ease-smooth) 30ms both;
+  }
+
+  .hero-stagger-2 {
+    animation: heroEnter 340ms var(--ease-smooth) 65ms both;
+  }
+
+  .hero-stagger-3 {
+    animation: heroEnter 380ms var(--ease-smooth) 110ms both;
+  }
+
+  .stripe-draw {
+    transform-origin: left center;
+    animation: stripeSweep 540ms var(--ease-smooth) 80ms both;
   }
 
   .page-enter {
-    animation: pageEnter 340ms var(--ease-smooth) both;
+    animation: pageEnter 240ms var(--ease-smooth) both;
   }
 
+  /* Native CSS Scroll-Driven Reveal (Chrome, Edge, Safari 26+, Firefox 159+) */
   @supports ((animation-timeline: view()) and (animation-range: entry)) {
     .scroll-reveal {
       animation: smoothScrollReveal 1s linear both;
       animation-timeline: view();
       animation-range: entry 0% entry 24%;
     }
+  }
+
+  /* IntersectionObserver fallback for iOS Safari / older browsers */
+  html[data-js-reveal="1"] .scroll-reveal {
+    opacity: 0.01;
+    transform: translate3d(0, 22px, 0) scale(0.985);
+    transition-property: opacity, transform;
+    transition-duration: 520ms;
+    transition-timing-function: var(--ease-smooth);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  html[data-js-reveal="1"] .scroll-reveal.is-visible {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  [data-stagger="1"] { --reveal-delay: 0ms; }
+  [data-stagger="2"] { --reveal-delay: 80ms; }
+  [data-stagger="3"] { --reveal-delay: 160ms; }
+  [data-stagger="4"] { --reveal-delay: 240ms; }
+}
+
+/* Smooth SPA route View Transitions API */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: fadeOutQuick 150ms ease-out both;
+  }
+  ::view-transition-new(root) {
+    animation: fadeIn 240ms var(--ease-smooth) both;
+  }
+  @keyframes fadeOutQuick {
+    to { opacity: 0.4; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }
 
@@ -250,7 +379,7 @@ dialog:modal {
   opacity: 0;
   visibility: hidden;
   transition-property: grid-template-rows, opacity, visibility;
-  transition-duration: 380ms, 300ms, 380ms;
+  transition-duration: 360ms, 280ms, 360ms;
   transition-timing-function: var(--ease-smooth), ease-out, step-end;
 }
 
@@ -271,7 +400,7 @@ dialog:modal {
 .drawer-content,
 .accordion-content {
   transform: translate3d(0, -8px, 0);
-  transition: transform 380ms var(--ease-smooth);
+  transition: transform 360ms var(--ease-smooth);
 }
 
 .drawer-grid[data-open="true"] .drawer-content,
@@ -285,7 +414,7 @@ dialog:modal {
   visibility: hidden;
   transform: translate3d(0, 6px, 0) scale(0.985);
   transition-property: opacity, transform, visibility;
-  transition-duration: 280ms, 280ms, 280ms;
+  transition-duration: 260ms, 260ms, 260ms;
   transition-timing-function: var(--ease-smooth), var(--ease-smooth), step-end;
 }
 
@@ -299,7 +428,7 @@ dialog:modal {
 /* Cookie consent banner entry/exit */
 .cookie-banner {
   opacity: 1;
-  transition: opacity 340ms var(--ease-smooth), transform 340ms var(--ease-smooth);
+  transition: opacity 320ms var(--ease-smooth), transform 320ms var(--ease-smooth);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -334,22 +463,24 @@ dialog:modal {
   background: #b91c1c;
 }
 
-/* Mobile Touch & Rendering Optimizations */
-html {
-  -webkit-text-size-adjust: 100%;
-  scroll-behavior: smooth;
+/* Mobile Touch & Input Optimizations */
+:where(button, a, input, select, textarea, summary) {
+  touch-action: manipulation;
 }
 
 @media (max-width: 768px) {
   * {
     -webkit-tap-highlight-color: transparent;
   }
-  button, a, input, select, textarea {
-    touch-action: manipulation;
-  }
   input, select, textarea {
     font-size: max(1rem, 1em);
   }
+}
+
+/* Safe-area padding helper for edge-to-edge mobile UI */
+.safe-px {
+  padding-inline-start: max(0.75rem, env(safe-area-inset-left, 0px));
+  padding-inline-end: max(0.75rem, env(safe-area-inset-right, 0px));
 }
 
 /* Hide scrollbar for smooth native horizontal swiping on mobile */
@@ -361,19 +492,21 @@ html {
   scrollbar-width: none;
 }
 
-/* Offscreen content performance optimization for low-end phones */
+/* Offscreen content performance optimization */
 .content-visibility-auto {
   content-visibility: auto;
-  contain-intrinsic-size: auto 500px;
+  contain-intrinsic-size: auto 420px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
   .animate-fadeIn,
   .animate-softPop {
     animation-duration: 160ms;
+  }
+  .ambient-orb-primary,
+  .ambient-orb-secondary,
+  .ambient-spark {
+    animation: none;
   }
   .drawer-grid,
   .accordion-grid,
@@ -407,6 +540,7 @@ html {
   [role="dialog"],
   [role="alertdialog"],
   .visually-hidden,
+  .ambient-layer,
   .no-print {
     display: none !important;
   }

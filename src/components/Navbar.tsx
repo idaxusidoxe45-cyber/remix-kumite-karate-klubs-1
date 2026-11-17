@@ -13,6 +13,7 @@ interface NavbarProps {
 export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
+  const headerRef = useRef<HTMLElement | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const aboutMenuId = useId();
   const mobileMenuId = useId();
@@ -25,7 +26,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
     { tab: 'contacts', path: '/contacts', label: 'SAZINIES AR MUMS' },
   ];
 
-  // Close menus on Escape or outside pointer click
+  // Close dropdown or mobile drawer on Escape or outside tap/click
   useEffect(() => {
     if (!aboutDropdownOpen && !mobileMenuOpen) return;
 
@@ -37,12 +38,12 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
     };
 
     const handlePointerDown = (e: PointerEvent) => {
-      if (
-        aboutDropdownOpen &&
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
+      const target = e.target as Node;
+      if (aboutDropdownOpen && dropdownRef.current && !dropdownRef.current.contains(target)) {
         setAboutDropdownOpen(false);
+      }
+      if (mobileMenuOpen && headerRef.current && !headerRef.current.contains(target)) {
+        setMobileMenuOpen(false);
       }
     };
 
@@ -61,22 +62,26 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
   const isAboutSectionActive = currentTab === 'about' || currentTab === 'coaches';
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#0a0a0c] shadow-lg border-b border-[#1e293b]">
+    <header
+      ref={headerRef}
+      className="sticky top-0 z-50 w-full max-w-full overflow-x-clip bg-[#0a0a0c]/95 backdrop-blur-md shadow-lg border-b border-[#1e293b]"
+    >
       <nav aria-label="Galvenā navigācija">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between min-h-[4rem] sm:min-h-[5rem] py-2 gap-1.5 sm:gap-4">
+        <div className="max-w-7xl mx-auto px-2.5 xs:px-3 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between min-h-[4rem] sm:min-h-[5rem] py-2 gap-1.5 sm:gap-3 xl:gap-4">
             {/* Logo */}
             <Link
               to="/"
               aria-current={currentTab === 'home' ? 'page' : undefined}
-              className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group py-1 flex-shrink-0"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-1.5 xs:gap-2 sm:gap-3 cursor-pointer group py-1 min-w-0 sm:flex-shrink-0"
             >
               <Logo
                 variant="dark"
-                className="w-8 h-8 xs:w-9 xs:h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 group-hover:scale-[1.03] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-lg flex-shrink-0"
+                className="w-7 h-7 min-[360px]:w-8 min-[360px]:h-8 sm:w-11 sm:h-11 md:w-12 md:h-12 group-hover:scale-[1.04] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-lg flex-shrink-0"
               />
-              <div className="flex flex-col justify-center flex-shrink-0">
-                <span className="font-heading text-xs xs:text-sm sm:text-base md:text-lg lg:text-base xl:text-lg font-bold tracking-wider text-white group-hover:text-[#f87171] transition-colors leading-snug block uppercase whitespace-nowrap">
+              <div className="flex flex-col justify-center min-w-0">
+                <span className="font-heading text-[11px] min-[375px]:text-xs sm:text-base md:text-lg lg:text-sm xl:text-lg font-bold tracking-normal xs:tracking-wider text-white group-hover:text-[#f87171] transition-colors leading-tight block uppercase truncate sm:overflow-visible sm:whitespace-nowrap">
                   KUMITE KARATE KLUBS
                 </span>
                 <span className="hidden sm:block text-[10px] md:text-[11px] uppercase tracking-wider text-slate-300 font-semibold leading-tight whitespace-nowrap">
@@ -86,7 +91,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
             </Link>
 
             {/* Desktop Navigation Links (from lg 1024px+) */}
-            <div className="hidden lg:flex items-center space-x-4 xl:space-x-7 flex-shrink-0">
+            <div className="hidden lg:flex items-center space-x-2.5 xl:space-x-6 flex-shrink-0">
               {navItems.map((item) => {
                 if (item.hasSub) {
                   return (
@@ -118,7 +123,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                         className={`relative min-h-[44px] inline-flex items-center space-x-1 font-heading tracking-wider text-xs xl:text-sm 2xl:text-base font-medium transition-colors whitespace-nowrap cursor-pointer ${
                           isAboutSectionActive
                             ? 'text-[#f87171]'
-                            : 'text-slate-100 hover:text-[#f87171]'
+                            : 'text-slate-100 hover:text-[#60a5fa]'
                         }`}
                       >
                         <span>{item.label}</span>
@@ -150,7 +155,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                           className={`block w-full text-left px-4 py-3 text-sm font-heading tracking-wider transition-colors ${
                             currentTab === 'about'
                               ? 'bg-[#1e293b] text-[#f87171] font-bold border-l-4 border-[#dc2626]'
-                              : 'hover:bg-[#1e293b] text-slate-100 hover:text-[#f87171]'
+                              : 'hover:bg-[#1e293b] text-slate-100 hover:text-[#60a5fa]'
                           }`}
                         >
                           PAR KLUBU
@@ -161,8 +166,8 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                           onClick={() => setAboutDropdownOpen(false)}
                           className={`block w-full text-left px-4 py-3 text-sm font-heading tracking-wider transition-colors ${
                             currentTab === 'coaches'
-                              ? 'bg-[#1e293b] text-[#f87171] font-bold border-l-4 border-[#dc2626]'
-                              : 'hover:bg-[#1e293b] text-slate-100 hover:text-[#f87171]'
+                              ? 'bg-[#1e293b] text-[#f87171] font-bold border-l-4 border-[#2563eb]'
+                              : 'hover:bg-[#1e293b] text-slate-100 hover:text-[#60a5fa]'
                           }`}
                         >
                           TRENERI
@@ -181,7 +186,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                     className={`min-h-[44px] inline-flex items-center font-heading tracking-wider text-xs xl:text-sm 2xl:text-base font-medium transition-colors relative py-2 whitespace-nowrap ${
                       isActive
                         ? 'text-[#f87171]'
-                        : 'text-slate-100 hover:text-[#f87171]'
+                        : 'text-slate-100 hover:text-[#60a5fa]'
                     }`}
                   >
                     {item.label}
@@ -204,7 +209,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Kumite Karate Klubs Facebook profils"
-                  className="w-9 h-9 rounded bg-[#1e293b] hover:bg-[#1877F2] text-white flex items-center justify-center transition-all hover:scale-[1.04] active:scale-[0.97]"
+                  className="w-9 h-9 rounded bg-[#1e293b] hover:bg-[#2563eb] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.96]"
                   title="Facebook"
                 >
                   <Facebook className="w-4 h-4" aria-hidden="true" />
@@ -214,7 +219,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Kumite Karate Klubs Instagram profils"
-                  className="w-9 h-9 rounded bg-[#1e293b] hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] text-white flex items-center justify-center transition-all hover:scale-[1.04] active:scale-[0.97]"
+                  className="w-9 h-9 rounded bg-[#1e293b] hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.96]"
                   title="Instagram"
                 >
                   <Instagram className="w-4 h-4" aria-hidden="true" />
@@ -224,7 +229,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Kumite Karate Klubs YouTube kanāls"
-                  className="w-9 h-9 rounded bg-[#1e293b] hover:bg-[#dc2626] text-white flex items-center justify-center transition-all hover:scale-[1.04] active:scale-[0.97]"
+                  className="w-9 h-9 rounded bg-[#1e293b] hover:bg-[#dc2626] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.96]"
                   title="YouTube"
                 >
                   <Youtube className="w-4 h-4" aria-hidden="true" />
@@ -234,18 +239,21 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
               <button
                 type="button"
                 onClick={openTrialModal}
-                className="min-h-[44px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 text-white font-heading tracking-wider px-3.5 xl:px-4 py-2 rounded shadow-lg border border-[#ef4444] transition-all active:scale-[0.98] text-xs xl:text-sm uppercase font-semibold whitespace-nowrap cursor-pointer"
+                className="min-h-[44px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 text-white font-heading tracking-wider px-3.5 xl:px-4 py-2 rounded shadow-lg border border-[#ef4444] transition-all active:scale-[0.97] text-xs xl:text-sm uppercase font-semibold whitespace-nowrap cursor-pointer"
               >
                 Bezmaksas treniņš
               </button>
             </div>
 
             {/* Mobile / Tablet controls */}
-            <div className="flex items-center space-x-2 sm:space-x-3 lg:hidden flex-shrink-0">
+            <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-3 lg:hidden flex-shrink-0">
               <button
                 type="button"
-                onClick={openTrialModal}
-                className="min-h-[44px] bg-[#dc2626] hover:bg-[#b91c1c] text-white text-xs sm:text-sm font-heading tracking-wider px-3 sm:px-4 py-2 rounded-lg uppercase font-bold shadow-md border border-red-500/50 transition-all active:scale-[0.98] whitespace-nowrap cursor-pointer"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  openTrialModal();
+                }}
+                className="min-h-[44px] bg-[#dc2626] hover:bg-[#b91c1c] text-white text-[11px] min-[360px]:text-xs sm:text-sm font-heading tracking-wide sm:tracking-wider px-2.5 min-[360px]:px-3 sm:px-4 py-2 rounded-lg uppercase font-bold shadow-md border border-red-500/50 transition-all active:scale-[0.96] whitespace-nowrap cursor-pointer"
               >
                 Pieteikties
               </button>
@@ -255,7 +263,11 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                 aria-expanded={mobileMenuOpen}
                 aria-controls={mobileMenuId}
                 aria-label={mobileMenuOpen ? 'Aizvērt navigācijas izvēlni' : 'Atvērt navigācijas izvēlni'}
-                className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-lg text-white bg-[#1e293b] hover:bg-[#dc2626] border border-slate-700/80 transition-all active:scale-[0.96] shadow-sm flex-shrink-0 cursor-pointer"
+                className={`min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-lg text-white border transition-all active:scale-[0.94] shadow-sm flex-shrink-0 cursor-pointer ${
+                  mobileMenuOpen
+                    ? 'bg-[#dc2626] border-red-400'
+                    : 'bg-[#1e293b] hover:bg-[#2563eb] border-slate-700/80'
+                }`}
               >
                 <span aria-hidden="true" className="w-5 h-4 flex flex-col justify-center items-center gap-[5px]">
                   <span
@@ -288,15 +300,15 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
           className="lg:hidden drawer-grid bg-[#0a0a0c] shadow-2xl"
         >
           <div className="drawer-inner">
-            <div className="drawer-content border-t border-b border-[#1e293b] px-4 pt-2 pb-6 space-y-1.5 max-h-[85vh] overflow-y-auto">
+            <div className="drawer-content border-t border-b border-[#1e293b] px-4 pt-2 pb-6 space-y-1.5 max-h-[85dvh] overflow-y-auto overscroll-contain">
               <Link
                 to="/"
                 aria-current={currentTab === 'home' ? 'page' : undefined}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`min-h-[44px] flex items-center w-full text-left px-3 py-2.5 rounded-md font-heading text-lg font-medium transition-colors ${
+                className={`min-h-[44px] flex items-center w-full text-left px-3 py-2.5 rounded-md font-heading text-lg font-medium transition-colors active:scale-[0.99] ${
                   currentTab === 'home'
                     ? 'bg-[#1e293b] text-[#f87171] border-l-4 border-[#dc2626]'
-                    : 'text-slate-100 hover:bg-[#1e293b] hover:text-[#f87171]'
+                    : 'text-slate-100 hover:bg-[#1e293b] hover:text-[#60a5fa]'
                 }`}
               >
                 SĀKUMS
@@ -305,10 +317,10 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                 to="/about"
                 aria-current={currentTab === 'about' ? 'page' : undefined}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`min-h-[44px] flex items-center w-full text-left px-3 py-2.5 rounded-md font-heading text-lg font-medium transition-colors ${
+                className={`min-h-[44px] flex items-center w-full text-left px-3 py-2.5 rounded-md font-heading text-lg font-medium transition-colors active:scale-[0.99] ${
                   currentTab === 'about'
                     ? 'bg-[#1e293b] text-[#f87171] border-l-4 border-[#dc2626]'
-                    : 'text-slate-100 hover:bg-[#1e293b] hover:text-[#f87171]'
+                    : 'text-slate-100 hover:bg-[#1e293b] hover:text-[#60a5fa]'
                 }`}
               >
                 PAR KLUBU
@@ -317,10 +329,10 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                 to="/coaches"
                 aria-current={currentTab === 'coaches' ? 'page' : undefined}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`min-h-[44px] flex items-center w-full text-left px-6 py-2.5 rounded-md font-heading text-base transition-colors ${
+                className={`min-h-[44px] flex items-center w-full text-left px-6 py-2.5 rounded-md font-heading text-base transition-colors active:scale-[0.99] ${
                   currentTab === 'coaches'
-                    ? 'bg-[#1e293b] text-[#f87171] border-l-4 border-[#dc2626]'
-                    : 'text-slate-300 hover:bg-[#1e293b] hover:text-[#f87171]'
+                    ? 'bg-[#1e293b] text-[#60a5fa] border-l-4 border-[#2563eb]'
+                    : 'text-slate-300 hover:bg-[#1e293b] hover:text-[#60a5fa]'
                 }`}
               >
                 — Treneri
@@ -329,10 +341,10 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                 to="/schedule"
                 aria-current={currentTab === 'schedule' ? 'page' : undefined}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`min-h-[44px] flex items-center w-full text-left px-3 py-2.5 rounded-md font-heading text-lg font-medium transition-colors ${
+                className={`min-h-[44px] flex items-center w-full text-left px-3 py-2.5 rounded-md font-heading text-lg font-medium transition-colors active:scale-[0.99] ${
                   currentTab === 'schedule'
                     ? 'bg-[#1e293b] text-[#f87171] border-l-4 border-[#dc2626]'
-                    : 'text-slate-100 hover:bg-[#1e293b] hover:text-[#f87171]'
+                    : 'text-slate-100 hover:bg-[#1e293b] hover:text-[#60a5fa]'
                 }`}
               >
                 NODARBĪBU GRAFIKS
@@ -341,10 +353,10 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                 to="/gallery"
                 aria-current={currentTab === 'gallery' ? 'page' : undefined}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`min-h-[44px] flex items-center w-full text-left px-3 py-2.5 rounded-md font-heading text-lg font-medium transition-colors ${
+                className={`min-h-[44px] flex items-center w-full text-left px-3 py-2.5 rounded-md font-heading text-lg font-medium transition-colors active:scale-[0.99] ${
                   currentTab === 'gallery'
                     ? 'bg-[#1e293b] text-[#f87171] border-l-4 border-[#dc2626]'
-                    : 'text-slate-100 hover:bg-[#1e293b] hover:text-[#f87171]'
+                    : 'text-slate-100 hover:bg-[#1e293b] hover:text-[#60a5fa]'
                 }`}
               >
                 GALERIJA
@@ -353,10 +365,10 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                 to="/contacts"
                 aria-current={currentTab === 'contacts' ? 'page' : undefined}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`min-h-[44px] flex items-center w-full text-left px-3 py-2.5 rounded-md font-heading text-lg font-medium transition-colors ${
+                className={`min-h-[44px] flex items-center w-full text-left px-3 py-2.5 rounded-md font-heading text-lg font-medium transition-colors active:scale-[0.99] ${
                   currentTab === 'contacts'
                     ? 'bg-[#1e293b] text-[#f87171] border-l-4 border-[#dc2626]'
-                    : 'text-slate-100 hover:bg-[#1e293b] hover:text-[#f87171]'
+                    : 'text-slate-100 hover:bg-[#1e293b] hover:text-[#60a5fa]'
                 }`}
               >
                 SAZINIES AR MUMS
@@ -368,7 +380,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Kumite Karate Klubs Facebook profils"
-                  className="w-11 h-11 inline-flex items-center justify-center bg-[#1e293b] hover:bg-[#1877F2] text-white rounded-lg transition-all hover:scale-[1.04] active:scale-[0.97]"
+                  className="w-11 h-11 inline-flex items-center justify-center bg-[#1e293b] hover:bg-[#2563eb] text-white rounded-lg transition-all hover:scale-[1.05] active:scale-[0.95]"
                 >
                   <Facebook className="w-5 h-5" aria-hidden="true" />
                 </a>
@@ -377,7 +389,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Kumite Karate Klubs Instagram profils"
-                  className="w-11 h-11 inline-flex items-center justify-center bg-[#1e293b] text-white rounded-lg hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] transition-all hover:scale-[1.04] active:scale-[0.97]"
+                  className="w-11 h-11 inline-flex items-center justify-center bg-[#1e293b] text-white rounded-lg hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] transition-all hover:scale-[1.05] active:scale-[0.95]"
                 >
                   <Instagram className="w-5 h-5" aria-hidden="true" />
                 </a>
@@ -386,7 +398,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Kumite Karate Klubs YouTube kanāls"
-                  className="w-11 h-11 inline-flex items-center justify-center bg-[#1e293b] text-white rounded-lg hover:bg-[#dc2626] transition-all hover:scale-[1.04] active:scale-[0.97]"
+                  className="w-11 h-11 inline-flex items-center justify-center bg-[#1e293b] text-white rounded-lg hover:bg-[#dc2626] transition-all hover:scale-[1.05] active:scale-[0.95]"
                 >
                   <Youtube className="w-5 h-5" aria-hidden="true" />
                 </a>
@@ -395,6 +407,10 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
           </div>
         </div>
       </nav>
+      {/* Kumite Aka/Ao Scroll Progress Indicator */}
+      <div aria-hidden="true" className="h-[3px] w-full bg-[#1e293b]/70 overflow-hidden">
+        <div className="scroll-progress-bar h-full w-full" />
+      </div>
     </header>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState, useId } from 'react';
+import React, { useState, useId, useRef, useEffect } from 'react';
 import {
   MapPin,
   Phone,
@@ -21,6 +21,8 @@ interface ContactsProps {
   openTrialModal: () => void;
 }
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function Contacts({ openTrialModal }: ContactsProps) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('+371 ');
@@ -33,15 +35,27 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
   const [phoneError, setPhoneError] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
+  const resetTimerRef = useRef<number | null>(null);
   const phoneErrorId = useId();
 
+  useEffect(() => {
+    return () => {
+      if (resetTimerRef.current !== null) {
+        window.clearTimeout(resetTimerRef.current);
+      }
+    };
+  }, []);
+
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatLatvianPhoneNumber(e.target.value);
-    setPhone(formatted);
-    const digits = formatted.replace(/\D/g, '');
-    if (phoneError && (digits.length <= 3 || isValidLatvianPhoneNumber(formatted))) {
-      setPhoneError('');
-    }
+    const val = e.target.value;
+    setPhone((prev) => {
+      const formatted = formatLatvianPhoneNumber(val, prev);
+      const digits = formatted.replace(/\D/g, '');
+      if (phoneError && (digits.length <= 3 || isValidLatvianPhoneNumber(formatted))) {
+        setPhoneError('');
+      }
+      return formatted;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -53,11 +67,29 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
       return;
     }
 
-    if (!name.trim() || !email.trim() || !gdprConsent) return;
+    if (!name.trim()) {
+      setSubmitError('Lūdzu, ievadiet savu vārdu.');
+      return;
+    }
+
+    if (!EMAIL_REGEX.test(email.trim())) {
+      setSubmitError('Lūdzu, ievadiet derīgu e-pasta adresi.');
+      return;
+    }
+
+    if (!message.trim()) {
+      setSubmitError('Lūdzu, uzrakstiet savu ziņu.');
+      return;
+    }
 
     const digits = phone.replace(/\D/g, '');
     if (digits.length > 3 && !isValidLatvianPhoneNumber(phone)) {
       setPhoneError('Lūdzu, ievadiet derīgu Latvijas tālruņa numuru vai atstājiet tukšu.');
+      return;
+    }
+
+    if (!gdprConsent) {
+      setSubmitError('Lūdzu, atzīmējiet piekrišanu personas datu apstrādei.');
       return;
     }
 
@@ -81,7 +113,8 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
       }
 
       setSubmitted(true);
-      setTimeout(() => {
+      resetTimerRef.current = window.setTimeout(() => {
+        resetTimerRef.current = null;
         setSubmitted(false);
         setName('');
         setPhone('+371 ');
@@ -107,9 +140,9 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
   ];
 
   return (
-    <div className="bg-[#ffffff] text-[#0f172a]">
+    <div className="text-[#0f172a]">
       {/* Hero Header */}
-      <section className="relative bg-[#0a0a0c] text-white py-20 lg:py-28 overflow-hidden border-b-8 border-[#dc2626]">
+      <section className="relative bg-[#0a0a0c] text-white py-16 sm:py-24 lg:py-28 overflow-hidden border-b-8 border-[#dc2626]">
         <img
           src="/assets_gallery/trenini/karate-web-17.webp"
           srcSet="/assets_gallery/trenini/karate-web-17-800w.webp 800w, /assets_gallery/trenini/karate-web-17.webp 1600w"
@@ -124,31 +157,33 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
           className="absolute inset-0 w-full h-full object-cover opacity-45 filter grayscale pointer-events-none select-none"
         />
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="hero-enter">
-            <span className="text-xs sm:text-sm uppercase tracking-widest text-[#f87171] font-heading font-bold block mb-2">
+          <div>
+            <span className="hero-stagger-1 text-xs sm:text-sm uppercase tracking-widest text-[#60a5fa] font-heading font-bold block mb-2">
               Kumite Karate Klubs
             </span>
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-heading text-white uppercase font-bold tracking-tight mb-6 leading-tight">
+            <h1 className="hero-stagger-2 text-3xl sm:text-5xl lg:text-6xl font-heading text-white uppercase font-bold tracking-tight mb-6 leading-tight">
               Sazinies ar mums
             </h1>
-            <button
-              type="button"
-              onClick={openTrialModal}
-              className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg sm:text-xl uppercase tracking-widest px-8 py-3.5 font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-xl border-2 border-white rounded-lg cursor-pointer"
-            >
-              Pievienojies mums
-            </button>
+            <div className="hero-stagger-3">
+              <button
+                type="button"
+                onClick={openTrialModal}
+                className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg sm:text-xl uppercase tracking-widest px-8 py-3.5 font-bold transition-all hover:-translate-y-0.5 active:scale-[0.97] shadow-xl border-2 border-white rounded-lg cursor-pointer"
+              >
+                Pievienojies mums
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Main Content Info & Form */}
-      <section className="py-24 bg-[#ffffff]">
+      <section className="py-16 sm:py-24 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16 sm:mb-20">
             {/* Contact Form */}
-            <div>
-              <div className="bg-[#0a0a0c] text-white p-6 sm:p-10 rounded-2xl shadow-2xl border-2 border-slate-800 h-full">
+            <div data-stagger="1" className="scroll-reveal">
+              <div className="bg-[#0a0a0c] text-white p-6 sm:p-10 rounded-2xl shadow-2xl border-2 border-slate-800 border-t-4 border-t-[#dc2626] h-full">
                 <h2 className="text-2xl sm:text-3xl font-heading text-white uppercase font-bold tracking-wide mb-6">
                   Nosūtīt ziņu
                 </h2>
@@ -163,7 +198,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                     </p>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="space-y-4">
+                  <form onSubmit={handleSubmit} className="space-y-4" noValidate>
                     <input
                       type="text"
                       name="website"
@@ -184,12 +219,16 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                         </label>
                         <input
                           id="contacts-name"
+                          name="name"
                           type="text"
                           required
                           autoComplete="name"
                           enterKeyHint="next"
                           value={name}
-                          onChange={(e) => setName(e.target.value)}
+                          onChange={(e) => {
+                            setName(e.target.value);
+                            if (submitError) setSubmitError('');
+                          }}
                           placeholder="Jūsu vārds"
                           className="w-full min-h-[44px] bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#dc2626]"
                         />
@@ -203,6 +242,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                         </label>
                         <input
                           id="contacts-phone"
+                          name="phone"
                           type="tel"
                           autoComplete="tel"
                           inputMode="tel"
@@ -232,13 +272,20 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                       </label>
                       <input
                         id="contacts-email"
+                        name="email"
                         type="email"
                         required
                         autoComplete="email"
                         inputMode="email"
+                        autoCorrect="off"
+                        autoCapitalize="none"
+                        spellCheck={false}
                         enterKeyHint="next"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          if (submitError) setSubmitError('');
+                        }}
                         placeholder="E-pasta adrese"
                         className="w-full min-h-[44px] bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#dc2626]"
                       />
@@ -252,28 +299,36 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                       </label>
                       <textarea
                         id="contacts-message"
+                        name="message"
                         rows={4}
                         required
                         enterKeyHint="send"
                         value={message}
-                        onChange={(e) => setMessage(e.target.value)}
+                        onChange={(e) => {
+                          setMessage(e.target.value);
+                          if (submitError) setSubmitError('');
+                        }}
                         placeholder="Jūsu ziņa"
                         className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#dc2626]"
                       />
                     </div>
-                    <div className="flex items-start space-x-3 pt-1">
+                    <label htmlFor="contacts-gdpr" className="flex items-start space-x-3 pt-1 cursor-pointer min-h-[44px]">
                       <input
                         type="checkbox"
                         id="contacts-gdpr"
+                        name="gdprConsent"
                         required
                         checked={gdprConsent}
-                        onChange={(e) => setGdprConsent(e.target.checked)}
+                        onChange={(e) => {
+                          setGdprConsent(e.target.checked);
+                          if (e.target.checked && submitError) setSubmitError('');
+                        }}
                         className="mt-1 accent-[#dc2626] w-5 h-5 rounded flex-shrink-0 cursor-pointer"
                       />
-                      <label htmlFor="contacts-gdpr" className="text-xs sm:text-sm text-slate-200 leading-snug cursor-pointer">
+                      <span className="text-xs sm:text-sm text-slate-200 leading-snug">
                         Piekrītu personas datu apstrādei, lai Kumite Karate Klubs varētu atbildēt uz manu ziņu.
-                      </label>
-                    </div>
+                      </span>
+                    </label>
                     {submitError && (
                       <div role="alert" className="p-3 bg-red-500/20 border border-red-500 text-red-200 rounded-lg text-sm flex items-center space-x-2">
                         <AlertCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
@@ -283,8 +338,8 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                     <div className="flex justify-end pt-2">
                       <button
                         type="submit"
-                        disabled={!gdprConsent || isSubmitting}
-                        className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-xl hover:shadow-red-600/30 disabled:opacity-50 text-white font-heading text-xl uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all active:scale-[0.98] shadow-xl border-2 border-white flex items-center justify-center space-x-2 disabled:cursor-not-allowed cursor-pointer"
+                        disabled={isSubmitting}
+                        className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-xl hover:shadow-red-600/30 disabled:opacity-50 text-white font-heading text-xl uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all active:scale-[0.97] shadow-xl border-2 border-white flex items-center justify-center space-x-2 disabled:cursor-not-allowed cursor-pointer"
                       >
                         {isSubmitting ? (
                           <>
@@ -304,9 +359,9 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
             {/* Hours & Contact details */}
             <div className="space-y-8">
               <InteractiveRepelCard maxShift={10} maxRotate={4}>
-                <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-md">
+                <div data-stagger="2" className="scroll-reveal bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 border-t-4 border-t-[#2563eb] shadow-md">
                   <h2 className="text-2xl sm:text-3xl font-heading uppercase tracking-wider mb-6 flex items-center text-[#0a0a0c] font-bold">
-                    <Clock className="w-7 h-7 text-[#dc2626] mr-3" aria-hidden="true" />
+                    <Clock className="w-7 h-7 text-[#2563eb] mr-3" aria-hidden="true" />
                     <span>Zāles darba laiks</span>
                   </h2>
                   <ul className="space-y-3 font-sans">
@@ -323,7 +378,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
               </InteractiveRepelCard>
 
               <InteractiveRepelCard maxShift={10} maxRotate={4}>
-                <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-md space-y-5">
+                <div data-stagger="3" className="scroll-reveal bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 border-t-4 border-t-[#dc2626] shadow-md space-y-5">
                   <h2 className="text-2xl sm:text-3xl font-heading uppercase tracking-wider text-[#0a0a0c] font-bold">
                     Kontakti un Saziņa
                   </h2>
@@ -342,12 +397,12 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                       </span>
                     </p>
                     <p className="flex items-center space-x-3">
-                      <Mail className="w-5 h-5 text-[#dc2626] flex-shrink-0" aria-hidden="true" />
+                      <Mail className="w-5 h-5 text-[#2563eb] flex-shrink-0" aria-hidden="true" />
                       <span>
                         E-Pasts:{' '}
                         <a
                           href="mailto:info@kumitekarate.lv"
-                          className="underline font-bold text-[#b91c1c] hover:text-[#dc2626] transition-colors"
+                          className="underline font-bold text-[#2563eb] hover:text-[#1d4ed8] transition-colors"
                         >
                           info@kumitekarate.lv
                         </a>
@@ -366,14 +421,14 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                       href="https://wa.link/y3zuwq"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="min-h-[44px] flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-heading text-sm font-bold uppercase tracking-wider shadow-sm transition-all hover:-translate-y-0.5 active:scale-[0.98]"
+                      className="min-h-[44px] flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-heading text-sm font-bold uppercase tracking-wider shadow-sm transition-all hover:-translate-y-0.5 active:scale-[0.97]"
                     >
                       <MessageCircle className="w-5 h-5" aria-hidden="true" />
                       <span>WhatsApp Čats</span>
                     </a>
                     <a
                       href="tel:+37129177274"
-                      className="min-h-[44px] flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0a0a0c] hover:bg-[#1e293b] text-white font-heading text-sm font-bold uppercase tracking-wider shadow-sm transition-all hover:-translate-y-0.5 active:scale-[0.98]"
+                      className="min-h-[44px] flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0a0a0c] hover:bg-[#1e293b] text-white font-heading text-sm font-bold uppercase tracking-wider shadow-sm transition-all hover:-translate-y-0.5 active:scale-[0.97]"
                     >
                       <Phone className="w-4 h-4 text-[#f87171]" aria-hidden="true" />
                       <span>Zvanīt trenerim</span>
@@ -389,7 +444,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
             <InteractiveRepelCard maxShift={8} maxRotate={3}>
               <div className="scroll-reveal bg-white p-6 sm:p-10 rounded-2xl border border-slate-200 shadow-md content-visibility-auto">
                 <div className="text-center max-w-2xl mx-auto mb-8">
-                  <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#dc2626] font-bold">
+                  <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#2563eb] font-bold">
                     Ērta nokļūšana
                   </span>
                   <h2 className="text-3xl sm:text-4xl font-heading text-[#0f172a] uppercase font-bold tracking-wide mt-1">
@@ -398,7 +453,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                   <p className="text-slate-600 font-sans text-sm sm:text-base mt-2">
                     Kluba treniņu zāle atrodas <strong>Rīgā, Gustava Zemgala gatvē 71</strong> ar ērtu piebraukšanu gan ar auto, gan sabiedrisko transportu.
                   </p>
-                  <div className="w-20 h-1 bg-[#dc2626] mx-auto mt-4 rounded-full" />
+                  <div className="w-20 h-1 kumite-aka-ao-bar mx-auto mt-4 rounded-full" />
                 </div>
 
                 {/* 1-Click Navigation Buttons */}
@@ -407,7 +462,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                     href="https://waze.com/ul?ll=56.971622,24.166368&navigate=yes"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="min-h-[48px] inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl bg-[#33ccff] hover:bg-[#2ab6e5] text-[#00334d] font-heading text-sm sm:text-base font-bold uppercase tracking-wider shadow-md transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.98]"
+                    className="min-h-[48px] inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-heading text-sm sm:text-base font-bold uppercase tracking-wider shadow-md transition-all hover:-translate-y-0.5 active:scale-[0.97]"
                   >
                     <Navigation className="w-5 h-5" aria-hidden="true" />
                     <span>Waze Navigācija</span>
@@ -416,7 +471,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                     href="https://www.google.com/maps/search/?api=1&query=56.971622,24.166368"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="min-h-[48px] inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl bg-[#4285F4] hover:bg-[#3367d6] text-white font-heading text-sm sm:text-base font-bold uppercase tracking-wider shadow-md transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.98]"
+                    className="min-h-[48px] inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-sm sm:text-base font-bold uppercase tracking-wider shadow-md transition-all hover:-translate-y-0.5 active:scale-[0.97]"
                   >
                     <MapPin className="w-5 h-5" aria-hidden="true" />
                     <span>Google Maps</span>
@@ -425,14 +480,14 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                     href="https://maps.apple.com/?q=Kumite+Karate+Klubs&ll=56.971622,24.166368"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="min-h-[48px] inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl bg-[#0a0a0c] hover:bg-[#1e293b] text-white font-heading text-sm sm:text-base font-bold uppercase tracking-wider shadow-md transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.98] border border-slate-700"
+                    className="min-h-[48px] inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl bg-[#0a0a0c] hover:bg-[#1e293b] text-white font-heading text-sm sm:text-base font-bold uppercase tracking-wider shadow-md transition-all hover:-translate-y-0.5 active:scale-[0.97] border border-slate-700"
                   >
-                    <Navigation className="w-5 h-5 text-[#f87171]" aria-hidden="true" />
+                    <Navigation className="w-5 h-5 text-[#60a5fa]" aria-hidden="true" />
                     <span>Apple Maps</span>
                   </a>
                 </div>
 
-                {/* Zāles foto ar Waze tiešo saiti */}
+                {/* High-Res Gym Photo with Waze direct link */}
                 <div className="max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-xl border-2 border-slate-900 relative mb-10 group">
                   <a
                     href="https://waze.com/ul?ll=56.971622,24.166368&navigate=yes"
@@ -441,15 +496,17 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                     className="block relative"
                   >
                     <img
-                      src="/assets_gallery/zale/img_2357-400x284.webp"
+                      src="/assets_gallery/zale/img_2357-scaled.webp"
+                      srcSet="/assets_gallery/zale/img_2357-400x284.webp 400w, /assets_gallery/zale/img_2357-scaled.webp 1600w"
+                      sizes="(max-width: 640px) 100vw, 896px"
                       alt="Gustava Zemgala gatve 71 Zāle Rīgā"
-                      width={400}
-                      height={284}
+                      width={1600}
+                      height={1066}
                       loading="lazy"
                       decoding="async"
                       className="w-full h-72 sm:h-96 object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.02]"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex items-end justify-between p-6 sm:p-8">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex items-end justify-between p-6 sm:p-8">
                       <div>
                         <p className="text-white font-heading text-xl sm:text-2xl font-bold uppercase tracking-wider">
                           Gustava Zemgala gatve 71, Rīga
@@ -489,8 +546,8 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                   </div>
 
                   <div className="bg-[#f8fafc] border border-slate-200 rounded-xl p-5 space-y-2">
-                    <div className="flex items-center gap-2.5 text-emerald-700 font-heading uppercase text-sm font-bold tracking-wider">
-                      <Car className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+                    <div className="flex items-center gap-2.5 text-[#0f172a] font-heading uppercase text-sm font-bold tracking-wider">
+                      <Car className="w-5 h-5 text-[#dc2626] flex-shrink-0" aria-hidden="true" />
                       <span>Auto stāvvieta</span>
                     </div>
                     <p className="text-sm text-slate-700 font-sans leading-relaxed">

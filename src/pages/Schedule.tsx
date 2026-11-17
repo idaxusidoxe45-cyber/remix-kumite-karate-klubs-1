@@ -9,6 +9,7 @@ import {
   Youtube,
   ArrowRight,
   Radio,
+  Printer,
 } from 'lucide-react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
 
@@ -34,13 +35,36 @@ const SLOT_DAY_UPPER_BY_INDEX: Record<number, string> = {
   5: 'PIEKTDIENA',
 };
 
+const WEEKDAY_SHORT_MAP: Record<string, number> = {
+  Sun: 0,
+  Mon: 1,
+  Tue: 2,
+  Wed: 3,
+  Thu: 4,
+  Fri: 5,
+  Sat: 6,
+};
+
+function getRigaWeekdayIndex(): number {
+  try {
+    const short = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Europe/Riga',
+      weekday: 'short',
+    }).format(new Date());
+    if (short in WEEKDAY_SHORT_MAP) return WEEKDAY_SHORT_MAP[short];
+  } catch {
+    // Fallback if timezone data unavailable
+  }
+  return new Date().getDay();
+}
+
 export default function Schedule({ openTrialModal }: ScheduleProps) {
   const [ageFilter, setAgeFilter] = useState<'all' | AgeGroupFilter>('all');
   const [dayFilter, setDayFilter] = useState<'all' | 'mwf' | 'tt'>('all');
   const [todayDayIndex, setTodayDayIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    setTodayDayIndex(new Date().getDay());
+    setTodayDayIndex(getRigaWeekdayIndex());
   }, []);
 
   const filteredGroups = useMemo(() => {
@@ -92,9 +116,9 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
   ];
 
   return (
-    <div className="bg-[#ffffff] text-[#0f172a]">
+    <div className="text-[#0f172a]">
       {/* Hero Header */}
-      <section className="relative bg-[#0a0a0c] text-white py-20 lg:py-28 overflow-hidden border-b-8 border-[#dc2626]">
+      <section className="relative bg-[#0a0a0c] text-white py-16 sm:py-24 lg:py-28 overflow-hidden border-b-8 border-[#dc2626] no-print">
         <img
           src="/assets_gallery/trenini/karate-web-17.webp"
           srcSet="/assets_gallery/trenini/karate-web-17-800w.webp 800w, /assets_gallery/trenini/karate-web-17.webp 1600w"
@@ -109,46 +133,48 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
           className="absolute inset-0 w-full h-full object-cover opacity-45 filter grayscale pointer-events-none select-none"
         />
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="hero-enter">
-            <span className="text-xs sm:text-sm uppercase tracking-widest text-[#f87171] font-heading font-bold block mb-2">
+          <div>
+            <span className="hero-stagger-1 text-xs sm:text-sm uppercase tracking-widest text-[#60a5fa] font-heading font-bold block mb-2">
               Kumite Karate Klubs
             </span>
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-heading text-white uppercase font-bold tracking-tight mb-6 leading-tight">
+            <h1 className="hero-stagger-2 text-3xl sm:text-5xl lg:text-6xl font-heading text-white uppercase font-bold tracking-tight mb-6 leading-tight">
               Nodarbību Grafiks
             </h1>
-            <button
-              type="button"
-              onClick={openTrialModal}
-              className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-xl hover:shadow-red-600/30 text-white font-heading text-base sm:text-xl uppercase tracking-wider px-6 sm:px-8 py-3.5 font-bold transition-all active:scale-[0.98] shadow-xl border-2 border-white rounded-lg text-center cursor-pointer"
-            >
-              Pieteikties bezmaksas nodarbībai
-            </button>
+            <div className="hero-stagger-3">
+              <button
+                type="button"
+                onClick={openTrialModal}
+                className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-xl hover:shadow-red-600/30 text-white font-heading text-base sm:text-xl uppercase tracking-wider px-6 sm:px-8 py-3.5 font-bold transition-all active:scale-[0.97] shadow-xl border-2 border-white rounded-lg text-center cursor-pointer"
+              >
+                Pieteikties bezmaksas nodarbībai
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Schedule Groups Grid */}
-      <section className="py-16 sm:py-24 bg-[#ffffff]">
+      <section className="py-14 sm:py-24 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="scroll-reveal text-center max-w-2xl mx-auto mb-10">
-            <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#dc2626] font-bold">
+            <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#2563eb] font-bold">
               Nodarbību laiki
             </span>
             <h2 className="text-3xl sm:text-5xl font-heading text-[#0f172a] uppercase font-bold tracking-wide mt-2">
               Mūsu Treniņu Grafiks
             </h2>
-            <div className="w-24 h-1 bg-[#dc2626] mx-auto mt-4 rounded-full" />
+            <div className="w-24 h-1 kumite-aka-ao-bar mx-auto mt-4 rounded-full stripe-draw" />
           </div>
 
           {/* Live "Šodien zālē" Indicator */}
           <div
             role="status"
             aria-live="polite"
-            className={`mb-8 rounded-2xl border p-4 sm:p-5 flex items-center justify-between gap-4 shadow-xs ${
+            className={`mb-8 rounded-2xl border p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4 shadow-xs ${
               todayStatus === null
                 ? 'bg-[#f8fafc] border-slate-200 text-slate-800'
                 : todayStatus.isOpenToday
-                  ? 'bg-emerald-50/90 border-emerald-300 text-emerald-950'
+                  ? 'bg-[#eff6ff] border-[#2563eb]/40 text-[#0f172a]'
                   : 'bg-slate-100 border-slate-300 text-slate-800'
             }`}
           >
@@ -159,14 +185,14 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
                   todayStatus === null
                     ? 'bg-slate-400'
                     : todayStatus.isOpenToday
-                      ? 'bg-emerald-500 animate-pulse'
-                      : 'bg-amber-500'
+                      ? 'bg-[#2563eb] animate-pulse'
+                      : 'bg-[#dc2626]'
                 }`}
               />
               <div>
-                <div className="flex items-center gap-2 text-xs font-heading font-bold uppercase tracking-wider text-[#b91c1c]">
+                <div className="flex items-center gap-2 text-xs font-heading font-bold uppercase tracking-wider text-[#dc2626]">
                   <Radio className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>Šodien zālē</span>
+                  <span>Šodien zālē (Rīga)</span>
                 </div>
                 <p className="text-sm sm:text-base font-sans font-semibold mt-0.5">
                   {todayStatus
@@ -175,10 +201,19 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
                 </p>
               </div>
             </div>
+
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="no-print min-h-[44px] inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-[#0a0a0c] hover:text-white text-[#0f172a] border border-slate-300 text-xs font-heading font-bold uppercase tracking-wider transition-all active:scale-[0.97] shadow-xs cursor-pointer"
+            >
+              <Printer className="w-4 h-4 text-[#dc2626]" aria-hidden="true" />
+              <span>Drukāt grafiku</span>
+            </button>
           </div>
 
           {/* Age-Group & Day Filter Toolbar */}
-          <div className="bg-[#f8fafc] border border-slate-200 rounded-2xl p-4 sm:p-5 mb-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="no-print bg-[#f8fafc] border border-slate-200 rounded-2xl p-4 sm:p-5 mb-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs font-heading font-bold uppercase tracking-wider text-slate-600 mr-1">
                 Vecums:
@@ -189,9 +224,9 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
                   type="button"
                   aria-pressed={ageFilter === opt.key}
                   onClick={() => setAgeFilter(opt.key)}
-                  className={`min-h-[40px] px-4 py-1.5 rounded-full text-xs sm:text-sm font-heading font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                  className={`min-h-[44px] px-4 py-1.5 rounded-full text-xs sm:text-sm font-heading font-bold uppercase tracking-wider transition-all active:scale-[0.96] cursor-pointer ${
                     ageFilter === opt.key
-                      ? 'bg-[#dc2626] text-white shadow-sm border border-[#0a0a0c]'
+                      ? 'bg-[#dc2626] text-white shadow-md border-2 border-[#0a0a0c]'
                       : 'bg-white text-[#0f172a] hover:bg-slate-100 border border-slate-300'
                   }`}
                 >
@@ -210,9 +245,9 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
                   type="button"
                   aria-pressed={dayFilter === opt.key}
                   onClick={() => setDayFilter(opt.key)}
-                  className={`min-h-[40px] px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-heading font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                  className={`min-h-[44px] px-4 py-1.5 rounded-full text-xs sm:text-sm font-heading font-bold uppercase tracking-wider transition-all active:scale-[0.96] cursor-pointer ${
                     dayFilter === opt.key
-                      ? 'bg-[#0a0a0c] text-white shadow-sm'
+                      ? 'bg-[#2563eb] text-white shadow-md border-2 border-[#0a0a0c]'
                       : 'bg-white text-[#0f172a] hover:bg-slate-100 border border-slate-300'
                   }`}
                 >
@@ -233,30 +268,39 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
                   setAgeFilter('all');
                   setDayFilter('all');
                 }}
-                className="min-h-[44px] px-6 py-2.5 rounded-lg bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-sm uppercase font-bold tracking-wider cursor-pointer"
+                className="min-h-[44px] px-6 py-2.5 rounded-lg bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-sm uppercase font-bold tracking-wider cursor-pointer active:scale-[0.97]"
               >
                 Rādīt visas grupas
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredGroups.map((group) => (
-                <InteractiveRepelCard key={group.id} maxShift={12} maxRotate={6}>
-                  <div className="scroll-reveal bg-white rounded-2xl shadow-lg overflow-hidden border border-slate-200 flex flex-col justify-between hover:border-[#dc2626] hover:shadow-xl transition-all h-full">
+            <div className="print-schedule-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredGroups.map((group, idx) => (
+                <InteractiveRepelCard key={group.id} maxShift={12} maxRotate={5}>
+                  <div
+                    data-stagger={String((idx % 3) + 1)}
+                    className="print-card scroll-reveal bg-white rounded-2xl shadow-lg overflow-hidden border border-slate-200 flex flex-col justify-between hover:border-[#dc2626] hover:shadow-xl transition-all h-full"
+                  >
                     <div>
                       <div className="h-48 overflow-hidden relative">
                         <img
                           src={group.image}
                           alt={group.title}
+                          width={400}
+                          height={284}
                           loading="lazy"
                           decoding="async"
                           className="w-full h-full object-cover"
                         />
-                        <div className="absolute top-4 left-4 bg-[#dc2626] text-white font-heading text-lg uppercase tracking-wider px-4 py-1.5 rounded-lg font-bold shadow-md border border-white">
+                        <div
+                          className={`absolute top-4 left-4 text-white font-heading text-lg uppercase tracking-wider px-4 py-1.5 rounded-lg font-bold shadow-md border border-white ${
+                            group.dayPattern === 'tt' ? 'bg-[#2563eb]' : 'bg-[#dc2626]'
+                          }`}
+                        >
                           {group.title}
                         </div>
                         {group.ageLabel && (
-                          <div className="absolute bottom-3 left-4 bg-[#0a0a0c]/85 text-white text-xs font-sans font-semibold px-3 py-1 rounded-full border border-white/20">
+                          <div className="absolute bottom-3 left-4 bg-[#0a0a0c]/88 text-white text-xs font-sans font-semibold px-3 py-1 rounded-full border border-white/25">
                             {group.ageLabel}
                           </div>
                         )}
@@ -264,7 +308,12 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
 
                       <div className="p-6 space-y-3">
                         <h3 className="font-heading text-2xl uppercase tracking-wider text-[#0a0a0c] mb-4 flex items-center font-bold">
-                          <Clock className="w-6 h-6 text-[#dc2626] mr-2" aria-hidden="true" />
+                          <Clock
+                            className={`w-6 h-6 mr-2 ${
+                              group.dayPattern === 'tt' ? 'text-[#2563eb]' : 'text-[#dc2626]'
+                            }`}
+                            aria-hidden="true"
+                          />
                           <span>Grafiks</span>
                         </h3>
                         <ul className="space-y-2.5">
@@ -277,21 +326,21 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
                                 key={sIdx}
                                 className={`flex items-center justify-between gap-2 text-sm p-3 rounded-lg border font-semibold font-sans ${
                                   isTodaySlot
-                                    ? 'bg-emerald-50 border-emerald-400 text-emerald-950'
+                                    ? 'bg-[#eff6ff] border-[#2563eb] text-[#0f172a]'
                                     : 'text-slate-800 bg-slate-50 border-slate-200'
                                 }`}
                               >
                                 <span className="flex items-center">
                                   <Calendar
                                     className={`w-4 h-4 mr-2.5 flex-shrink-0 ${
-                                      isTodaySlot ? 'text-emerald-700' : 'text-[#dc2626]'
+                                      isTodaySlot ? 'text-[#2563eb]' : 'text-[#dc2626]'
                                     }`}
                                     aria-hidden="true"
                                   />
                                   <span>{slot}</span>
                                 </span>
                                 {isTodaySlot && (
-                                  <span className="text-[10px] font-heading font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-600 text-white flex-shrink-0">
+                                  <span className="text-[10px] font-heading font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#2563eb] text-white flex-shrink-0">
                                     Šodien
                                   </span>
                                 )}
@@ -302,11 +351,11 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
                       </div>
                     </div>
 
-                    <div className="p-6 pt-0">
+                    <div className="p-6 pt-0 no-print">
                       <button
                         type="button"
                         onClick={openTrialModal}
-                        className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-xl hover:shadow-red-600/30 text-white font-heading text-xl uppercase tracking-wider py-3.5 rounded-lg font-bold transition-all active:scale-[0.98] flex items-center justify-center space-x-2 shadow-lg border border-white cursor-pointer"
+                        className="w-full min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-xl hover:shadow-red-600/30 text-white font-heading text-xl uppercase tracking-wider py-3.5 rounded-lg font-bold transition-all active:scale-[0.97] flex items-center justify-center space-x-2 shadow-lg border border-white cursor-pointer"
                       >
                         <span>Pieteikties grupā</span>
                         <ArrowRight className="w-5 h-5" aria-hidden="true" />
@@ -321,12 +370,12 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
       </section>
 
       {/* Social Media Footer Section */}
-      <section className="py-24 bg-[#0a0a0c] text-white border-t-8 border-[#dc2626] text-center content-visibility-auto">
+      <section className="no-print py-20 sm:py-24 bg-[#0a0a0c] text-white border-t-8 border-[#2563eb] text-center content-visibility-auto">
         <div className="max-w-4xl mx-auto px-4 space-y-6">
-          <h2 className="text-3xl sm:text-4xl font-heading text-white uppercase font-bold tracking-wide">
+          <h2 className="scroll-reveal text-3xl sm:text-4xl font-heading text-white uppercase font-bold tracking-wide">
             SEKO MUMS SOCIĀLAJOS TĪKLOS
           </h2>
-          <p className="text-slate-200 font-sans">
+          <p className="scroll-reveal text-slate-200 font-sans">
             Skaties jaunākos ierakstus, bildes un video mūsu kontos
           </p>
           <div className="flex justify-center space-x-4 pt-4">
@@ -335,7 +384,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Kumite Karate Klubs Facebook profils"
-              className="w-12 h-12 rounded-lg bg-[#1e293b] hover:bg-[#1d4ed8] text-white flex items-center justify-center transition-all hover:scale-[1.04] active:scale-[0.97] shadow-lg border border-slate-700"
+              className="w-12 h-12 rounded-lg bg-[#1e293b] hover:bg-[#2563eb] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
               title="Facebook"
             >
               <Facebook className="w-6 h-6" aria-hidden="true" />
@@ -345,7 +394,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Kumite Karate Klubs Instagram profils"
-              className="w-12 h-12 rounded-lg bg-[#1e293b] hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] text-white flex items-center justify-center transition-all hover:scale-[1.04] active:scale-[0.97] shadow-lg border border-slate-700"
+              className="w-12 h-12 rounded-lg bg-[#1e293b] hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
               title="Instagram"
             >
               <Instagram className="w-6 h-6" aria-hidden="true" />
@@ -355,7 +404,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Kumite Karate Klubs YouTube kanāls"
-              className="w-12 h-12 rounded-lg bg-[#1e293b] hover:bg-[#dc2626] text-white flex items-center justify-center transition-all hover:scale-[1.04] active:scale-[0.97] shadow-lg border border-slate-700"
+              className="w-12 h-12 rounded-lg bg-[#1e293b] hover:bg-[#dc2626] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
               title="YouTube"
             >
               <Youtube className="w-6 h-6" aria-hidden="true" />

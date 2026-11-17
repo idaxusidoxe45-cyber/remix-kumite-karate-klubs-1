@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useId } from 'react';
+import React, { useState, useEffect, useId, useMemo, useRef } from 'react';
 import { GalleryItem } from '../types';
 import { getDynamicGalleryItemsAsync, fetchCloudGalleryItems } from '../data';
 import LightboxModal from '../components/LightboxModal';
@@ -11,10 +11,14 @@ interface GalleryProps {
   openTrialModal: () => void;
 }
 
+const GALLERY_BATCH_SIZE = 24;
+
 export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProps) {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [allGalleryItems, setAllGalleryItems] = useState<GalleryItem[]>([]);
+  const [visibleCount, setVisibleCount] = useState<number>(GALLERY_BATCH_SIZE);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -38,7 +42,16 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
   const [formError, setFormError] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
 
+  const resetTimerRef = useRef<number | null>(null);
   const errorId = useId();
+
+  useEffect(() => {
+    return () => {
+      if (resetTimerRef.current !== null) {
+        window.clearTimeout(resetTimerRef.current);
+      }
+    };
+  }, []);
 
   const categories = [
     { key: 'all', label: 'Visi' },
@@ -50,14 +63,41 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
     { key: 'zale', label: 'Zāle' },
   ];
 
-  const filteredItems =
-    activeCategory === 'all'
-      ? allGalleryItems
-      : allGalleryItems.filter((item) => item.category === activeCategory);
+  const filteredItems = useMemo(
+    () =>
+      activeCategory === 'all'
+        ? allGalleryItems
+        : allGalleryItems.filter((item) => item.category === activeCategory),
+    [allGalleryItems, activeCategory]
+  );
+
+  const displayedItems = useMemo(
+    () => filteredItems.slice(0, visibleCount),
+    [filteredItems, visibleCount]
+  );
+
+  // Auto-append more gallery photos cleanly as user scrolls down on mobile/desktop
+  useEffect(() => {
+    if (visibleCount >= filteredItems.length) return;
+    const node = sentinelRef.current;
+    if (!node || typeof IntersectionObserver === 'undefined') return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setVisibleCount((prev) => Math.min(filteredItems.length, prev + GALLERY_BATCH_SIZE));
+        }
+      },
+      { rootMargin: '250px 0px' }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [visibleCount, filteredItems.length]);
 
   const handleCategoryChange = (key: string) => {
     setSelectedImageIndex(null);
     setActiveCategory(key);
+    setVisibleCount(GALLERY_BATCH_SIZE);
   };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -67,10 +107,19 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
       setFormSubmitted(true);
       return;
     }
-    if (!formName.trim() || !formGdpr) return;
+
+    if (!formName.trim()) {
+      setFormError('Lūdzu, ievadiet savu vārdu.');
+      return;
+    }
 
     if (!isValidLatvianPhoneNumber(formPhone)) {
       setFormError('Lūdzu, ievadiet derīgu Latvijas tālruņa numuru (piemēram, +371 29177274).');
+      return;
+    }
+
+    if (!formGdpr) {
+      setFormError('Lūdzu, atzīmējiet piekrišanu personas datu apstrādei.');
       return;
     }
 
@@ -89,7 +138,8 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
         return;
       }
       setFormSubmitted(true);
-      setTimeout(() => {
+      resetTimerRef.current = window.setTimeout(() => {
+        resetTimerRef.current = null;
         setFormSubmitted(false);
         setFormName('');
         setFormPhone('+371 ');
@@ -118,7 +168,7 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
       ? filteredItems[selectedImageIndex]
       : null;
 
-  const adjacentSrcs = React.useMemo(() => {
+  const adjacentSrcs = useMemo(() => {
     if (selectedImageIndex === null || filteredItems.length <= 1) return undefined;
     const len = filteredItems.length;
     const srcs: string[] = [];
@@ -132,9 +182,9 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
   }, [selectedImageIndex, filteredItems]);
 
   return (
-    <div className="bg-[#ffffff] text-[#0f172a]">
+    <div className="text-[#0f172a]">
       {/* Hero Header */}
-      <section className="relative bg-[#0a0a0c] text-white py-20 lg:py-28 overflow-hidden border-b-8 border-[#dc2626]">
+      <section className="relative bg-[#0a0a0c] text-white py-16 sm:py-24 lg:py-28 overflow-hidden border-b-8 border-[#dc2626]">
         <img
           src="/assets_gallery/trenini/karate-web-17.webp"
           srcSet="/assets_gallery/trenini/karate-web-17-800w.webp 800w, /assets_gallery/trenini/karate-web-17.webp 1600w"
@@ -149,14 +199,14 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
           className="absolute inset-0 w-full h-full object-cover opacity-45 filter grayscale pointer-events-none select-none"
         />
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="hero-enter">
-            <span className="text-xs sm:text-sm uppercase tracking-widest text-[#f87171] font-heading font-bold block mb-2">
+          <div>
+            <span className="hero-stagger-1 text-xs sm:text-sm uppercase tracking-widest text-[#60a5fa] font-heading font-bold block mb-2">
               Kumite Karate Klubs
             </span>
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-heading text-white uppercase font-bold tracking-tight mb-4 leading-tight">
+            <h1 className="hero-stagger-2 text-3xl sm:text-5xl lg:text-6xl font-heading text-white uppercase font-bold tracking-tight mb-4 leading-tight">
               Galerija
             </h1>
-            <p className="text-slate-200 max-w-xl text-base font-sans">
+            <p className="hero-stagger-3 text-slate-200 max-w-xl text-base font-sans">
               Atved bērnu uz bezmaksas izmēģinājuma treniņu! Atstāj savu vārdu un telefona numuru un mēs ar tevi sazināsimies.
             </p>
           </div>
@@ -167,7 +217,7 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
       <section className="py-12 bg-[#f8fafc] border-b border-slate-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <InteractiveRepelCard maxShift={10} maxRotate={4}>
-            <div className="bg-[#0a0a0c] text-white p-6 sm:p-8 rounded-2xl shadow-2xl border-2 border-slate-800">
+            <div className="bg-[#0a0a0c] text-white p-6 sm:p-8 rounded-2xl shadow-2xl border-2 border-slate-800 border-t-4 border-t-[#2563eb]">
               <h2 className="text-2xl sm:text-3xl font-heading text-white uppercase font-bold tracking-wide mb-2">
                 Iepazīšanas nodarbība bezmaksas
               </h2>
@@ -177,13 +227,13 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
 
               {formSubmitted ? (
                 <div role="status" aria-live="polite" className="text-center py-8 space-y-3">
-                  <CheckCircle className="w-12 h-12 text-[#f87171] mx-auto" aria-hidden="true" />
+                  <CheckCircle className="w-12 h-12 text-[#f87171] mx-auto animate-softPop" aria-hidden="true" />
                   <h3 className="text-2xl font-heading text-white uppercase font-bold">
                     Pieteikums nosūtīts!
                   </h3>
                 </div>
               ) : (
-                <form onSubmit={handleFormSubmit} className="space-y-4">
+                <form onSubmit={handleFormSubmit} className="space-y-4" noValidate>
                   <input
                     type="text"
                     name="website"
@@ -201,12 +251,16 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
                       </label>
                       <input
                         id="gallery-trial-name"
+                        name="name"
                         type="text"
                         required
                         autoComplete="name"
                         enterKeyHint="next"
                         value={formName}
-                        onChange={(e) => setFormName(e.target.value)}
+                        onChange={(e) => {
+                          setFormName(e.target.value);
+                          if (formError) setFormError('');
+                        }}
                         placeholder="Jūsu vārds *"
                         className="w-full min-h-[44px] bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#dc2626]"
                       />
@@ -217,6 +271,7 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
                       </label>
                       <input
                         id="gallery-trial-phone"
+                        name="phone"
                         type="tel"
                         required
                         autoComplete="tel"
@@ -224,7 +279,8 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
                         enterKeyHint="next"
                         value={formPhone}
                         onChange={(e) => {
-                          setFormPhone(formatLatvianPhoneNumber(e.target.value));
+                          const val = e.target.value;
+                          setFormPhone((prev) => formatLatvianPhoneNumber(val, prev));
                           if (formError) setFormError('');
                         }}
                         aria-invalid={Boolean(formError) || undefined}
@@ -240,6 +296,7 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
                     </label>
                     <textarea
                       id="gallery-trial-message"
+                      name="message"
                       rows={3}
                       enterKeyHint="send"
                       value={formMessage}
@@ -248,19 +305,23 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
                       className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 text-base focus:outline-none focus:border-[#dc2626]"
                     />
                   </div>
-                  <div className="flex items-start space-x-3 pt-1">
+                  <label htmlFor="gallery-trial-gdpr" className="flex items-start space-x-3 pt-1 cursor-pointer min-h-[44px]">
                     <input
                       type="checkbox"
                       id="gallery-trial-gdpr"
+                      name="gdprConsent"
                       required
                       checked={formGdpr}
-                      onChange={(e) => setFormGdpr(e.target.checked)}
+                      onChange={(e) => {
+                        setFormGdpr(e.target.checked);
+                        if (e.target.checked && formError) setFormError('');
+                      }}
                       className="mt-1 accent-[#dc2626] w-5 h-5 rounded flex-shrink-0 cursor-pointer"
                     />
-                    <label htmlFor="gallery-trial-gdpr" className="text-xs sm:text-sm text-slate-200 leading-snug cursor-pointer">
+                    <span className="text-xs sm:text-sm text-slate-200 leading-snug">
                       Piekrītu personas datu apstrādei pieteikuma izskatīšanai.
-                    </label>
-                  </div>
+                    </span>
+                  </label>
                   {formError && (
                     <div id={errorId} role="alert" className="p-3 bg-red-500/20 border border-red-500 text-red-200 rounded-lg text-sm flex items-center space-x-2">
                       <AlertCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
@@ -270,8 +331,8 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
                   <div className="flex justify-end">
                     <button
                       type="submit"
-                      disabled={!formGdpr || formSubmitting}
-                      className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-xl border-2 border-white cursor-pointer"
+                      disabled={formSubmitting}
+                      className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 disabled:cursor-not-allowed text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 active:scale-[0.97] shadow-xl border-2 border-white cursor-pointer"
                     >
                       {formSubmitting ? 'Sūta...' : 'Nosūtīt'}
                     </button>
@@ -284,7 +345,7 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
       </section>
 
       {/* Gallery Filter & Grid */}
-      <section className="py-16 sm:py-24 bg-[#ffffff]">
+      <section className="py-14 sm:py-24 bg-transparent">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8 sm:mb-12">
             {categories.map((cat) => (
@@ -293,10 +354,10 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
                 type="button"
                 aria-pressed={activeCategory === cat.key}
                 onClick={() => handleCategoryChange(cat.key)}
-                className={`min-h-[44px] font-heading text-xs sm:text-base uppercase tracking-wider px-4 py-2 sm:px-6 sm:py-2.5 rounded-full font-bold transition-all active:scale-[0.98] cursor-pointer ${
+                className={`min-h-[44px] font-heading text-xs sm:text-base uppercase tracking-wider px-4 py-2 sm:px-6 sm:py-2.5 rounded-full font-bold transition-all active:scale-[0.96] cursor-pointer ${
                   activeCategory === cat.key
                     ? 'bg-[#dc2626] text-white shadow-md border-2 border-[#0a0a0c]'
-                    : 'bg-white text-[#0a0a0c] hover:bg-slate-100 border border-slate-300'
+                    : 'bg-white text-[#0a0a0c] hover:bg-slate-100 hover:border-[#2563eb] border border-slate-300'
                 }`}
               >
                 {cat.label}
@@ -306,9 +367,9 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
 
           <div
             key={activeCategory}
-            className="animate-fadeIn grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 p-1 sm:p-4 content-visibility-auto"
+            className="animate-fadeIn grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 p-1 sm:p-4"
           >
-            {filteredItems.map((item, idx) => (
+            {displayedItems.map((item, idx) => (
               <InteractiveRepelCard
                 key={item.id}
                 maxShift={8}
@@ -319,29 +380,40 @@ export default function Gallery({ openTrialModal: _openTrialModal }: GalleryProp
                   type="button"
                   onClick={() => setSelectedImageIndex(idx)}
                   aria-label={`Atvērt foto: ${item.title}`}
-                  className="relative w-full h-full text-left overflow-hidden rounded-xl bg-gray-900 border border-gray-800 group shadow-lg hover:border-[#dc2626] transition-colors cursor-pointer block"
+                  className="relative w-full h-full text-left overflow-hidden rounded-xl bg-gray-900 border border-slate-200 group shadow-lg hover:border-[#2563eb] active:scale-[0.98] transition-all cursor-pointer block"
                 >
                   <img
                     src={item.image}
                     alt={item.title}
-                    loading="lazy"
+                    width={400}
+                    height={284}
+                    loading={idx < 8 ? 'eager' : 'lazy'}
                     decoding="async"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03]"
+                    className="w-full h-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3 sm:p-4">
-                    <div>
-                      <p className="text-white font-semibold text-xs sm:text-base leading-tight">
-                        {item.title}
-                      </p>
-                      <p className="text-[11px] sm:text-xs text-slate-200 font-sans hidden xs:block">
-                        {item.caption}
-                      </p>
-                    </div>
+                  <div className="absolute inset-x-0 bottom-0 p-2.5 sm:p-3 bg-gradient-to-t from-black/75 via-black/30 to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                    <span className="inline-block px-2 py-0.5 rounded bg-black/55 backdrop-blur-xs text-white font-semibold text-[11px] sm:text-xs leading-tight">
+                      {item.title}
+                    </span>
                   </div>
                 </button>
               </InteractiveRepelCard>
             ))}
           </div>
+
+          {visibleCount < filteredItems.length && (
+            <div ref={sentinelRef} className="mt-10 text-center">
+              <button
+                type="button"
+                onClick={() =>
+                  setVisibleCount((prev) => Math.min(filteredItems.length, prev + GALLERY_BATCH_SIZE))
+                }
+                className="min-h-[44px] px-7 py-3 rounded-full bg-[#0a0a0c] hover:bg-[#2563eb] text-white font-heading text-xs sm:text-sm uppercase tracking-wider font-bold transition-all active:scale-[0.97] shadow-md cursor-pointer"
+              >
+                Rādīt vairāk ({displayedItems.length} / {filteredItems.length})
+              </button>
+            </div>
+          )}
         </div>
       </section>
 

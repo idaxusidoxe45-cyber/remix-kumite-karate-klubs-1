@@ -2,12 +2,12 @@ import { useEffect, useRef, type PointerEvent } from 'react';
 
 /**
  * Coordinates React `isOpen` state with a native `<dialog>` element opened via `showModal()`.
- * Provides native Esc/Android back handling, `closedby="any"` progressive enhancement,
- * and safe outside-backdrop pointer dismissal without mutating body scroll styles.
+ * Uses `closedby="any"` when supported natively and falls back cleanly on Safari/iOS.
  */
 export function useDialogModal(isOpen: boolean, onClose: () => void) {
   const dialogRef = useRef<HTMLDialogElement | null>(null);
   const pointerStartedOutsideRef = useRef(false);
+  const supportsClosedByRef = useRef(false);
   const onCloseRef = useRef(onClose);
 
   useEffect(() => {
@@ -18,9 +18,12 @@ export function useDialogModal(isOpen: boolean, onClose: () => void) {
     const dialog = dialogRef.current;
     if (!dialog) return;
 
+    supportsClosedByRef.current =
+      typeof HTMLDialogElement !== 'undefined' && 'closedBy' in HTMLDialogElement.prototype;
     dialog.setAttribute('closedby', 'any');
 
     const handleClose = () => {
+      dialog.returnValue = '';
       onCloseRef.current();
     };
 
@@ -53,12 +56,14 @@ export function useDialogModal(isOpen: boolean, onClose: () => void) {
   };
 
   const handlePointerDown = (e: PointerEvent<HTMLDialogElement>) => {
+    if (supportsClosedByRef.current) return;
     const dialog = dialogRef.current;
     if (!dialog) return;
     pointerStartedOutsideRef.current = isOutsideDialog(e, dialog);
   };
 
   const handlePointerUp = (e: PointerEvent<HTMLDialogElement>) => {
+    if (supportsClosedByRef.current) return;
     const dialog = dialogRef.current;
     if (!dialog) return;
     const endedOutside = isOutsideDialog(e, dialog);

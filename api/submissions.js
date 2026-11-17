@@ -71,8 +71,9 @@ export default async function handler(req, res) {
         status: session && body.status ? String(body.status) : 'new',
       };
 
-      const submissions = await getCloudData(SUBMISSIONS_KEY, DEMO_SUBMISSIONS);
-      const deduped = submissions.filter((s) => String(s.id) !== String(newSubmission.id));
+      const submissions = await getCloudData(SUBMISSIONS_KEY, []);
+      const baseList = Array.isArray(submissions) ? submissions : [];
+      const deduped = baseList.filter((s) => String(s.id) !== String(newSubmission.id));
       const updated = [newSubmission, ...deduped];
       await saveCloudData(SUBMISSIONS_KEY, updated);
 

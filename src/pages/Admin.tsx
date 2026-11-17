@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   getStoredSubmissions, 
   fetchSubmissionsFromCloud,
@@ -37,6 +37,7 @@ import {
   Save, 
   Download,
   Eye,
+  EyeOff,
   RefreshCw,
   X,
   Upload,
@@ -50,6 +51,26 @@ import {
 import { Logo } from '../components/Logo';
 import { useDialogModal } from '../hooks/useDialogModal';
 
+interface ConfirmActionState {
+  title: string;
+  message: string;
+  confirmLabel: string;
+  tone: 'warning' | 'danger';
+  onConfirm: () => Promise<void>;
+}
+
+const isLocalPreviewHost = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  const h = window.location.hostname;
+  return (
+    h === 'localhost' ||
+    h === '127.0.0.1' ||
+    h.startsWith('192.168.') ||
+    h.startsWith('10.') ||
+    h.endsWith('.local')
+  );
+};
+
 export default function Admin() {
   const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('');
@@ -60,6 +81,9 @@ export default function Admin() {
   const [needsSetup, setNeedsSetup] = useState(false);
   const [setupPassword, setSetupPassword] = useState('');
   const [setupConfirm, setSetupConfirm] = useState('');
+  const [showLoginPw, setShowLoginPw] = useState(false);
+  const [showSetupPw, setShowSetupPw] = useState(false);
+  const [showSettingsPw, setShowSettingsPw] = useState(false);
 
   const [activeTab, setActiveTab] = useState<'submissions' | 'reviews' | 'gallery' | 'trash' | 'settings'>('submissions');
 
@@ -78,6 +102,7 @@ export default function Admin() {
   const [newReviewRole, setNewReviewRole] = useState('');
   const [newReviewText, setNewReviewText] = useState('');
   const [newReviewRating, setNewReviewRating] = useState(5);
+  const [isAddingReview, setIsAddingReview] = useState(false);
 
   // Gallery modals & viewer
   const [showAddGalleryModal, setShowAddGalleryModal] = useState(false);
@@ -95,18 +120,35 @@ export default function Admin() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [settingsMsg, setSettingsMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<ConfirmActionState | null>(null);
+  const [isConfirmBusy, setIsConfirmBusy] = useState(false);
+
+  const toastTimerRef = useRef<number | null>(null);
+  const csvTimerRef = useRef<number | null>(null);
 
   const addReviewDialog = useDialogModal(showAddReviewModal, () => setShowAddReviewModal(false));
   const addGalleryDialog = useDialogModal(showAddGalleryModal, () => setShowAddGalleryModal(false));
   const photoViewerDialog = useDialogModal(Boolean(selectedGalleryItem), () => setSelectedGalleryItem(null));
+  const confirmDialog = useDialogModal(Boolean(confirmAction), () => {
+    if (!isConfirmBusy) setConfirmAction(null);
+  });
 
-  const showToast = (msg: string) => {
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+      if (csvTimerRef.current) window.clearTimeout(csvTimerRef.current);
+    };
+  }, []);
+
+  const showToast = useCallback((msg: string) => {
+    if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3500);
-  };
+    toastTimerRef.current = window.setTimeout(() => setToastMessage(null), 3500);
+  }, []);
 
   const handleUnauthorized = useCallback(() => {
     if (typeof window !== 'undefined') {
@@ -120,28 +162,38 @@ export default function Admin() {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      if (typeof window !== 'undefined' && sessionStorage.getItem('kumite_admin_local_session') === '1') {
-        if (mounted) {
-          setIsAuthenticated(true);
-          setAuthLoading(false);
-        }
-        return;
-      }
       try {
         const res = await fetch('/api/auth', { credentials: 'include' });
         const isJson = Boolean(res.headers.get('content-type')?.includes('application/json'));
         if (res.ok && isJson && mounted) {
+          if (typeof window !== 'undefined') {
+            sessionStorage.removeItem('kumite_admin_local_session');
+          }
           const data = await res.json();
           setIsAuthenticated(Boolean(data.authenticated));
           setNeedsSetup(Boolean(data.needsSetup));
           if (data.notificationEmail) setTargetEmail(data.notificationEmail);
+          return;
         }
       } catch {
-        // Offline / server unavailable
-      } finally {
-        if (mounted) setAuthLoading(false);
+        // Offline / local Vite preview without Vercel Serverless Functions
       }
-    })();
+
+      if (
+        mounted &&
+        isLocalPreviewHost() &&
+        typeof window !== 'undefined' &&
+        sessionStorage.getItem('kumite_admin_local_session') === '1'
+      ) {
+        setIsAuthenticated(true);
+      } else if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('kumite_admin_local_session');
+      }
+
+      if (mounted) setAuthLoading(false);
+    })().finally(() => {
+      if (mounted) setAuthLoading(false);
+    });
     return () => {
       mounted = false;
     };
@@ -179,11 +231,26 @@ export default function Admin() {
   }, [handleUnauthorized]);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      refreshData();
-      const interval = setInterval(refreshData, 15000);
-      return () => clearInterval(interval);
-    }
+    if (!isAuthenticated) return;
+    refreshData();
+
+    const interval = window.setInterval(() => {
+      if (!document.hidden) {
+        refreshData();
+      }
+    }, 15000);
+
+    const handleVisibility = () => {
+      if (!document.hidden) {
+        refreshData();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, [isAuthenticated, refreshData]);
 
   const handleSetupPassword = async (e: React.FormEvent) => {
@@ -231,6 +298,7 @@ export default function Admin() {
     const cleanUsername = username.trim().toLowerCase();
     const cleanPassword = password.trim();
 
+    let apiRespondedJson = false;
     try {
       const res = await fetch('/api/auth?action=login', {
         method: 'POST',
@@ -240,6 +308,7 @@ export default function Admin() {
       });
       const isJson = Boolean(res.headers.get('content-type')?.includes('application/json'));
       if (isJson) {
+        apiRespondedJson = true;
         const data = await res.json().catch(() => ({}));
         if (res.ok && data.success) {
           setIsAuthenticated(true);
@@ -251,8 +320,8 @@ export default function Admin() {
           setNeedsSetup(true);
           setLoginError(data.message || 'Nepieciešama sākotnējā iestatīšana.');
           return;
-        } else if (data.message) {
-          setLoginError(data.message);
+        } else {
+          setLoginError(data.message || 'Nepareizs lietotājvārds vai parole!');
           return;
         }
       }
@@ -262,16 +331,23 @@ export default function Admin() {
       setAuthBusy(false);
     }
 
-    // Local / static preview fallback authentication
-    if (cleanUsername === 'admin' && (cleanPassword === 'kumite2026' || cleanPassword === 'admin')) {
-      if (typeof window !== 'undefined') {
-        sessionStorage.setItem('kumite_admin_local_session', '1');
+    // Offline / static localhost preview fallback ONLY (never active in production)
+    if (!apiRespondedJson && isLocalPreviewHost()) {
+      if (cleanUsername === 'admin' && cleanPassword === 'kumite2026') {
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('kumite_admin_local_session', '1');
+        }
+        setIsAuthenticated(true);
+        setPassword('');
+        showToast('Autorizējies lokālā priekšskatījuma režīmā!');
+      } else {
+        setLoginError('Nepareizs lietotājvārds vai parole!');
       }
-      setIsAuthenticated(true);
-      setPassword('');
-      showToast('Autorizējies administratora panelī!');
-    } else {
-      setLoginError('Nepareizs lietotājvārds vai parole!');
+      return;
+    }
+
+    if (!apiRespondedJson) {
+      setLoginError('Serveris pašlaik nav sasniedzams. Lūdzu, mēģiniet vēlāk.');
     }
   };
 
@@ -302,30 +378,34 @@ export default function Admin() {
     }
   };
 
-  const handleDeleteSub = async (id: string) => {
+  const handleDeleteSub = (id: string) => {
     const targetSub = submissions.find(s => s.id === id);
     if (!targetSub) return;
 
-    if (!confirm(`Vai pārvietot pieteikumu no "${targetSub.name}" uz atkritni?\nTas glabāsies 30 dienas ar iespēju jebkurā laikā to atjaunot.`)) {
-      return;
-    }
-
-    try {
-      const trashed = await moveToTrash(
-        'submission',
-        targetSub,
-        targetSub.name,
-        `${targetSub.type === 'trial' ? 'Bezmaksas treniņš' : 'Kontakti'} | ${targetSub.phone || targetSub.email || ''}`
-      );
-      setTrashItems(prev => [trashed, ...prev]);
-      setSubmissions(prev => prev.filter(s => s.id !== id));
-      await deleteSubmission(id);
-      showToast('Pieteikums pārvietots uz atkritni (glabājas 30 dienas).');
-      refreshData();
-    } catch (err) {
-      if (err instanceof Error && err.message === 'UNAUTHORIZED') handleUnauthorized();
-      else showToast('Neizdevās dzēst pieteikumu.');
-    }
+    setConfirmAction({
+      title: 'Pārvietot pieteikumu uz atkritni?',
+      message: `Pieteikums no "${targetSub.name}" tiks pārvietots uz atkritni. Tas glabāsies 30 dienas ar iespēju to atjaunot.`,
+      confirmLabel: 'Pārvietot uz atkritni',
+      tone: 'warning',
+      onConfirm: async () => {
+        try {
+          const trashed = await moveToTrash(
+            'submission',
+            targetSub,
+            targetSub.name,
+            `${targetSub.type === 'trial' ? 'Bezmaksas treniņš' : 'Kontakti'} | ${targetSub.phone || targetSub.email || ''}`
+          );
+          setTrashItems(prev => [trashed, ...prev]);
+          setSubmissions(prev => prev.filter(s => s.id !== id));
+          await deleteSubmission(id);
+          showToast('Pieteikums pārvietots uz atkritni (glabājas 30 dienas).');
+          refreshData();
+        } catch (err) {
+          if (err instanceof Error && err.message === 'UNAUTHORIZED') handleUnauthorized();
+          else showToast('Neizdevās dzēst pieteikumu.');
+        }
+      }
+    });
   };
 
   const handleToggleReviewStatus = async (reviewId: number | string, currentStatus?: string) => {
@@ -361,54 +441,62 @@ export default function Admin() {
     refreshData();
   };
 
-  const handleDeleteReview = async (reviewId: number | string) => {
+  const handleDeleteReview = (reviewId: number | string) => {
     const targetReview = reviews.find(r => String(r.id) === String(reviewId));
     if (!targetReview) return;
 
-    if (!confirm(`Vai pārvietot atsauksmi no "${targetReview.author}" uz atkritni?\nTā glabāsies 30 dienas ar iespēju jebkurā laikā to atjaunot.`)) {
-      return;
-    }
-
-    try {
-      const trashed = await moveToTrash(
-        'review',
-        targetReview,
-        targetReview.author,
-        `${targetReview.role || 'Atsauksme'} • ★ ${targetReview.rating || 5}`
-      );
-      setTrashItems(prev => [trashed, ...prev]);
-      setReviews(prev => prev.filter(r => String(r.id) !== String(reviewId)));
-
-      if (typeof window !== 'undefined') {
+    setConfirmAction({
+      title: 'Pārvietot atsauksmi uz atkritni?',
+      message: `Atsauksme no "${targetReview.author}" tiks pārvietota uz atkritni un glabāsies 30 dienas.`,
+      confirmLabel: 'Pārvietot uz atkritni',
+      tone: 'warning',
+      onConfirm: async () => {
         try {
-          const local = JSON.parse(localStorage.getItem('user_submitted_reviews') || '[]');
-          const filtered = local.filter((r: Testimonial) => String(r.id) !== String(reviewId));
-          localStorage.setItem('user_submitted_reviews', JSON.stringify(filtered));
+          const trashed = await moveToTrash(
+            'review',
+            targetReview,
+            targetReview.author,
+            `${targetReview.role || 'Atsauksme'} • ★ ${targetReview.rating || 5}`
+          );
+          setTrashItems(prev => [trashed, ...prev]);
+          setReviews(prev => prev.filter(r => String(r.id) !== String(reviewId)));
 
-          const overrides = JSON.parse(localStorage.getItem('kumite_review_overrides') || '{}');
-          overrides[String(reviewId)] = { ...(overrides[String(reviewId)] || {}), deleted: true };
-          localStorage.setItem('kumite_review_overrides', JSON.stringify(overrides));
-        } catch {}
+          if (typeof window !== 'undefined') {
+            try {
+              const local = JSON.parse(localStorage.getItem('user_submitted_reviews') || '[]');
+              const filtered = local.filter((r: Testimonial) => String(r.id) !== String(reviewId));
+              localStorage.setItem('user_submitted_reviews', JSON.stringify(filtered));
+
+              const overrides = JSON.parse(localStorage.getItem('kumite_review_overrides') || '{}');
+              overrides[String(reviewId)] = { ...(overrides[String(reviewId)] || {}), deleted: true };
+              localStorage.setItem('kumite_review_overrides', JSON.stringify(overrides));
+            } catch {}
+          }
+
+          const res = await fetch(`/api/reviews?id=${encodeURIComponent(reviewId)}`, {
+            method: 'DELETE',
+            credentials: 'include'
+          }).catch(() => null);
+          if (res?.status === 401) {
+            handleUnauthorized();
+            return;
+          }
+
+          showToast('Atsauksme pārvietota uz atkritni (glabājas 30 dienas).');
+          refreshData();
+        } catch (err) {
+          if (err instanceof Error && err.message === 'UNAUTHORIZED') handleUnauthorized();
+          else showToast('Neizdevās dzēst atsauksmi.');
+        }
       }
-
-      await fetch(`/api/reviews?id=${encodeURIComponent(reviewId)}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      }).catch(() => null);
-
-      showToast('Atsauksme pārvietota uz atkritni (glabājas 30 dienas).');
-    } catch (err) {
-      if (err instanceof Error && err.message === 'UNAUTHORIZED') handleUnauthorized();
-      else showToast('Neizdevās dzēst atsauksmi.');
-    }
-
-    refreshData();
+    });
   };
 
   const handleAddReview = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newReviewAuthor.trim() || !newReviewText.trim()) return;
+    if (isAddingReview || !newReviewAuthor.trim() || !newReviewText.trim()) return;
 
+    setIsAddingReview(true);
     const newRev: Testimonial = {
       id: Date.now(),
       author: newReviewAuthor.trim(),
@@ -418,71 +506,86 @@ export default function Admin() {
       status: 'published'
     };
 
-    if (typeof window !== 'undefined') {
-      try {
-        const local = JSON.parse(localStorage.getItem('user_submitted_reviews') || '[]');
-        localStorage.setItem('user_submitted_reviews', JSON.stringify([newRev, ...local]));
-      } catch {}
-    }
-
     try {
-      await fetch('/api/reviews', {
+      const res = await fetch('/api/reviews', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...newRev, isCustom: true })
       }).catch(() => null);
-    } catch {}
 
-    setShowAddReviewModal(false);
-    setNewReviewAuthor('');
-    setNewReviewRole('');
-    setNewReviewText('');
-    setNewReviewRating(5);
-    showToast('Atsauksme veiksmīgi pievienota un publicēta!');
-    refreshData();
-  };
-
-  // GALLERY MANAGEMENT
-  const handleDeleteGalleryItem = async (itemId: number | string) => {
-    const targetItem = galleryItems.find(g => String(g.id) === String(itemId));
-    if (!targetItem) return;
-
-    if (!confirm(`Vai pārvietot fotoattēlu "${targetItem.title}" uz atkritni?\nTas glabāsies 30 dienas ar iespēju jebkurā laikā to atjaunot.`)) {
-      return;
-    }
-
-    try {
-      const trashed = await moveToTrash(
-        'gallery',
-        targetItem,
-        targetItem.title,
-        `Kategorija: ${targetItem.category}`,
-        targetItem.image
-      );
-      setTrashItems(prev => [trashed, ...prev]);
-      setGalleryItems(prev => prev.filter(g => String(g.id) !== String(itemId)));
-
-      const res = await fetch(`/api/gallery?id=${encodeURIComponent(itemId)}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
-      if (res.status === 401) {
+      if (res?.status === 401) {
         handleUnauthorized();
         return;
       }
 
-      if (selectedGalleryItem && String(selectedGalleryItem.id) === String(itemId)) {
-        setSelectedGalleryItem(null);
+      if (res && !res.ok && !isLocalPreviewHost()) {
+        showToast('Neizdevās saglabāt atsauksmi serverī.');
+        return;
       }
 
-      showToast('Fotoattēls pārvietots uz atkritni (glabājas 30 dienas).');
-    } catch (err) {
-      if (err instanceof Error && err.message === 'UNAUTHORIZED') handleUnauthorized();
-      else showToast('Kļūda dzēšot fotoattēlu.');
-    }
+      if (typeof window !== 'undefined') {
+        try {
+          const local = JSON.parse(localStorage.getItem('user_submitted_reviews') || '[]');
+          localStorage.setItem('user_submitted_reviews', JSON.stringify([newRev, ...local]));
+        } catch {}
+      }
 
-    refreshData();
+      setShowAddReviewModal(false);
+      setNewReviewAuthor('');
+      setNewReviewRole('');
+      setNewReviewText('');
+      setNewReviewRating(5);
+      showToast('Atsauksme veiksmīgi pievienota un publicēta!');
+      refreshData();
+    } finally {
+      setIsAddingReview(false);
+    }
+  };
+
+  // GALLERY MANAGEMENT
+  const handleDeleteGalleryItem = (itemId: number | string) => {
+    const targetItem = galleryItems.find(g => String(g.id) === String(itemId));
+    if (!targetItem) return;
+
+    setConfirmAction({
+      title: 'Pārvietot fotoattēlu uz atkritni?',
+      message: `Fotoattēls "${targetItem.title}" tiks pārvietots uz atkritni un glabāsies 30 dienas.`,
+      confirmLabel: 'Pārvietot uz atkritni',
+      tone: 'warning',
+      onConfirm: async () => {
+        try {
+          const trashed = await moveToTrash(
+            'gallery',
+            targetItem,
+            targetItem.title,
+            `Kategorija: ${targetItem.category}`,
+            targetItem.image
+          );
+          setTrashItems(prev => [trashed, ...prev]);
+          setGalleryItems(prev => prev.filter(g => String(g.id) !== String(itemId)));
+
+          const res = await fetch(`/api/gallery?id=${encodeURIComponent(itemId)}`, {
+            method: 'DELETE',
+            credentials: 'include'
+          });
+          if (res.status === 401) {
+            handleUnauthorized();
+            return;
+          }
+
+          if (selectedGalleryItem && String(selectedGalleryItem.id) === String(itemId)) {
+            setSelectedGalleryItem(null);
+          }
+
+          showToast('Fotoattēls pārvietots uz atkritni (glabājas 30 dienas).');
+          refreshData();
+        } catch (err) {
+          if (err instanceof Error && err.message === 'UNAUTHORIZED') handleUnauthorized();
+          else showToast('Kļūda dzēšot fotoattēlu.');
+        }
+      }
+    });
   };
 
   // TRASH RESTORE & PERMANENT DELETE HANDLERS
@@ -500,37 +603,45 @@ export default function Admin() {
     }
   };
 
-  const handlePermanentDelete = async (trashId: string, title: string) => {
-    if (!confirm(`Vai tiešām vēlaties NEATGRIEZENISKI dzēst "${title}"?\nŠo darbību nebūs iespējams atsaukt!`)) {
-      return;
-    }
-
-    try {
-      await permanentlyDeleteItem(trashId);
-      setTrashItems(prev => prev.filter(t => t.id !== trashId));
-      showToast(`"${title}" neatgriezeniski izdzēsts.`);
-      refreshData();
-    } catch (err) {
-      if (err instanceof Error && err.message === 'UNAUTHORIZED') handleUnauthorized();
-      else showToast('Kļūda dzēšot vienumu.');
-    }
+  const handlePermanentDelete = (trashId: string, title: string) => {
+    setConfirmAction({
+      title: 'Neatgriezeniska dzēšana',
+      message: `Vai tiešām vēlaties NEATGRIEZENISKI dzēst "${title}"? Šo darbību nebūs iespējams atsaukt!`,
+      confirmLabel: 'Dzēst neatgriezeniski',
+      tone: 'danger',
+      onConfirm: async () => {
+        try {
+          await permanentlyDeleteItem(trashId);
+          setTrashItems(prev => prev.filter(t => t.id !== trashId));
+          showToast(`"${title}" neatgriezeniski izdzēsts.`);
+          refreshData();
+        } catch (err) {
+          if (err instanceof Error && err.message === 'UNAUTHORIZED') handleUnauthorized();
+          else showToast('Kļūda dzēšot vienumu.');
+        }
+      }
+    });
   };
 
-  const handleEmptyTrash = async () => {
+  const handleEmptyTrash = () => {
     if (trashItems.length === 0) return;
-    if (!confirm(`UZMANĪBU: Vai tiešām vēlaties IZTĪRĪT visu atkritni (${trashItems.length} vienumi)?\nVisi elementi tiks neatgriezeniski izdzēsti!`)) {
-      return;
-    }
-
-    try {
-      await emptyTrash();
-      setTrashItems([]);
-      showToast('Atkritne pilnībā iztīrīta.');
-      refreshData();
-    } catch (err) {
-      if (err instanceof Error && err.message === 'UNAUTHORIZED') handleUnauthorized();
-      else showToast('Kļūda tīrot atkritni.');
-    }
+    setConfirmAction({
+      title: 'Iztīrīt visu atkritni?',
+      message: `UZMANĪBU: Visi ${trashItems.length} atkritnes vienumi tiks neatgriezeniski izdzēsti bez atjaunošanas iespējas.`,
+      confirmLabel: 'Iztīrīt atkritni',
+      tone: 'danger',
+      onConfirm: async () => {
+        try {
+          await emptyTrash();
+          setTrashItems([]);
+          showToast('Atkritne pilnībā iztīrīta.');
+          refreshData();
+        } catch (err) {
+          if (err instanceof Error && err.message === 'UNAUTHORIZED') handleUnauthorized();
+          else showToast('Kļūda tīrot atkritni.');
+        }
+      }
+    });
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -655,6 +766,8 @@ export default function Admin() {
 
   const handleSaveSettingsEmail = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSavingSettings) return;
+    setIsSavingSettings(true);
     setSettingsMsg(null);
     try {
       const res = await fetch('/api/auth?action=update-settings', {
@@ -676,11 +789,14 @@ export default function Admin() {
       }
     } catch {
       setSettingsMsg({ type: 'err', text: 'Savienojuma kļūda.' });
+    } finally {
+      setIsSavingSettings(false);
     }
   };
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSavingSettings) return;
     setSettingsMsg(null);
     if (newPassword.length < 8) {
       setSettingsMsg({ type: 'err', text: 'Jaunajai parolei jābūt vismaz 8 simbolus garai.' });
@@ -691,6 +807,7 @@ export default function Admin() {
       return;
     }
 
+    setIsSavingSettings(true);
     try {
       const res = await fetch('/api/auth?action=change-password', {
         method: 'POST',
@@ -714,6 +831,8 @@ export default function Admin() {
       }
     } catch {
       setSettingsMsg({ type: 'err', text: 'Savienojuma kļūda.' });
+    } finally {
+      setIsSavingSettings(false);
     }
   };
 
@@ -747,8 +866,12 @@ export default function Admin() {
     const a = document.createElement('a');
     a.href = url;
     a.download = `pieteikumi-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.style.display = 'none';
+    document.body.appendChild(a);
     a.click();
-    URL.revokeObjectURL(url);
+    a.remove();
+    if (csvTimerRef.current) window.clearTimeout(csvTimerRef.current);
+    csvTimerRef.current = window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     showToast('CSV fails eksportēts.');
   };
 
@@ -790,17 +913,28 @@ export default function Admin() {
                 <label htmlFor="admin-setup-password" className="block text-xs uppercase font-heading font-bold text-slate-200 mb-1">
                   Jaunā parole *
                 </label>
-                <input
-                  id="admin-setup-password"
-                  type="password"
-                  required
-                  minLength={8}
-                  autoComplete="new-password"
-                  value={setupPassword}
-                  onChange={(e) => setSetupPassword(e.target.value)}
-                  placeholder="Vismaz 8 simboli..."
-                  className="w-full min-h-[44px] bg-[#0a0a0c] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#dc2626] text-base"
-                />
+                <div className="relative">
+                  <input
+                    id="admin-setup-password"
+                    type={showSetupPw ? 'text' : 'password'}
+                    required
+                    minLength={8}
+                    autoComplete="new-password"
+                    value={setupPassword}
+                    onChange={(e) => setSetupPassword(e.target.value)}
+                    placeholder="Vismaz 8 simboli..."
+                    className="w-full min-h-[44px] bg-[#0a0a0c] border border-slate-700 rounded-lg pl-4 pr-12 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#dc2626] text-base"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowSetupPw((v) => !v)}
+                    aria-pressed={showSetupPw}
+                    aria-label={showSetupPw ? 'Paslēpt paroli' : 'Parādīt paroli'}
+                    className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center absolute right-0 top-0 text-slate-400 hover:text-white cursor-pointer"
+                  >
+                    {showSetupPw ? <EyeOff className="w-5 h-5" aria-hidden="true" /> : <Eye className="w-5 h-5" aria-hidden="true" />}
+                  </button>
+                </div>
               </div>
               <div>
                 <label htmlFor="admin-setup-confirm" className="block text-xs uppercase font-heading font-bold text-slate-200 mb-1">
@@ -808,7 +942,7 @@ export default function Admin() {
                 </label>
                 <input
                   id="admin-setup-confirm"
-                  type="password"
+                  type={showSetupPw ? 'text' : 'password'}
                   required
                   minLength={8}
                   autoComplete="new-password"
@@ -838,6 +972,9 @@ export default function Admin() {
                   type="text"
                   required
                   autoComplete="username"
+                  autoCorrect="off"
+                  autoCapitalize="none"
+                  spellCheck={false}
                   enterKeyHint="next"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -850,17 +987,28 @@ export default function Admin() {
                 <label htmlFor="admin-login-password" className="block text-xs uppercase font-heading font-bold text-slate-200 mb-1">
                   Parole
                 </label>
-                <input
-                  id="admin-login-password"
-                  type="password"
-                  required
-                  autoComplete="current-password"
-                  enterKeyHint="go"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full min-h-[44px] bg-[#0a0a0c] border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#dc2626] text-base"
-                />
+                <div className="relative">
+                  <input
+                    id="admin-login-password"
+                    type={showLoginPw ? 'text' : 'password'}
+                    required
+                    autoComplete="current-password"
+                    enterKeyHint="go"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full min-h-[44px] bg-[#0a0a0c] border border-slate-700 rounded-lg pl-4 pr-12 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-[#dc2626] text-base"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginPw((v) => !v)}
+                    aria-pressed={showLoginPw}
+                    aria-label={showLoginPw ? 'Paslēpt paroli' : 'Parādīt paroli'}
+                    className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center absolute right-0 top-0 text-slate-400 hover:text-white cursor-pointer"
+                  >
+                    {showLoginPw ? <EyeOff className="w-5 h-5" aria-hidden="true" /> : <Eye className="w-5 h-5" aria-hidden="true" />}
+                  </button>
+                </div>
               </div>
 
               <button
@@ -871,9 +1019,6 @@ export default function Admin() {
                 {authBusy ? <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" /> : <Lock className="w-5 h-5" aria-hidden="true" />}
                 <span>Ieiet vadības panelī</span>
               </button>
-              <p className="text-center text-xs text-slate-400 pt-1">
-                Piekļuve: <span className="text-slate-200 font-mono">admin</span> / <span className="text-slate-200 font-mono">kumite2026</span>
-              </p>
             </form>
           )}
         </div>
@@ -1370,6 +1515,9 @@ export default function Admin() {
                     type="email"
                     required
                     autoComplete="email"
+                    autoCorrect="off"
+                    autoCapitalize="none"
+                    spellCheck={false}
                     value={targetEmail}
                     onChange={(e) => setTargetEmail(e.target.value)}
                     placeholder="info@kumitekarate.lv"
@@ -1379,7 +1527,8 @@ export default function Admin() {
 
                 <button
                   type="submit"
-                  className="w-full sm:w-auto min-h-[48px] bg-[#0a0a0c] hover:bg-[#1e293b] text-white font-heading text-sm uppercase tracking-wider px-6 py-3 rounded-lg font-bold shadow transition-colors flex items-center justify-center space-x-2 cursor-pointer"
+                  disabled={isSavingSettings}
+                  className="w-full sm:w-auto min-h-[48px] bg-[#0a0a0c] hover:bg-[#1e293b] disabled:opacity-50 text-white font-heading text-sm uppercase tracking-wider px-6 py-3 rounded-lg font-bold shadow transition-colors flex items-center justify-center space-x-2 cursor-pointer"
                 >
                   <Save className="w-4 h-4 text-[#f87171]" aria-hidden="true" />
                   <span>Saglabāt E-pastu</span>
@@ -1388,7 +1537,18 @@ export default function Admin() {
             </div>
 
             <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
-              <h2 className="text-xl font-heading font-bold uppercase tracking-wide text-[#0a0a0c]">Paroles maiņa</h2>
+              <div className="flex items-center justify-between gap-2">
+                <h2 className="text-xl font-heading font-bold uppercase tracking-wide text-[#0a0a0c]">Paroles maiņa</h2>
+                <button
+                  type="button"
+                  onClick={() => setShowSettingsPw((v) => !v)}
+                  aria-pressed={showSettingsPw}
+                  className="text-xs font-heading uppercase font-bold text-[#2563eb] hover:text-[#1d4ed8] inline-flex items-center gap-1.5 min-h-[44px] px-2 cursor-pointer"
+                >
+                  {showSettingsPw ? <EyeOff className="w-4 h-4" aria-hidden="true" /> : <Eye className="w-4 h-4" aria-hidden="true" />}
+                  <span>{showSettingsPw ? 'Paslēpt paroles' : 'Parādīt paroles'}</span>
+                </button>
+              </div>
 
               <form onSubmit={handleChangePassword} className="space-y-4">
                 <div>
@@ -1397,7 +1557,7 @@ export default function Admin() {
                   </label>
                   <input
                     id="admin-settings-current-pw"
-                    type="password"
+                    type={showSettingsPw ? 'text' : 'password'}
                     required
                     autoComplete="current-password"
                     value={currentPassword}
@@ -1413,7 +1573,7 @@ export default function Admin() {
                   </label>
                   <input
                     id="admin-settings-new-pw"
-                    type="password"
+                    type={showSettingsPw ? 'text' : 'password'}
                     required
                     minLength={8}
                     autoComplete="new-password"
@@ -1430,7 +1590,7 @@ export default function Admin() {
                   </label>
                   <input
                     id="admin-settings-confirm-pw"
-                    type="password"
+                    type={showSettingsPw ? 'text' : 'password'}
                     required
                     minLength={8}
                     autoComplete="new-password"
@@ -1443,7 +1603,8 @@ export default function Admin() {
 
                 <button
                   type="submit"
-                  className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-sm uppercase tracking-wider px-6 py-3 rounded-lg font-bold shadow transition-colors flex items-center justify-center space-x-2 cursor-pointer"
+                  disabled={isSavingSettings}
+                  className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white font-heading text-sm uppercase tracking-wider px-6 py-3 rounded-lg font-bold shadow transition-colors flex items-center justify-center space-x-2 cursor-pointer"
                 >
                   <Save className="w-4 h-4" aria-hidden="true" />
                   <span>Saglabāt paroli</span>
@@ -1800,9 +1961,11 @@ export default function Admin() {
                 </button>
                 <button
                   type="submit"
-                  className="min-h-[44px] bg-[#dc2626] hover:bg-[#b91c1c] text-white text-xs font-heading font-bold uppercase px-5 py-2.5 rounded-lg shadow cursor-pointer"
+                  disabled={isAddingReview}
+                  className="min-h-[44px] bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-50 text-white text-xs font-heading font-bold uppercase px-5 py-2.5 rounded-lg shadow cursor-pointer inline-flex items-center justify-center gap-2"
                 >
-                  Saglabāt un Publicēt
+                  {isAddingReview && <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />}
+                  <span>{isAddingReview ? 'Saglabā...' : 'Saglabāt un Publicēt'}</span>
                 </button>
               </div>
             </form>
@@ -2009,12 +2172,73 @@ export default function Admin() {
         )}
       </dialog>
 
+      {/* MODAL: STYLED CONFIRMATION DIALOG */}
+      <dialog
+        {...confirmDialog.dialogProps}
+        aria-label={confirmAction?.title || 'Apstiprināt darbību'}
+        className="m-auto p-0 bg-[#0a0a0c] border-2 border-slate-700 text-white rounded-2xl max-w-md w-[calc(100%-1.5rem)] shadow-2xl"
+      >
+        {confirmAction && (
+          <div className="p-6 space-y-5 animate-fadeIn">
+            <div className="flex items-start gap-3">
+              <div
+                className={`p-2.5 rounded-xl flex-shrink-0 ${
+                  confirmAction.tone === 'danger' ? 'bg-red-500/20 text-[#f87171]' : 'bg-blue-500/20 text-[#60a5fa]'
+                }`}
+              >
+                <AlertCircle className="w-6 h-6" aria-hidden="true" />
+              </div>
+              <div className="min-w-0">
+                <h2 className="text-lg font-heading font-bold uppercase tracking-wide text-white">
+                  {confirmAction.title}
+                </h2>
+                <p className="text-sm text-slate-300 font-sans mt-1.5 leading-relaxed">
+                  {confirmAction.message}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-2.5 pt-2 border-t border-slate-800">
+              <button
+                type="button"
+                autoFocus
+                disabled={isConfirmBusy}
+                onClick={() => setConfirmAction(null)}
+                className="min-h-[44px] px-4 py-2.5 rounded-lg border border-slate-600 text-slate-200 hover:bg-slate-800 disabled:opacity-50 text-xs font-heading uppercase font-bold cursor-pointer"
+              >
+                Atcelt
+              </button>
+              <button
+                type="button"
+                disabled={isConfirmBusy}
+                onClick={async () => {
+                  if (!confirmAction || isConfirmBusy) return;
+                  setIsConfirmBusy(true);
+                  try {
+                    await confirmAction.onConfirm();
+                    setConfirmAction(null);
+                  } finally {
+                    setIsConfirmBusy(false);
+                  }
+                }}
+                className={`min-h-[44px] px-5 py-2.5 rounded-lg text-white text-xs font-heading uppercase font-bold shadow cursor-pointer inline-flex items-center justify-center gap-2 disabled:opacity-50 ${
+                  confirmAction.tone === 'danger' ? 'bg-[#dc2626] hover:bg-[#b91c1c]' : 'bg-[#2563eb] hover:bg-[#1d4ed8]'
+                }`}
+              >
+                {isConfirmBusy && <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />}
+                <span>{confirmAction.confirmLabel}</span>
+              </button>
+            </div>
+          </div>
+        )}
+      </dialog>
+
       {/* Toast Notification Pill */}
       {toastMessage && (
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-4 right-4 z-50 bg-[#0a0a0c] text-white border border-slate-700 px-4 py-3 rounded-xl shadow-2xl text-xs sm:text-sm font-heading font-bold tracking-wide animate-fadeIn"
+          className="fixed bottom-4 right-4 z-50 bg-[#0a0a0c] text-white border border-slate-700 px-4 py-3 rounded-xl shadow-2xl text-xs sm:text-sm font-heading font-bold tracking-wide animate-fadeIn pb-[max(0.75rem,env(safe-area-inset-bottom))]"
         >
           {toastMessage}
         </div>

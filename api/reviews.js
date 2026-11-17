@@ -119,6 +119,7 @@ export default async function handler(req, res) {
       if (id === undefined || id === null || id === '') {
         return res.status(400).json({ success: false, message: 'ID required' });
       }
+      const validStatus = ['published', 'draft', 'rejected'].includes(status) ? status : undefined;
 
       const idStr = String(id);
       const [reviews, overrides] = await Promise.all([
@@ -130,7 +131,7 @@ export default async function handler(req, res) {
         if (String(item.id) === idStr) {
           return {
             ...item,
-            ...(status && { status }),
+            ...(validStatus && { status: validStatus }),
             ...(text && { text: String(text).trim().slice(0, 1500) }),
             ...(author && { author: String(author).trim().slice(0, 80) }),
             ...(role !== undefined && { role: String(role).trim().slice(0, 60) }),
@@ -143,7 +144,7 @@ export default async function handler(req, res) {
       const nextOverrides = { ...(overrides || {}) };
       nextOverrides[idStr] = {
         ...(nextOverrides[idStr] || {}),
-        ...(status && { status }),
+        ...(validStatus && { status: validStatus }),
         ...(text && { text: String(text).trim().slice(0, 1500) }),
         ...(author && { author: String(author).trim().slice(0, 80) }),
         ...(role !== undefined && { role: String(role).trim().slice(0, 60) }),

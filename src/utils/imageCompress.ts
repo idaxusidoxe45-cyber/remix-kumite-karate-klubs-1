@@ -84,18 +84,18 @@ async function encodeAdaptive(canvas: HTMLCanvasElement, maxTargetBytes: number)
 
 /**
  * Compresses any uploaded photo into two right-sized WebP assets:
- * - thumb (max 600px, <= ~65 KB) for gallery cards
- * - full (max 1400px, <= ~450 KB) for lightbox modal & Vercel Hobby limits
+ * - thumb (max 600px, <= ~55 KB) for gallery cards
+ * - full (max 1280px, <= ~220 KB) for lightbox modal & Upstash/Vercel Hobby compatibility
  */
 export async function compressImageForGallery(file: File): Promise<CompressedImageResult> {
   const img = await loadImageFromFile(file);
 
   const thumbCanvas = renderCanvas(img, 600);
-  const fullCanvas = renderCanvas(img, 1400);
+  const fullCanvas = renderCanvas(img, 1280);
 
   const [thumbBlob, fullBlob] = await Promise.all([
-    encodeAdaptive(thumbCanvas, 65 * 1024),
-    encodeAdaptive(fullCanvas, 450 * 1024),
+    encodeAdaptive(thumbCanvas, 55 * 1024),
+    encodeAdaptive(fullCanvas, 220 * 1024),
   ]);
 
   const [thumbDataUrl, fullDataUrl] = await Promise.all([

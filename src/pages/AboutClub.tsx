@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PageTab, Testimonial } from '../types';
+import { PageTab, Testimonial, BeltDetail } from '../types';
 import {
   BELT_SYSTEM,
   JAPANESE_NUMBERS,
@@ -7,8 +7,9 @@ import {
   FAQ_ITEMS,
   getDynamicTestimonials,
   fetchCloudTestimonials,
+  getBeltSystemDetailsAsync,
 } from '../data';
-import { Star } from 'lucide-react';
+import { Star, ChevronDown } from 'lucide-react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
 import AccordionItem from '../components/AccordionItem';
 
@@ -25,6 +26,8 @@ export default function AboutClub({
 }: AboutClubProps) {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [openToggle, setOpenToggle] = useState<number | null>(null);
+  const [beltDetails, setBeltDetails] = useState<BeltDetail[] | null>(null);
+  const [selectedBeltId, setSelectedBeltId] = useState<number | null>(null);
   const [testimonials, setTestimonials] = useState<Testimonial[]>(() =>
     getDynamicTestimonials({ includeLocal: false })
   );
@@ -34,30 +37,22 @@ export default function AboutClub({
     fetchCloudTestimonials().then((revs) => setTestimonials(revs));
   }, []);
 
-  useEffect(() => {
-    if (window.location.hash === '#atsauksmes') {
-      const timer = setTimeout(() => {
-        const el = document.getElementById('atsauksmes');
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 150);
-      return () => clearTimeout(timer);
-    }
-  }, []);
-
   const toggleFaq = (idx: number) => {
     setOpenFaq(openFaq === idx ? null : idx);
   };
 
   const toggleAccordion = (idx: number) => {
-    setOpenToggle(openToggle === idx ? null : idx);
+    const next = openToggle === idx ? null : idx;
+    setOpenToggle(next);
+    if (next === 0 && !beltDetails) {
+      void getBeltSystemDetailsAsync().then((details) => setBeltDetails(details));
+    }
   };
 
   return (
-    <div className="bg-[#ffffff] text-[#0f172a]">
+    <div className="text-[#0f172a]">
       {/* Hero Header */}
-      <section className="relative bg-[#0a0a0c] text-white py-20 lg:py-28 overflow-hidden border-b-8 border-[#dc2626]">
+      <section className="relative bg-[#0a0a0c] text-white py-16 sm:py-24 lg:py-28 overflow-hidden border-b-8 border-[#dc2626]">
         <img
           src="/assets_gallery/trenini/karate-web-17.webp"
           srcSet="/assets_gallery/trenini/karate-web-17-800w.webp 800w, /assets_gallery/trenini/karate-web-17.webp 1600w"
@@ -72,28 +67,30 @@ export default function AboutClub({
           className="absolute inset-0 w-full h-full object-cover opacity-45 filter grayscale pointer-events-none select-none"
         />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="hero-enter">
-            <span className="text-xs sm:text-sm uppercase tracking-widest text-[#f87171] font-heading font-bold block mb-2">
+          <div>
+            <span className="hero-stagger-1 text-xs sm:text-sm uppercase tracking-widest text-[#60a5fa] font-heading font-bold block mb-2">
               Kopš 2023
             </span>
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-heading text-white uppercase font-bold tracking-tight mb-6 leading-tight">
+            <h1 className="hero-stagger-2 text-3xl sm:text-5xl lg:text-6xl font-heading text-white uppercase font-bold tracking-tight mb-6 leading-tight">
               Par Mums
             </h1>
-            <a
-              href="https://wa.link/y3zuwq"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto min-h-[48px] text-center inline-flex items-center justify-center bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-xl uppercase tracking-wider px-6 sm:px-8 py-3.5 font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] rounded-lg border-2 border-white shadow-xl"
-            >
-              Uzdod jautājumu
-            </a>
+            <div className="hero-stagger-3">
+              <a
+                href="https://wa.link/y3zuwq"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto min-h-[48px] text-center inline-flex items-center justify-center bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-xl uppercase tracking-wider px-6 sm:px-8 py-3.5 font-bold transition-all hover:-translate-y-0.5 active:scale-[0.97] rounded-lg border-2 border-white shadow-xl"
+              >
+                Uzdod jautājumu
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Quote Banner */}
-      <section className="py-12 bg-[#f8fafc] border-b border-slate-200 text-center">
-        <div className="max-w-4xl mx-auto px-4">
+      <section className="py-10 sm:py-12 bg-[#f8fafc] border-b border-slate-200 text-center">
+        <div className="scroll-reveal max-w-4xl mx-auto px-4">
           <blockquote className="font-heading text-xl sm:text-2xl text-[#0a0a0c] tracking-wide font-bold">
             “Nav jābaidās no tā, kurš praktizē 10 000 dažādus sitienus. Jābaidās no tā, kurš praktizē vienu sitienu 10 000 reizes.”{' '}
             <cite className="not-italic text-[#dc2626] block mt-2 font-bold text-lg font-serif">
@@ -104,12 +101,13 @@ export default function AboutClub({
       </section>
 
       {/* Main Club Info */}
-      <section className="py-24 bg-[#ffffff]">
+      <section className="py-16 sm:py-24 bg-transparent">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="scroll-reveal space-y-6">
             <h2 className="text-3xl sm:text-5xl font-heading text-[#0f172a] font-bold uppercase tracking-wide">
               Mūsu Klubs
             </h2>
+            <div className="w-20 h-1 kumite-aka-ao-bar rounded-full stripe-draw" />
             <div className="space-y-4 text-slate-700 leading-relaxed font-sans text-lg">
               <p>
                 <strong>“Kumite karatē klubs”</strong> ir dibināts 2023. gadā augustā, kā arī iestājas Latvijas Karatē Federācijā.
@@ -129,7 +127,7 @@ export default function AboutClub({
               <button
                 type="button"
                 onClick={openTrialModal}
-                className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg sm:text-xl uppercase tracking-widest px-8 py-4 rounded-lg font-bold shadow-xl transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] border-2 border-white cursor-pointer"
+                className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg sm:text-xl uppercase tracking-widest px-8 py-4 rounded-lg font-bold shadow-xl transition-all hover:-translate-y-0.5 active:scale-[0.97] border-2 border-white cursor-pointer"
               >
                 Pievienojies mūsu karatē ģimenei
               </button>
@@ -139,10 +137,10 @@ export default function AboutClub({
       </section>
 
       {/* Coach Intro Teaser */}
-      <section className="py-24 bg-[#0a0a0c] text-white border-y-4 border-[#dc2626] content-visibility-auto">
+      <section className="py-16 sm:py-24 bg-[#0a0a0c] text-white border-y-4 border-[#2563eb]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <InteractiveRepelCard maxShift={14} maxRotate={6} onClick={() => setCurrentTab('coaches')}>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center p-6 sm:p-8 bg-[#111827] rounded-2xl border-2 border-slate-800 cursor-pointer">
+          <InteractiveRepelCard maxShift={12} maxRotate={5} onClick={() => setCurrentTab('coaches')}>
+            <div className="scroll-reveal grid grid-cols-1 lg:grid-cols-3 gap-10 sm:gap-12 items-center p-6 sm:p-8 bg-[#111827] rounded-2xl border-2 border-slate-800 hover:border-[#2563eb] transition-colors cursor-pointer">
               <div className="lg:col-span-2 space-y-6">
                 <h2 className="font-heading text-white text-2xl sm:text-4xl uppercase font-bold tracking-wide">
                   “Karatē ir mācība uz visu mūžu.” (Kenwa Mabuni)
@@ -158,7 +156,7 @@ export default function AboutClub({
                       e.stopPropagation();
                       setCurrentTab('coaches');
                     }}
-                    className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-lg border-2 border-white cursor-pointer relative z-20"
+                    className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg uppercase tracking-widest px-8 py-3.5 rounded-lg font-bold transition-all hover:-translate-y-0.5 active:scale-[0.97] shadow-lg border-2 border-white cursor-pointer relative z-20"
                   >
                     Vairāk par treneri
                   </button>
@@ -169,9 +167,11 @@ export default function AboutClub({
                 <img
                   src="/assets_coaches/ka_00302-edit.webp"
                   alt="Treneris Nikolajs Bodrovs"
+                  width={1200}
+                  height={800}
                   loading="lazy"
                   decoding="async"
-                  className="w-full h-80 object-cover"
+                  className="w-full h-72 sm:h-80 object-cover"
                 />
               </div>
             </div>
@@ -179,28 +179,78 @@ export default function AboutClub({
         </div>
       </section>
 
-      {/* Interesting Karate Information / Toggles */}
-      <section className="py-24 bg-[#f8fafc] content-visibility-auto">
+      {/* Interesting Karate Information / Interactive Accordions */}
+      <section className="py-16 sm:py-24 bg-[#f8fafc]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#dc2626] font-bold">
+          <div className="scroll-reveal text-center mb-12 sm:mb-16">
+            <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#2563eb] font-bold">
               Zināšanas un terminoloģija
             </span>
             <h2 className="text-3xl sm:text-5xl font-heading text-[#0f172a] font-bold uppercase tracking-wide mt-2">
               Interesanta informācija par karatē
             </h2>
-            <div className="w-24 h-1 bg-[#dc2626] mx-auto mt-4 rounded-full" />
+            <div className="w-24 h-1 kumite-aka-ao-bar mx-auto mt-4 rounded-full" />
           </div>
 
           <div className="space-y-4">
             {[
               {
                 title: 'Eksāmenu sistēma mūsu klubā',
-                content: (
+                content: beltDetails ? (
+                  <div className="py-2 space-y-3">
+                    <p className="text-xs sm:text-sm text-slate-600 font-sans">
+                      Noklikšķiniet uz jebkuras pakāpes, lai apskatītu prasības (Kihon, Kata, Kumite):
+                    </p>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-800 font-sans">
+                      {beltDetails.map((belt) => {
+                        const isSelected = selectedBeltId === belt.id;
+                        return (
+                          <li key={belt.id} className="col-span-1">
+                            <button
+                              type="button"
+                              aria-expanded={isSelected}
+                              onClick={() => setSelectedBeltId(isSelected ? null : belt.id)}
+                              className={`w-full min-h-[44px] bg-white p-3 rounded-lg shadow-xs border text-left flex items-center justify-between gap-2 transition-all cursor-pointer active:scale-[0.985] ${
+                                isSelected ? 'border-[#2563eb] ring-1 ring-[#2563eb]' : 'border-slate-200 hover:border-slate-400'
+                              }`}
+                            >
+                              <span className="flex items-center space-x-3 min-w-0">
+                                <span
+                                  aria-hidden="true"
+                                  className="w-7 h-3.5 rounded-sm border border-slate-300 flex-shrink-0"
+                                  style={{
+                                    background: belt.secondaryColor
+                                      ? `linear-gradient(90deg, ${belt.primaryColor} 50%, ${belt.secondaryColor} 50%)`
+                                      : belt.primaryColor,
+                                  }}
+                                />
+                                <span className="font-semibold text-sm truncate">{belt.label}</span>
+                              </span>
+                              <ChevronDown
+                                className={`w-4 h-4 text-slate-500 flex-shrink-0 transition-transform duration-200 ${
+                                  isSelected ? 'rotate-180 text-[#2563eb]' : ''
+                                }`}
+                                aria-hidden="true"
+                              />
+                            </button>
+                            {isSelected && (
+                              <div className="mt-1.5 bg-white border border-slate-200 rounded-lg p-3.5 text-xs sm:text-sm space-y-2 animate-fadeIn">
+                                <p className="font-semibold text-[#0a0a0c]">{belt.focus}</p>
+                                <p><strong>Kihon:</strong> {belt.kihon}</p>
+                                <p><strong>Kata:</strong> {belt.kata}</p>
+                                <p><strong>Kumite:</strong> {belt.kumite}</p>
+                              </div>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                ) : (
                   <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-800 py-2 font-sans">
                     {BELT_SYSTEM.map((belt, i) => (
                       <li key={i} className="bg-white p-3 rounded-lg shadow-xs border border-slate-200 flex items-center space-x-3">
-                        <span className="w-2.5 h-2.5 rounded-full bg-[#dc2626]" />
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#dc2626] flex-shrink-0" />
                         <span className="font-semibold">{belt}</span>
                       </li>
                     ))}
@@ -213,7 +263,7 @@ export default function AboutClub({
                   <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 py-2">
                     {JAPANESE_NUMBERS.map((n, i) => (
                       <div key={i} className="bg-white p-3 rounded-lg shadow-xs border border-slate-200 text-center">
-                        <span className="font-bold text-[#dc2626] block text-xl font-heading">{n.jp}</span>
+                        <span className={`font-bold block text-xl font-heading ${i % 2 === 0 ? 'text-[#dc2626]' : 'text-[#2563eb]'}`}>{n.jp}</span>
                         <span className="text-xs text-slate-600 uppercase font-heading font-bold">{n.lv}</span>
                       </div>
                     ))}
@@ -272,16 +322,16 @@ export default function AboutClub({
       </section>
 
       {/* FAQ Section */}
-      <section className="py-24 bg-[#ffffff] border-t border-slate-200 content-visibility-auto">
+      <section className="py-16 sm:py-24 bg-transparent border-t border-slate-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <div className="scroll-reveal text-center mb-12 sm:mb-16">
             <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#dc2626] font-bold">
               Atbildes uz jautājumiem
             </span>
             <h2 className="text-3xl sm:text-5xl font-heading text-[#0f172a] font-bold uppercase tracking-wide mt-2">
               Biežāk uzdotie jautājumi
             </h2>
-            <div className="w-24 h-1 bg-[#dc2626] mx-auto mt-4 rounded-full" />
+            <div className="w-24 h-1 kumite-aka-ao-bar mx-auto mt-4 rounded-full" />
           </div>
 
           <div className="space-y-4">
@@ -301,24 +351,29 @@ export default function AboutClub({
       </section>
 
       {/* Testimonials Section */}
-      <section id="atsauksmes" className="py-24 bg-[#f8fafc] content-visibility-auto">
+      <section id="atsauksmes" className="py-16 sm:py-24 bg-[#f8fafc] border-t border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <div className="scroll-reveal text-center mb-12 sm:mb-16">
             <span aria-hidden="true" className="text-6xl text-[#dc2626] font-serif font-bold">
               “
             </span>
             <h2 className="text-3xl sm:text-5xl font-heading text-[#0f172a] font-bold uppercase tracking-wide mt-1">
               Atsauksmes
             </h2>
-            <div className="w-24 h-1 bg-[#dc2626] mx-auto mt-4 rounded-full" />
+            <div className="w-24 h-1 kumite-aka-ao-bar mx-auto mt-4 rounded-full" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {testimonials
               .filter((t) => t.status === 'published')
-              .map((t) => (
-                <InteractiveRepelCard key={t.id} maxShift={14} maxRotate={6}>
-                  <div className="scroll-reveal bg-white rounded-xl p-8 border border-slate-200 shadow-md flex flex-col justify-between h-full hover:-translate-y-1 hover:shadow-xl hover:border-[#dc2626] transition-all duration-300">
+              .map((t, idx) => (
+                <InteractiveRepelCard key={t.id} maxShift={12} maxRotate={5}>
+                  <div
+                    data-stagger={String((idx % 3) + 1)}
+                    className={`scroll-reveal bg-white rounded-xl p-7 sm:p-8 border border-slate-200 border-t-4 ${
+                      idx % 2 === 1 ? 'border-t-[#2563eb]' : 'border-t-[#dc2626]'
+                    } shadow-md flex flex-col justify-between h-full hover:-translate-y-1 hover:shadow-xl transition-all duration-300`}
+                  >
                     <div className="space-y-4">
                       <div className="flex text-amber-500 space-x-1" aria-label={`Vērtējums ${t.rating || 5} no 5 zvaigznēm`}>
                         {[...Array(t.rating || 5)].map((_, i) => (
@@ -345,7 +400,7 @@ export default function AboutClub({
               <button
                 type="button"
                 onClick={openReviewModal}
-                className="w-full sm:w-auto min-h-[48px] inline-block bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.015] active:scale-[0.985] shadow-md border-2 border-white cursor-pointer"
+                className="w-full sm:w-auto min-h-[48px] inline-block bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-lg uppercase tracking-wider px-8 py-3.5 rounded-lg font-bold transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.97] shadow-md border-2 border-white cursor-pointer"
               >
                 Atstāt atsauksmi
               </button>

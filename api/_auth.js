@@ -13,15 +13,17 @@ export function setApiHeaders(req, res, { allowCredentials = true } = {}) {
   res.setHeader('X-Content-Type-Options', 'nosniff');
 
   const origin = req.headers.origin;
+  const reqHost = String(req.headers.host || '').split(':')[0].toLowerCase();
   if (origin) {
     let allowed = false;
     try {
       const url = new URL(origin);
       const host = url.hostname.toLowerCase();
       if (
+        (reqHost && host === reqHost) ||
         host === 'kumitekarate.lv' ||
         host === 'www.kumitekarate.lv' ||
-        host.endsWith('.vercel.app') ||
+        (host.startsWith('remix-kumite-karate-klubs-') && host.endsWith('.vercel.app')) ||
         host === 'localhost' ||
         host === '127.0.0.1'
       ) {
