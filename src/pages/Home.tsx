@@ -259,13 +259,15 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
 
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center lg:text-left max-w-3xl">
-            <div className="hero-stagger-1 flex items-center justify-center lg:justify-start space-x-2.5 mb-4 sm:mb-5 flex-wrap gap-y-2">
-              <Logo variant="dark" className="w-8 h-8 sm:w-10 sm:h-10 shadow-lg flex-shrink-0" />
-              <span className="inline-flex items-center bg-[#1e293b]/95 border border-slate-700 px-3 py-1 rounded-full text-[11px] sm:text-xs uppercase tracking-wider text-slate-100 font-heading font-bold shadow-sm">
-                Kumite Karate Klubs •{' '}
-                <span className="text-[#f87171] mx-1">Vairāk</span> •{' '}
-                <span className="text-[#60a5fa] mx-1">Ātrāk</span> •{' '}
-                <span className="text-white ml-1">Spēcīgāk</span>
+            <div className="hero-stagger-1 flex items-center justify-center lg:justify-start gap-2.5 mb-4 sm:mb-5">
+              <Logo variant="dark" className="hidden sm:block w-10 h-10 shadow-lg flex-shrink-0" />
+              <span className="inline-block text-center bg-[#1e293b]/95 border border-slate-700 px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs uppercase tracking-wider text-slate-100 font-heading font-bold shadow-sm leading-snug">
+                <span className="hidden sm:inline">Kumite Karate Klubs • </span>
+                <span className="text-[#f87171]">Vairāk</span>
+                <span className="text-slate-400 mx-1.5">•</span>
+                <span className="text-[#60a5fa]">Ātrāk</span>
+                <span className="text-slate-400 mx-1.5">•</span>
+                <span className="text-white">Spēcīgāk</span>
               </span>
             </div>
 
@@ -280,14 +282,14 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
               <button
                 type="button"
                 onClick={openTrialModal}
-                className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-xl hover:shadow-red-600/30 text-white font-heading text-base sm:text-lg uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 font-bold transition-all active:scale-[0.97] shadow-xl rounded-xl border border-red-400 cursor-pointer"
+                className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] hover:brightness-110 hover:shadow-xl hover:shadow-red-600/30 text-white font-heading text-sm xs:text-base sm:text-lg uppercase tracking-wider px-4 sm:px-8 py-3.5 sm:py-4 font-bold transition-all active:scale-[0.97] shadow-xl rounded-xl border border-red-400 cursor-pointer"
               >
                 Piesakies bezmaksas nodarbībai
               </button>
               <button
                 type="button"
                 onClick={() => setCurrentTab('about')}
-                className="w-full sm:w-auto min-h-[48px] bg-[#1e293b]/95 hover:bg-[#2563eb] text-white font-heading text-base sm:text-lg uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 font-bold transition-all active:scale-[0.97] rounded-xl border border-[#2563eb]/60 hover:border-white shadow-md cursor-pointer"
+                className="w-full sm:w-auto min-h-[48px] bg-[#1e293b]/95 hover:bg-[#2563eb] text-white font-heading text-sm xs:text-base sm:text-lg uppercase tracking-wider px-4 sm:px-8 py-3.5 sm:py-4 font-bold transition-all active:scale-[0.97] rounded-xl border border-[#2563eb]/60 hover:border-white shadow-md cursor-pointer"
               >
                 Uzzini vairāk
               </button>
@@ -300,7 +302,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
       <section className="py-16 sm:py-24 bg-[#f8fafc] border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="scroll-reveal text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-            <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#2563eb] font-bold">
+            <span className="text-xs sm:text-sm uppercase font-heading tracking-[0.16em] sm:tracking-[0.3em] text-[#2563eb] font-bold">
               Karatē Bērniem un Jauniešiem
             </span>
             <h2 className="text-3xl sm:text-5xl font-heading text-[#0f172a] font-bold uppercase tracking-wide mt-2">
@@ -352,7 +354,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
       <section className="py-16 sm:py-20 bg-transparent border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="scroll-reveal text-center max-w-2xl mx-auto mb-12 sm:mb-14">
-            <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#dc2626] font-bold">
+            <span className="text-xs sm:text-sm uppercase font-heading tracking-[0.16em] sm:tracking-[0.3em] text-[#dc2626] font-bold">
               Vienkārši un droši
             </span>
             <h2 className="text-3xl sm:text-5xl font-heading text-[#0f172a] font-bold uppercase tracking-wide mt-2">
@@ -458,7 +460,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 items-center">
             <div className="scroll-reveal space-y-6">
-              <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#60a5fa] font-bold">
+              <span className="text-xs sm:text-sm uppercase font-heading tracking-[0.16em] sm:tracking-[0.3em] text-[#60a5fa] font-bold">
                 Bezmaksas izmēģinājums
               </span>
               <h2 className="text-3xl sm:text-5xl font-heading text-white uppercase tracking-wide font-bold leading-tight">
@@ -622,7 +624,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 items-center">
             <div className="scroll-reveal">
-              <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#2563eb] font-bold">
+              <span className="text-xs sm:text-sm uppercase font-heading tracking-[0.16em] sm:tracking-[0.3em] text-[#2563eb] font-bold">
                 Pievienojies ģimenei
               </span>
               <h2 className="text-3xl sm:text-5xl font-heading text-[#0f172a] font-bold uppercase tracking-wide mt-2 mb-6">
@@ -667,7 +669,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="scroll-reveal flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-12">
             <div>
-              <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#dc2626] font-bold">
+              <span className="text-xs sm:text-sm uppercase font-heading tracking-[0.16em] sm:tracking-[0.3em] text-[#dc2626] font-bold">
                 Mūsu mirkļi
               </span>
               <h2 className="text-3xl sm:text-5xl font-heading text-[#0f172a] font-bold uppercase tracking-wide mt-2">
@@ -789,7 +791,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 items-center">
             <div className="scroll-reveal space-y-6">
-              <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#f87171] font-bold">
+              <span className="text-xs sm:text-sm uppercase font-heading tracking-[0.16em] sm:tracking-[0.3em] text-[#f87171] font-bold">
                 Sazinies ar mums
               </span>
               <h2 className="text-3xl sm:text-5xl font-heading text-white uppercase tracking-wide font-bold mb-6">

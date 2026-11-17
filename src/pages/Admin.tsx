@@ -79,6 +79,7 @@ export default function Admin() {
   const [authBusy, setAuthBusy] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [needsSetup, setNeedsSetup] = useState(false);
+  const [missingConfig, setMissingConfig] = useState(false);
   const [setupPassword, setSetupPassword] = useState('');
   const [setupConfirm, setSetupConfirm] = useState('');
   const [showLoginPw, setShowLoginPw] = useState(false);
@@ -172,6 +173,7 @@ export default function Admin() {
           const data = await res.json();
           setIsAuthenticated(Boolean(data.authenticated));
           setNeedsSetup(Boolean(data.needsSetup));
+          setMissingConfig(Boolean(data.missingConfig));
           if (data.notificationEmail) setTargetEmail(data.notificationEmail);
           return;
         }
@@ -894,7 +896,11 @@ export default function Admin() {
             </div>
             <h1 className="text-2xl font-heading font-bold uppercase tracking-wider text-white">Kumite Karate Klubs</h1>
             <p className="text-xs uppercase font-heading tracking-widest text-[#f87171] font-bold mt-1">
-              {needsSetup ? 'Drošības sākotnējā iestatīšana' : 'CMS Vadības Panelis'}
+              {missingConfig
+                ? 'Servera konfigurācija nepieciešama'
+                : needsSetup
+                  ? 'Drošības sākotnējā iestatīšana'
+                  : 'CMS Vadības Panelis'}
             </p>
           </div>
 
@@ -904,7 +910,34 @@ export default function Admin() {
             </div>
           )}
 
-          {needsSetup ? (
+          {missingConfig ? (
+            <div className="space-y-4">
+              <div className="p-4 bg-slate-900/80 border border-slate-700 rounded-xl space-y-2.5 text-xs sm:text-sm text-slate-200 leading-relaxed">
+                <p className="font-semibold text-white">
+                  Vercel projektā vēl nav iestatīta administratora parole vai Upstash Redis datubāze.
+                </p>
+                <ol className="list-decimal list-inside space-y-1.5 text-slate-300">
+                  <li>
+                    Atveriet Vercel projektu → <span className="font-mono text-white">Settings → Environment Variables</span>
+                  </li>
+                  <li>
+                    Pievienojiet <span className="font-mono text-[#60a5fa]">ADMIN_PASSWORD</span> (vēlamo paroli) un nospiediet <span className="font-mono text-white">Redeploy</span>
+                  </li>
+                  <li>
+                    (Pēc izvēles) Pievienojiet <span className="font-mono text-[#60a5fa]">Upstash Redis</span> integrāciju mākoņa datu glabāšanai
+                  </li>
+                </ol>
+              </div>
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="w-full min-h-[48px] bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-heading text-base uppercase tracking-wider py-3.5 rounded-lg font-bold transition-all active:scale-[0.98] shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <RefreshCw className="w-4 h-4" aria-hidden="true" />
+                <span>Pārbaudīt vēlreiz</span>
+              </button>
+            </div>
+          ) : needsSetup ? (
             <form onSubmit={handleSetupPassword} className="space-y-4">
               <p className="text-xs sm:text-sm text-slate-200 leading-relaxed bg-slate-900/70 p-3 rounded-lg border border-slate-800">
                 Šī ir pirmā autorizācija. Izveidojiet drošu administratora paroli (vismaz 8 simboli), kas tiks šifrēta serverī.

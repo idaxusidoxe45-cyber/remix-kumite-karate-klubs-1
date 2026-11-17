@@ -157,7 +157,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
       <section className="py-14 sm:py-24 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="scroll-reveal text-center max-w-2xl mx-auto mb-10">
-            <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#2563eb] font-bold">
+            <span className="text-xs sm:text-sm uppercase font-heading tracking-[0.16em] sm:tracking-[0.3em] text-[#2563eb] font-bold">
               Nodarbību laiki
             </span>
             <h2 className="text-3xl sm:text-5xl font-heading text-[#0f172a] uppercase font-bold tracking-wide mt-2">

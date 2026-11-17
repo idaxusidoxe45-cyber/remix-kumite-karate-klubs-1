@@ -32,11 +32,13 @@ export default async function handler(req, res) {
     if (req.method === 'GET') {
       const cred = await getConfiguredCredential();
       const session = cred ? await verifySession(req) : null;
+      const kvReady = isKvConfigured();
       const response = {
         success: true,
         authenticated: Boolean(session),
-        needsSetup: !cred,
-        hasKv: isKvConfigured(),
+        needsSetup: Boolean(!cred && kvReady),
+        missingConfig: Boolean(!cred && !kvReady),
+        hasKv: kvReady,
       };
       if (session) {
         response.notificationEmail = await getSafeNotificationEmail();
@@ -131,6 +133,13 @@ export default async function handler(req, res) {
       if (action === 'change-password') {
         const session = await requireAdmin(req, res);
         if (!session) return;
+
+        if (!isKvConfigured()) {
+          return res.status(400).json({
+            success: false,
+            message: 'Lai mainītu paroli tieši no vadības paneļa, pievienojiet Upstash KV datubāzi (vai atjauniniet ADMIN_PASSWORD Vercel iestatījumos).',
+          });
+        }
 
         const currentPassword = String(req.body?.currentPassword || '');
         const newPassword = String(req.body?.newPassword || '');

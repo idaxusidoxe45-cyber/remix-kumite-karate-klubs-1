@@ -63,6 +63,11 @@ export async function getSessionSecret() {
     return kvSecret;
   }
 
+  const envCred = (process.env.ADMIN_PASSWORD_HASH || process.env.ADMIN_PASSWORD || '').trim();
+  if (envCred) {
+    return crypto.scryptSync(envCred, 'kumite-admin-session-v1', 32).toString('hex');
+  }
+
   if (!cachedProcessSecret) {
     cachedProcessSecret = crypto.randomBytes(32).toString('hex');
   }
