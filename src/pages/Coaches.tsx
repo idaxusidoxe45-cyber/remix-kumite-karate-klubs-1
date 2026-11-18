@@ -244,10 +244,10 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 max-w-3xl mx-auto items-stretch">
-            {/* Reel 1: Individuālā pieeja */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 max-w-2xl mx-auto items-stretch">
+            {/* Reel 1 */}
             <InteractiveRepelCard maxShift={10} maxRotate={4}>
-              <div className="scroll-reveal bg-[#0a0a0c] text-white rounded-2xl overflow-hidden shadow-xl border border-slate-800 flex flex-col h-full hover:border-[#2563eb] transition-colors">
+              <div className="scroll-reveal bg-[#0a0a0c] rounded-2xl overflow-hidden shadow-2xl border-4 border-slate-900 hover:border-[#2563eb] transition-all duration-300">
                 <div className="relative aspect-[9/16] bg-black overflow-hidden flex items-center justify-center">
                   <video
                     controls
@@ -260,25 +260,12 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
                     Jūsu pārlūks neatbalsta video atskaņošanu.
                   </video>
                 </div>
-                <div className="p-4 sm:p-5 text-left flex-1 flex flex-col justify-between border-t border-slate-800">
-                  <div>
-                    <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-heading font-bold uppercase tracking-wider bg-[#2563eb]/20 text-[#60a5fa] border border-[#2563eb]/30 mb-2">
-                      Individuālā pieeja
-                    </span>
-                    <h3 className="font-heading text-lg sm:text-xl font-bold uppercase text-white tracking-wide">
-                      Tehnikas un sparinga slīpēšana
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-300 font-sans mt-1">
-                      Treneris personīgi palīdz nostiprināt precīzu sitienu un aizsardzības tehniku.
-                    </p>
-                  </div>
-                </div>
               </div>
             </InteractiveRepelCard>
 
-            {/* Reel 2: Grupu nodarbības */}
+            {/* Reel 2 */}
             <InteractiveRepelCard maxShift={10} maxRotate={4}>
-              <div className="scroll-reveal bg-[#0a0a0c] text-white rounded-2xl overflow-hidden shadow-xl border border-slate-800 flex flex-col h-full hover:border-[#dc2626] transition-colors">
+              <div className="scroll-reveal bg-[#0a0a0c] rounded-2xl overflow-hidden shadow-2xl border-4 border-slate-900 hover:border-[#dc2626] transition-all duration-300">
                 <div className="relative aspect-[9/16] bg-black overflow-hidden flex items-center justify-center">
                   <video
                     controls
@@ -290,19 +277,6 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
                     <source src="/assets_video/atmosfera-grupa.mp4" type="video/mp4" />
                     Jūsu pārlūks neatbalsta video atskaņošanu.
                   </video>
-                </div>
-                <div className="p-4 sm:p-5 text-left flex-1 flex flex-col justify-between border-t border-slate-800">
-                  <div>
-                    <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-heading font-bold uppercase tracking-wider bg-[#dc2626]/20 text-[#f87171] border border-[#dc2626]/30 mb-2">
-                      Grupu treniņi
-                    </span>
-                    <h3 className="font-heading text-lg sm:text-xl font-bold uppercase text-white tracking-wide">
-                      Dinamika un cīņas gars
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-300 font-sans mt-1">
-                      Aizraujoši sparingi, reakcijas attīstīšana un draudzīga komandas atmosfēra.
-                    </p>
-                  </div>
                 </div>
               </div>
             </InteractiveRepelCard>
