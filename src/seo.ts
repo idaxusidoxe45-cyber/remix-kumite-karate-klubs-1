@@ -392,7 +392,7 @@ const ROUTE_SEO_MAP: Record<PublicRoutePath, RouteSeoData> = {
     path: '/contacts',
     title: 'Kontakti un zāles adrese Rīgā | Kumite Karate Klubs',
     description:
-      'Sazinies ar Kumite Karate Klubu: Rīga, Gustava Zemgala gatve 71, tālr. +371 29177274, info@kumitekarate.lv. Bezmaksas auto stāvvieta un pieteikšanās izmēģinājuma treniņam.',
+      'Sazinies ar Kumite Karate Klubu: Rīga, Gustava Zemgala gatve 71, tālr. +371 29177274, info@kumitekarate.lv. Bezmaksas auto stāvvieta (līdz 3 stundām) un pieteikšanās izmēģinājuma treniņam.',
     canonical: `${SITE_URL}/contacts`,
     robots: 'index, follow',
     ogType: 'website',

@@ -44,19 +44,15 @@ function renderBeltIndicator(belt: BeltDetail) {
     );
   } else if (belt.apparelIcon === 'emblem') {
     content = (
-      <svg
-        viewBox="0 0 24 24"
-        className="w-5 h-5 text-[#2563eb]"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+      <img
+        src="/logo.png"
+        alt=""
         aria-hidden="true"
-      >
-        <path d="M12 2.5 19 5.5v6c0 4.8-3 8.3-7 10-4-1.7-7-5.2-7-10v-6l7-3Z" />
-        <path d="m12 7.5 1.35 2.75 3.05.45-2.2 2.15.52 3.05L12 14.45 9.28 15.9l.52-3.05-2.2-2.15 3.05-.45L12 7.5Z" />
-      </svg>
+        width={24}
+        height={24}
+        decoding="async"
+        className="w-6 h-6 rounded-full object-contain select-none"
+      />
     );
   } else {
     content = (
@@ -73,11 +69,16 @@ function renderBeltIndicator(belt: BeltDetail) {
   }
 
   return (
-    <span className="w-7 h-5 flex items-center justify-center flex-shrink-0">
+    <span className="w-7 h-6 flex items-center justify-center flex-shrink-0">
       {content}
     </span>
   );
 }
+
+const BELT_COLUMNS = [
+  BELT_SYSTEM_DETAILS.slice(0, 9),
+  BELT_SYSTEM_DETAILS.slice(9),
+];
 
 export default function AboutClub({
   setCurrentTab,
@@ -235,7 +236,7 @@ export default function AboutClub({
       </section>
 
       {/* Interesting Karate Information / Interactive Accordions */}
-      <section className="py-16 sm:py-24 bg-[#f8fafc]">
+      <section className="py-16 sm:py-24 bg-[#f8fafc] content-visibility-auto">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="scroll-reveal text-center mb-12 sm:mb-16">
             <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#2563eb] font-bold">
@@ -254,44 +255,47 @@ export default function AboutClub({
                 content: (
                   <div className="py-2 space-y-3">
                     <p className="text-xs sm:text-sm text-slate-600 font-sans">
-                      Noklikšķiniet uz jebkuras pakāpes, lai apskatītu prasības (Kihon, Kata, Kumite):
+                      Noklikšķiniet uz jebkuras pakāpes, lai apskatītu prasības (Kihon un Kumite):
                     </p>
-                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-800 font-sans">
-                      {BELT_SYSTEM_DETAILS.map((belt) => {
-                        const isSelected = selectedBeltId === belt.id;
-                        return (
-                          <li key={belt.id} className="col-span-1">
-                            <button
-                              type="button"
-                              aria-expanded={isSelected}
-                              onClick={() => setSelectedBeltId(isSelected ? null : belt.id)}
-                              className={`w-full min-h-[44px] bg-white p-3 rounded-lg shadow-xs border text-left flex items-center justify-between gap-2 transition-all cursor-pointer active:scale-[0.985] ${
-                                isSelected ? 'border-[#2563eb] ring-1 ring-[#2563eb]' : 'border-slate-200 hover:border-slate-400'
-                              }`}
-                            >
-                              <span className="flex items-center space-x-3 min-w-0">
-                                {renderBeltIndicator(belt)}
-                                <span className="font-semibold text-sm leading-snug">{belt.label}</span>
-                              </span>
-                              <ChevronDown
-                                className={`w-4 h-4 text-slate-500 flex-shrink-0 transition-transform duration-200 ${
-                                  isSelected ? 'rotate-180 text-[#2563eb]' : ''
-                                }`}
-                                aria-hidden="true"
-                              />
-                            </button>
-                            {isSelected && (
-                              <div className="mt-1.5 bg-white border border-slate-200 rounded-lg p-3.5 text-xs sm:text-sm space-y-2 animate-fadeIn">
-                                <p className="font-semibold text-[#0a0a0c]">{belt.focus}</p>
-                                <p><strong>Kihon:</strong> {belt.kihon}</p>
-                                <p><strong>Kata:</strong> {belt.kata}</p>
-                                <p><strong>Kumite:</strong> {belt.kumite}</p>
-                              </div>
-                            )}
-                          </li>
-                        );
-                      })}
-                    </ul>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 items-start">
+                      {BELT_COLUMNS.map((column, colIdx) => (
+                        <ul key={colIdx} className="space-y-2 text-sm text-slate-800 font-sans">
+                          {column.map((belt) => {
+                            const isSelected = selectedBeltId === belt.id;
+                            return (
+                              <li key={belt.id}>
+                                <button
+                                  type="button"
+                                  aria-expanded={isSelected}
+                                  onClick={() => setSelectedBeltId(isSelected ? null : belt.id)}
+                                  className={`w-full min-h-[44px] bg-white p-3 rounded-lg shadow-xs border text-left flex items-center justify-between gap-2 transition-all cursor-pointer active:scale-[0.985] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2563eb] ${
+                                    isSelected ? 'border-[#2563eb] ring-1 ring-[#2563eb]' : 'border-slate-200 hover:border-slate-400'
+                                  }`}
+                                >
+                                  <span className="flex items-center space-x-3 min-w-0">
+                                    {renderBeltIndicator(belt)}
+                                    <span className="font-semibold text-sm leading-snug">{belt.label}</span>
+                                  </span>
+                                  <ChevronDown
+                                    className={`w-4 h-4 text-slate-500 flex-shrink-0 transition-transform duration-200 ${
+                                      isSelected ? 'rotate-180 text-[#2563eb]' : ''
+                                    }`}
+                                    aria-hidden="true"
+                                  />
+                                </button>
+                                {isSelected && (
+                                  <div className="mt-1.5 bg-white border border-slate-200 rounded-lg p-3.5 text-xs sm:text-sm space-y-2 animate-fadeIn">
+                                    <p className="font-semibold text-[#0a0a0c]">{belt.focus}</p>
+                                    <p><strong>Kihon:</strong> {belt.kihon}</p>
+                                    <p><strong>Kumite:</strong> {belt.kumite}</p>
+                                  </div>
+                                )}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      ))}
+                    </div>
                   </div>
                 ),
               },
@@ -360,7 +364,7 @@ export default function AboutClub({
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16 sm:py-24 bg-transparent border-t border-slate-200">
+      <section className="py-16 sm:py-24 bg-transparent border-t border-slate-200 content-visibility-auto">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="scroll-reveal text-center mb-12 sm:mb-16">
             <span className="text-sm uppercase font-heading tracking-[0.3em] text-[#dc2626] font-bold">
@@ -389,7 +393,7 @@ export default function AboutClub({
       </section>
 
       {/* Testimonials Section */}
-      <section id="atsauksmes" className="py-16 sm:py-24 bg-[#f8fafc] border-t border-slate-200">
+      <section id="atsauksmes" className="py-16 sm:py-24 bg-[#f8fafc] border-t border-slate-200 content-visibility-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="scroll-reveal text-center mb-12 sm:mb-16">
             <span aria-hidden="true" className="text-6xl text-[#dc2626] font-serif font-bold">

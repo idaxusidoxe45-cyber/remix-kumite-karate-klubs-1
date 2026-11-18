@@ -17,6 +17,9 @@ export const Logo: React.FC<LogoProps> = ({
       <img
         src={logoSrc}
         alt="Kumite Karate Klubs Logo"
+        width={115}
+        height={115}
+        decoding="async"
         className="w-full h-full object-contain"
       />
     </div>

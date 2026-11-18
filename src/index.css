@@ -552,7 +552,7 @@ dialog:modal {
 /* Offscreen content performance optimization */
 .content-visibility-auto {
   content-visibility: auto;
-  contain-intrinsic-size: auto 420px;
+  contain-intrinsic-size: auto none auto 420px;
 }
 
 @media (prefers-reduced-motion: reduce) {

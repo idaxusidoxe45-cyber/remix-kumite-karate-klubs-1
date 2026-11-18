@@ -24,9 +24,7 @@ export interface BeltDetail {
   apparelIcon?: 'tshirt' | 'kimono' | 'emblem';
   focus: string;
   kihon: string;
-  kata: string;
   kumite: string;
-  skills: string[];
 }
 
 export interface GalleryItem {

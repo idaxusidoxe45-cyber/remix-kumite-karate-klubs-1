@@ -1,4 +1,4 @@
-import type { ScheduleGroup, GalleryItem, Testimonial, FaqItem, BeltDetail } from './types.ts';
+import type { ScheduleGroup, GalleryItem, Testimonial, FaqItem } from './types.ts';
 
 export const SCHEDULE_GROUPS: ScheduleGroup[] = [
   {
@@ -9,7 +9,7 @@ export const SCHEDULE_GROUPS: ScheduleGroup[] = [
     ageLabel: '7–11 gadi',
     dayPattern: 'mwf',
     schedule: [
-      'PIRMDIENA : 15:30 – 16:45',
+      'PIRMDIENA: 15:30 – 16:45',
       'TREŠDIENA: 15:30 – 16:45',
       'PIEKTDIENA: 15:30 – 16:45'
     ]
@@ -22,7 +22,7 @@ export const SCHEDULE_GROUPS: ScheduleGroup[] = [
     ageLabel: '9–12 gadi (ar pieredzi)',
     dayPattern: 'mwf',
     schedule: [
-      'PIRMDIENA : 16:45 – 18:00',
+      'PIRMDIENA: 16:45 – 18:00',
       'TREŠDIENA: 16:45 – 18:00',
       'PIEKTDIENA: 16:45 – 18:00'
     ]
@@ -35,7 +35,7 @@ export const SCHEDULE_GROUPS: ScheduleGroup[] = [
     ageLabel: '12–17 gadi (ar pieredzi)',
     dayPattern: 'mwf',
     schedule: [
-      'PIRMDIENA : 18:00 – 19:15',
+      'PIRMDIENA: 18:00 – 19:15',
       'TREŠDIENA: 18:00 – 19:15',
       'PIEKTDIENA: 18:00 – 19:15'
     ]
@@ -48,7 +48,7 @@ export const SCHEDULE_GROUPS: ScheduleGroup[] = [
     ageLabel: '8–13 gadi',
     dayPattern: 'mwf',
     schedule: [
-      'PIRMDIENA : 19:15 – 20:30',
+      'PIRMDIENA: 19:15 – 20:30',
       'TREŠDIENA: 19:15 – 20:30',
       'PIEKTDIENA: 19:15 – 20:30'
     ]
@@ -61,7 +61,7 @@ export const SCHEDULE_GROUPS: ScheduleGroup[] = [
     ageLabel: '5–7 gadi',
     dayPattern: 'tt',
     schedule: [
-      'OTRDIENA : 18:00 – 19:00',
+      'OTRDIENA: 18:00 – 19:00',
       'CETURTDIENA: 18:00 – 19:00'
     ]
   },
@@ -73,7 +73,7 @@ export const SCHEDULE_GROUPS: ScheduleGroup[] = [
     ageLabel: '7–11 gadi (ar pieredzi un bez pieredzes)',
     dayPattern: 'tt',
     schedule: [
-      'OTRDIENA : 19:00 – 20:15',
+      'OTRDIENA: 19:00 – 20:15',
       'CETURTDIENA: 19:00 – 20:15'
     ]
   }
@@ -189,32 +189,6 @@ export const FAQ_ITEMS: FaqItem[] = [
     answer: 'Jā, pie zāles automašīnu var novietot bez maksas (līdz 3 stundām).'
   }
 ];
-
-export const BELT_SYSTEM = [
-  '11 kyu – Karatē krekls (mazākajiem karatistiem)',
-  '10 kyu – Kimono',
-  '10 kyu – Emblēma',
-  '9 kyu – Balta – Sarkana',
-  '9 kyu – Sarkana',
-  '8 kyu – Sarkana – Oranža',
-  '8 kyu – Oranža',
-  '7 kyu – Oranža – Dzeltena',
-  '7 kyu – Dzeltena',
-  '6 kyu – Dzeltena – Zaļa',
-  '6 kyu – Zaļa',
-  '5 kyu – Zaļa – Zila',
-  '5 kyu – Zila',
-  '4 kyu – Zila – Brūna',
-  '3 kyu – Brūna',
-  '2 kyu – Brūna',
-  '1 kyu – Brūna',
-  '1 DAN – Melna'
-];
-
-export async function getBeltSystemDetailsAsync(): Promise<BeltDetail[]> {
-  const { BELT_SYSTEM_DETAILS } = await import('./data/belts');
-  return BELT_SYSTEM_DETAILS;
-}
 
 export const JAPANESE_NUMBERS = [
   { jp: 'Ichi', lv: 'Viens' },
