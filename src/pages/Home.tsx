@@ -413,11 +413,11 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                     </li>
                     <li className="flex items-center space-x-2">
                       <span className="w-2 h-2 rounded-full bg-[#2563eb] flex-shrink-0" />
-                      <span>Čības nokļūšanai no ģērbtuves līdz tatami</span>
+                      <span>Čības nokļūšanai no ģērbtuves līdz tatami (nodarbība notiek ar basām kājām)</span>
                     </li>
                     <li className="flex items-center space-x-2">
                       <span className="w-2 h-2 rounded-full bg-[#2563eb] flex-shrink-0" />
-                      <span>Dzeramā ūdens pudele (nodarbība notiek ar basām kājām)</span>
+                      <span>Dzeramā ūdens pudele</span>
                     </li>
                   </ul>
                 </div>
@@ -652,8 +652,14 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
               </div>
             </div>
 
-            <div className="w-full">
+            <div className="w-full space-y-6">
               <div data-stagger="2" className="scroll-reveal rounded-2xl overflow-hidden shadow-2xl bg-black border-4 border-[#dc2626]">
+                <YouTubeFacade
+                  videoId="EG2mULNR3iM"
+                  title="Vai esmu SPĒCĪGĀKS par karate MANEKENU?! | Kumite Karate Klubs"
+                />
+              </div>
+              <div data-stagger="3" className="scroll-reveal rounded-2xl overflow-hidden shadow-2xl bg-black border-4 border-[#1e293b]">
                 <YouTubeFacade
                   videoId="B4dpn-buHYk"
                   title="UZ STARTA LĪNIJAS #19 | KARATE"

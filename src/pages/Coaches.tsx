@@ -136,7 +136,7 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
             <div className="w-24 h-1 kumite-aka-ao-bar mx-auto mb-6 rounded-full stripe-draw" />
             <div className="text-slate-700 leading-relaxed space-y-4 text-base font-sans">
               <p>
-                Nikolajs Bodrovs ar karatē nodarbojas jau vairāk kā 24 gadus, un ir ieguvis 2 DAN. Viņa pirmais karatē treneris bija Aleksandrs Kudrjavcevs, kurš palīdzēja attīstīties gan fiziski un emocionāli, bet arī garīgi. Tika iedota laba karatē bāze, kas palīdzēja sasniegt mērķus un stiprināt raksturu.
+                Nikolajs Bodrovs ar karatē nodarbojas jau vairāk par 25 gadiem, un ir ieguvis 3 DAN. Viņa pirmais karatē treneris bija Aleksandrs Kudrjavcevs, kurš palīdzēja attīstīties gan fiziski un emocionāli, bet arī garīgi. Tika iedota laba karatē bāze, kas palīdzēja sasniegt mērķus un stiprināt raksturu.
               </p>
               <p>
                 Pēc tam Nikolaja treneri bija Aleksandrs Nakonečnijs un Maksims Ivančikovs, kuri trenēja un palīdzēja sasniegt labākos rezultātus Nikolaja karatē karjerā.
@@ -181,6 +181,7 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
                 <ul className="space-y-2 text-sm text-slate-200 font-sans">
                   <li className="flex items-center space-x-2"><span className="w-2 h-2 rounded-full bg-[#dc2626] flex-shrink-0" /><span>1 DAN (melna josta) – 29.08.2013</span></li>
                   <li className="flex items-center space-x-2"><span className="w-2 h-2 rounded-full bg-[#dc2626] flex-shrink-0" /><span>2 DAN – 12.05.2023</span></li>
+                  <li className="flex items-center space-x-2"><span className="w-2 h-2 rounded-full bg-[#dc2626] flex-shrink-0" /><span>3 DAN – 13.05.2026</span></li>
                   <li className="flex items-center space-x-2"><span className="w-2 h-2 rounded-full bg-[#2563eb] flex-shrink-0" /><span>Komandu Eiropas čempionāts 2010.g. – 1.vieta (juniori)</span></li>
                   <li className="flex items-center space-x-2"><span className="w-2 h-2 rounded-full bg-[#dc2626] flex-shrink-0" /><span>Eiropas čempionāts 2011.g. – 5.vieta (juniori)</span></li>
                   <li className="flex items-center space-x-2"><span className="w-2 h-2 rounded-full bg-[#2563eb] flex-shrink-0" /><span>Pasaules čempionats 2011.g. – 2.vieta (juniori)</span></li>

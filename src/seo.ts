@@ -50,7 +50,7 @@ const SPORTS_CLUB_ENTITY = {
   name: 'Kumite Karate Klubs',
   alternateName: 'Bērnu un jauniešu karatē klubs Kumite',
   description:
-    'Profesionāli karatē treniņi bērniem, jauniešiem un pieaugušajiem Rīgā. Sertificēts treneris Nikolajs Bodrovs (2 DAN), sagatavošana sacensībām, nometnes un bezmaksas izmēģinājuma nodarbības.',
+    'Profesionāli karatē treniņi bērniem, jauniešiem un pieaugušajiem Rīgā. Sertificēts treneris Nikolajs Bodrovs (3 DAN), sagatavošana sacensībām, nometnes un bezmaksas izmēģinājuma nodarbības.',
   url: `${SITE_URL}/`,
   logo: `${SITE_URL}/logo.png`,
   image: OG_IMAGE_URL,
@@ -93,10 +93,10 @@ const SPORTS_CLUB_ENTITY = {
     '@type': 'Person',
     '@id': `${SITE_URL}/coaches#nikolajs-bodrovs`,
     name: 'Nikolajs Bodrovs',
-    jobTitle: 'Galvenais treneris (2 DAN)',
+    jobTitle: 'Galvenais treneris (3 DAN)',
     telephone: '+371 29177274',
     description:
-      'Sertificēts karatē treneris (LSPA, Sertifikāta Nr. 3973), melnā josta (2 DAN), Latvijas izlases sportists (2009–2021) un LKF Slavas zāles dalībnieks.',
+      'Sertificēts karatē treneris (LSPA, Sertifikāta Nr. 3973), melnā josta (3 DAN), Latvijas izlases sportists (2009–2021) un LKF Slavas zāles dalībnieks.',
   },
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
@@ -208,7 +208,7 @@ const ROUTE_SEO_MAP: Record<PublicRoutePath, RouteSeoData> = {
     ogType: 'website',
     ogTitle: 'Kumite Karate Klubs Rīgā – Karatē treniņi bērniem un jauniešiem',
     ogDescription:
-      'Profesionāli karatē treniņi Rīgā sertificēta trenera Nikolaja Bodrova (2 DAN) vadībā. Piesakies bezmaksas izmēģinājuma nodarbībai!',
+      'Profesionāli karatē treniņi Rīgā sertificēta trenera Nikolaja Bodrova (3 DAN) vadībā. Piesakies bezmaksas izmēģinājuma nodarbībai!',
     ogImage: OG_IMAGE_URL,
     ogImageAlt: OG_IMAGE_ALT,
     preloadHero: KARATE_HERO_PRELOAD,
@@ -264,15 +264,15 @@ const ROUTE_SEO_MAP: Record<PublicRoutePath, RouteSeoData> = {
   },
   '/coaches': {
     path: '/coaches',
-    title: 'Treneris Nikolajs Bodrovs (2 DAN) | Kumite Karate Klubs Rīgā',
+    title: 'Treneris Nikolajs Bodrovs (3 DAN) | Kumite Karate Klubs Rīgā',
     description:
-      'Kumite Karate Kluba galvenais treneris Nikolajs Bodrovs (2 DAN) – sertificēts LSPA sporta speciālists, Eiropas čempionāta medaļnieks un LKF Slavas zāles sportists ar 24+ gadu pieredzi.',
+      'Kumite Karate Kluba galvenais treneris Nikolajs Bodrovs (3 DAN) – sertificēts LSPA sporta speciālists, Eiropas čempionāta medaļnieks un LKF Slavas zāles sportists ar 25+ gadu pieredzi.',
     canonical: `${SITE_URL}/coaches`,
     robots: 'index, follow',
     ogType: 'profile',
-    ogTitle: 'Treneris Nikolajs Bodrovs (2 DAN) | Kumite Karate Klubs',
+    ogTitle: 'Treneris Nikolajs Bodrovs (3 DAN) | Kumite Karate Klubs',
     ogDescription:
-      'Iepazīsties ar sertificētu karatē treneri Nikolaju Bodrovu (2 DAN): izglītība, sportiskie sasniegumi un individuāla pieeja katram audzēknim.',
+      'Iepazīsties ar sertificētu karatē treneri Nikolaju Bodrovu (3 DAN): izglītība, sportiskie sasniegumi un individuāla pieeja katram audzēknim.',
     ogImage: OG_IMAGE_URL,
     ogImageAlt: OG_IMAGE_ALT,
     preloadHero: COACH_HERO_PRELOAD,
@@ -284,14 +284,14 @@ const ROUTE_SEO_MAP: Record<PublicRoutePath, RouteSeoData> = {
           '@type': 'ProfilePage',
           '@id': `${SITE_URL}/coaches#webpage`,
           url: `${SITE_URL}/coaches`,
-          name: 'Treneris Nikolajs Bodrovs (2 DAN) | Kumite Karate Klubs Rīgā',
+          name: 'Treneris Nikolajs Bodrovs (3 DAN) | Kumite Karate Klubs Rīgā',
           inLanguage: 'lv-LV',
           isPartOf: { '@id': `${SITE_URL}/#website` },
           mainEntity: {
             '@type': 'Person',
             '@id': `${SITE_URL}/coaches#nikolajs-bodrovs`,
             name: 'Nikolajs Bodrovs',
-            jobTitle: 'Sertificēts karatē treneris (2 DAN)',
+            jobTitle: 'Sertificēts karatē treneris (3 DAN)',
             image: `${SITE_URL}/assets_coaches/ka_00302-edit.webp`,
             worksFor: { '@id': `${SITE_URL}/#sportsclub` },
             alumniOf: [
@@ -305,7 +305,9 @@ const ROUTE_SEO_MAP: Record<PublicRoutePath, RouteSeoData> = {
               },
             ],
             award: [
+              '3 DAN melnā josta karatē (2026)',
               '2 DAN melnā josta karatē (2023)',
+              '1 DAN melnā josta karatē (2013)',
               'Komandu Eiropas čempionāts 2010 – 1. vieta (juniori)',
               'Latvijas Karatē Federācijas Slavas zāle',
             ],

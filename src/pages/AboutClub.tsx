@@ -203,7 +203,7 @@ export default function AboutClub({
                 </h2>
                 <p className="text-slate-200 leading-relaxed text-base font-sans">
                   “Kumite karatē klubā” treniņus vada sertificēts (Sertifikāta Nr.: 3973) treneris{' '}
-                  <strong>Nikolajs Bodrovs (2 DAN)</strong>. Treneris ar karatē nodarbojas kopš 1999. gada. Latvijas izlases sportists no 2009. gada – 2021. gadam. Iekļauts Latvijas karatē federācijas Slavas zālē.
+                  <strong>Nikolajs Bodrovs (3 DAN)</strong>. Treneris ar karatē nodarbojas kopš 1999. gada. Latvijas izlases sportists no 2009. gada – 2021. gadam. Iekļauts Latvijas karatē federācijas Slavas zālē.
                 </p>
                 <div>
                   <button
