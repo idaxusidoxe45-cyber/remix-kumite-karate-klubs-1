@@ -229,35 +229,94 @@ export default function Coaches({ openTrialModal }: CoachesProps) {
         </div>
       </section>
 
-      {/* Video section */}
+      {/* Video section — Kluba atmosfēra un treniņi */}
       <section className="py-20 sm:py-24 bg-[#f8fafc] border-t border-slate-200 content-visibility-auto">
-        <div className="max-w-4xl mx-auto px-4 text-center space-y-8">
-          <h2 className="scroll-reveal text-3xl sm:text-4xl font-heading text-[#0f172a] uppercase font-bold tracking-wide">
-            Iepazīsti mūsu kluba atmosfēru
-          </h2>
-          <InteractiveRepelCard maxShift={12} maxRotate={5}>
-            <div className="scroll-reveal rounded-xl overflow-hidden shadow-2xl bg-black aspect-video relative flex items-center justify-center border-4 border-slate-900 hover:border-[#2563eb] transition-all duration-300">
-              <video
-                controls
-                playsInline
-                width={1280}
-                height={720}
-                preload="none"
-                poster="/assets_coaches/ka_00302-edit.webp"
-                className="w-full h-full object-cover"
-              >
-                <source src="/assets_video/kumite-video.mp4" type="video/mp4" />
-                Jūsu pārlūks neatbalsta video atskaņošanu.
-              </video>
-            </div>
-          </InteractiveRepelCard>
-          <button
-            type="button"
-            onClick={openTrialModal}
-            className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-lg uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold shadow-lg shadow-red-600/20 transition-all hover:-translate-y-0.5 active:scale-[0.97] border border-red-500/30 cursor-pointer"
-          >
-            Pievienojies mūsu karatē ģimenei
-          </button>
+        <div className="max-w-5xl mx-auto px-4 text-center space-y-8">
+          <div className="space-y-3">
+            <span className="text-xs sm:text-sm uppercase font-heading tracking-[0.2em] text-[#dc2626] font-bold">
+              Video no zāles
+            </span>
+            <h2 className="scroll-reveal text-3xl sm:text-4xl font-heading text-[#0f172a] uppercase font-bold tracking-wide">
+              Iepazīsti mūsu kluba atmosfēru
+            </h2>
+            <p className="text-slate-600 text-sm sm:text-base max-w-2xl mx-auto font-sans">
+              Reāli treniņu mirkļi no mūsu zāles — individuāla pieeja tehnikai un aizrautīgas bērnu nodarbības.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 max-w-3xl mx-auto items-stretch">
+            {/* Reel 1: Individuālā pieeja */}
+            <InteractiveRepelCard maxShift={10} maxRotate={4}>
+              <div className="scroll-reveal bg-[#0a0a0c] text-white rounded-2xl overflow-hidden shadow-xl border border-slate-800 flex flex-col h-full hover:border-[#2563eb] transition-colors">
+                <div className="relative aspect-[9/16] bg-black overflow-hidden flex items-center justify-center">
+                  <video
+                    controls
+                    playsInline
+                    preload="none"
+                    poster="/assets_video/thumb-individuali.webp"
+                    className="w-full h-full object-cover"
+                  >
+                    <source src="/assets_video/atmosfera-individuali.mp4" type="video/mp4" />
+                    Jūsu pārlūks neatbalsta video atskaņošanu.
+                  </video>
+                </div>
+                <div className="p-4 sm:p-5 text-left flex-1 flex flex-col justify-between border-t border-slate-800">
+                  <div>
+                    <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-heading font-bold uppercase tracking-wider bg-[#2563eb]/20 text-[#60a5fa] border border-[#2563eb]/30 mb-2">
+                      Individuālā pieeja
+                    </span>
+                    <h3 className="font-heading text-lg sm:text-xl font-bold uppercase text-white tracking-wide">
+                      Tehnikas un sparinga slīpēšana
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-300 font-sans mt-1">
+                      Treneris personīgi palīdz nostiprināt precīzu sitienu un aizsardzības tehniku.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </InteractiveRepelCard>
+
+            {/* Reel 2: Grupu nodarbības */}
+            <InteractiveRepelCard maxShift={10} maxRotate={4}>
+              <div className="scroll-reveal bg-[#0a0a0c] text-white rounded-2xl overflow-hidden shadow-xl border border-slate-800 flex flex-col h-full hover:border-[#dc2626] transition-colors">
+                <div className="relative aspect-[9/16] bg-black overflow-hidden flex items-center justify-center">
+                  <video
+                    controls
+                    playsInline
+                    preload="none"
+                    poster="/assets_video/thumb-grupa.webp"
+                    className="w-full h-full object-cover"
+                  >
+                    <source src="/assets_video/atmosfera-grupa.mp4" type="video/mp4" />
+                    Jūsu pārlūks neatbalsta video atskaņošanu.
+                  </video>
+                </div>
+                <div className="p-4 sm:p-5 text-left flex-1 flex flex-col justify-between border-t border-slate-800">
+                  <div>
+                    <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-heading font-bold uppercase tracking-wider bg-[#dc2626]/20 text-[#f87171] border border-[#dc2626]/30 mb-2">
+                      Grupu treniņi
+                    </span>
+                    <h3 className="font-heading text-lg sm:text-xl font-bold uppercase text-white tracking-wide">
+                      Dinamika un cīņas gars
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-300 font-sans mt-1">
+                      Aizraujoši sparingi, reakcijas attīstīšana un draudzīga komandas atmosfēra.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </InteractiveRepelCard>
+          </div>
+
+          <div className="pt-4">
+            <button
+              type="button"
+              onClick={openTrialModal}
+              className="w-full sm:w-auto min-h-[48px] bg-[#dc2626] hover:bg-[#b91c1c] text-white font-heading text-base sm:text-lg uppercase tracking-wider px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold shadow-lg shadow-red-600/20 transition-all hover:-translate-y-0.5 active:scale-[0.97] border border-red-500/30 cursor-pointer"
+            >
+              Pievienojies mūsu karatē ģimenei
+            </button>
+          </div>
         </div>
       </section>
 
