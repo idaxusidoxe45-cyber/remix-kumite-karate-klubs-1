@@ -551,7 +551,7 @@ export default function Contacts({ openTrialModal }: ContactsProps) {
                       <span>Auto stāvvieta</span>
                     </div>
                     <p className="text-sm text-slate-700 font-sans leading-relaxed">
-                      <strong>Bezmaksas auto stāvvieta</strong> klientiem un vecākiem atrodas tieši pie ēkas ieejas, tāpēc bērna nogādāšana uz nodarbību ir ērta un ātra.
+                      <strong>Bezmaksas auto stāvvieta (līdz 3 stundām)</strong> klientiem un vecākiem atrodas tieši pie ēkas ieejas, tāpēc bērna nogādāšana uz nodarbību ir ērta un ātra.
                     </p>
                   </div>
                 </div>

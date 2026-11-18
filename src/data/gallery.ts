@@ -874,22 +874,6 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "fullImage": "/assets_gallery/zale/img_2715-_1_-scaled.webp"
   },
   {
-    "id": 110,
-    "category": "zale",
-    "title": "Zāle",
-    "caption": "Zāles fotogrāfija",
-    "image": "/assets_gallery/zale/img_2723-copy-400x284.webp",
-    "fullImage": "/assets_gallery/zale/img_2723-copy.webp"
-  },
-  {
-    "id": 111,
-    "category": "zale",
-    "title": "Zāle",
-    "caption": "Zāles fotogrāfija",
-    "image": "/assets_gallery/zale/img_2729-400x284.webp",
-    "fullImage": "/assets_gallery/zale/img_2729-scaled.webp"
-  },
-  {
     "id": 112,
     "category": "zale",
     "title": "Zāle",

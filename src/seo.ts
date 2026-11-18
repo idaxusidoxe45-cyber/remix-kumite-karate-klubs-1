@@ -106,7 +106,7 @@ const SPORTS_CLUB_ENTITY = {
         '@type': 'Offer',
         itemOffered: {
           '@type': 'Service',
-          name: 'Karatē bērniem (5–6 gadi) — Iesācēju un jaunākā grupa',
+          name: 'Karatē bērniem (5–7 gadi) — Jaunākā grupa',
           description: 'Karatē pamati, koordinācija, lokanība, disciplīna un rotaļu elementi.',
         },
       },
@@ -114,7 +114,7 @@ const SPORTS_CLUB_ENTITY = {
         '@type': 'Offer',
         itemOffered: {
           '@type': 'Service',
-          name: 'Karatē bērniem (7–9 gadi) — Vidējā grupa',
+          name: 'Karatē bērniem (7–11 gadi) — Vidējā grupa',
           description: 'Karatē tehnika, disciplīna, fiziskā sagatavotība un pirmie starti sacensībās.',
         },
       },
@@ -122,7 +122,7 @@ const SPORTS_CLUB_ENTITY = {
         '@type': 'Offer',
         itemOffered: {
           '@type': 'Service',
-          name: 'Karatē jauniešiem un pieaugušajiem (10+ gadi) — Vecākā grupa',
+          name: 'Karatē jauniešiem (12–17 gadi) — Vecākā grupa',
           description: 'Padziļināta karatē tehnika, kumite sparingi un sagatavošanās čempionātiem.',
         },
       },
@@ -319,7 +319,7 @@ const ROUTE_SEO_MAP: Record<PublicRoutePath, RouteSeoData> = {
     path: '/schedule',
     title: 'Nodarbību grafiks Rīgā | Kumite Karate Klubs',
     description:
-      'Karatē treniņu grafiks Rīgā, Gustava Zemgala gatvē 71: rīta un vakara grupas iesācējiem, bērniem (5–6, 7–9 gadi) un jauniešiem (10+ gadi). Piesakies bezmaksas nodarbībai!',
+      'Karatē treniņu grafiks Rīgā, Gustava Zemgala gatvē 71: pēcpusdienas un vakara grupas bērniem un jauniešiem (5–7, 7–11, 8–13, 9–12 un 12–17 gadi). Piesakies bezmaksas nodarbībai!',
     canonical: `${SITE_URL}/schedule`,
     robots: 'index, follow',
     ogType: 'website',
@@ -347,7 +347,9 @@ const ROUTE_SEO_MAP: Record<PublicRoutePath, RouteSeoData> = {
               '@type': 'ListItem',
               position: idx + 1,
               name: group.title,
-              description: group.schedule.join('; '),
+              description: group.ageLabel
+                ? `${group.ageLabel} — ${group.schedule.join('; ')}`
+                : group.schedule.join('; '),
             })),
           },
         },

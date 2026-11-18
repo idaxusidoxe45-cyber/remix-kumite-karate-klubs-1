@@ -1,6 +1,6 @@
 export type PageTab = 'home' | 'about' | 'coaches' | 'schedule' | 'gallery' | 'contacts' | 'admin';
 
-export type AgeGroupFilter = '5-6' | '7-9' | '10+';
+export type AgeGroupFilter = '5-7' | '7-11' | '12-17';
 
 export interface ScheduleGroup {
   id: number | string;
@@ -21,6 +21,7 @@ export interface BeltDetail {
   primaryColor: string;
   secondaryColor?: string;
   isApparel?: boolean;
+  apparelIcon?: 'tshirt' | 'kimono' | 'emblem';
   focus: string;
   kihon: string;
   kata: string;

@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { PageTab, Testimonial, BeltDetail } from '../types';
 import {
-  BELT_SYSTEM,
   JAPANESE_NUMBERS,
   STRIKE_LEVELS,
   FAQ_ITEMS,
   getDynamicTestimonials,
   fetchCloudTestimonials,
-  getBeltSystemDetailsAsync,
 } from '../data';
-import { Star, ChevronDown } from 'lucide-react';
+import { BELT_SYSTEM_DETAILS } from '../data/belts';
+import { Star, ChevronDown, Shirt } from 'lucide-react';
 import InteractiveRepelCard from '../components/InteractiveRepelCard';
 import AccordionItem from '../components/AccordionItem';
 
@@ -19,6 +18,67 @@ interface AboutClubProps {
   openReviewModal?: () => void;
 }
 
+function renderBeltIndicator(belt: BeltDetail) {
+  let content: React.ReactNode;
+
+  if (belt.apparelIcon === 'tshirt') {
+    content = <Shirt className="w-5 h-5 text-[#dc2626]" strokeWidth={2.1} aria-hidden="true" />;
+  } else if (belt.apparelIcon === 'kimono') {
+    content = (
+      <svg
+        viewBox="0 0 24 24"
+        className="w-5 h-5 text-[#0f172a]"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M8 3 3 6.5 5 10.5 7.5 9V20h9V9L19 10.5 21 6.5 16 3" />
+        <path d="M8 3 13.5 13.5" />
+        <path d="M16 3 11 8.2" />
+        <path d="M7.5 13.5h9" />
+        <path d="M11.2 13.5 9.8 17.5M12.8 13.5l1.4 4" />
+      </svg>
+    );
+  } else if (belt.apparelIcon === 'emblem') {
+    content = (
+      <svg
+        viewBox="0 0 24 24"
+        className="w-5 h-5 text-[#2563eb]"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M12 2.5 19 5.5v6c0 4.8-3 8.3-7 10-4-1.7-7-5.2-7-10v-6l7-3Z" />
+        <path d="m12 7.5 1.35 2.75 3.05.45-2.2 2.15.52 3.05L12 14.45 9.28 15.9l.52-3.05-2.2-2.15 3.05-.45L12 7.5Z" />
+      </svg>
+    );
+  } else {
+    content = (
+      <span
+        aria-hidden="true"
+        className="w-7 h-3.5 rounded-sm border border-slate-300 block"
+        style={{
+          background: belt.secondaryColor
+            ? `linear-gradient(90deg, ${belt.primaryColor} 50%, ${belt.secondaryColor} 50%)`
+            : belt.primaryColor,
+        }}
+      />
+    );
+  }
+
+  return (
+    <span className="w-7 h-5 flex items-center justify-center flex-shrink-0">
+      {content}
+    </span>
+  );
+}
+
 export default function AboutClub({
   setCurrentTab,
   openTrialModal,
@@ -26,7 +86,6 @@ export default function AboutClub({
 }: AboutClubProps) {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [openToggle, setOpenToggle] = useState<number | null>(null);
-  const [beltDetails, setBeltDetails] = useState<BeltDetail[] | null>(null);
   const [selectedBeltId, setSelectedBeltId] = useState<number | null>(null);
   const [testimonials, setTestimonials] = useState<Testimonial[]>(() =>
     getDynamicTestimonials({ includeLocal: false })
@@ -42,11 +101,7 @@ export default function AboutClub({
   };
 
   const toggleAccordion = (idx: number) => {
-    const next = openToggle === idx ? null : idx;
-    setOpenToggle(next);
-    if (next === 0 && !beltDetails) {
-      void getBeltSystemDetailsAsync().then((details) => setBeltDetails(details));
-    }
+    setOpenToggle(openToggle === idx ? null : idx);
   };
 
   return (
@@ -196,13 +251,13 @@ export default function AboutClub({
             {[
               {
                 title: 'Eksāmenu sistēma mūsu klubā',
-                content: beltDetails ? (
+                content: (
                   <div className="py-2 space-y-3">
                     <p className="text-xs sm:text-sm text-slate-600 font-sans">
                       Noklikšķiniet uz jebkuras pakāpes, lai apskatītu prasības (Kihon, Kata, Kumite):
                     </p>
                     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-800 font-sans">
-                      {beltDetails.map((belt) => {
+                      {BELT_SYSTEM_DETAILS.map((belt) => {
                         const isSelected = selectedBeltId === belt.id;
                         return (
                           <li key={belt.id} className="col-span-1">
@@ -215,16 +270,8 @@ export default function AboutClub({
                               }`}
                             >
                               <span className="flex items-center space-x-3 min-w-0">
-                                <span
-                                  aria-hidden="true"
-                                  className="w-7 h-3.5 rounded-sm border border-slate-300 flex-shrink-0"
-                                  style={{
-                                    background: belt.secondaryColor
-                                      ? `linear-gradient(90deg, ${belt.primaryColor} 50%, ${belt.secondaryColor} 50%)`
-                                      : belt.primaryColor,
-                                  }}
-                                />
-                                <span className="font-semibold text-sm truncate">{belt.label}</span>
+                                {renderBeltIndicator(belt)}
+                                <span className="font-semibold text-sm leading-snug">{belt.label}</span>
                               </span>
                               <ChevronDown
                                 className={`w-4 h-4 text-slate-500 flex-shrink-0 transition-transform duration-200 ${
@@ -246,15 +293,6 @@ export default function AboutClub({
                       })}
                     </ul>
                   </div>
-                ) : (
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-800 py-2 font-sans">
-                    {BELT_SYSTEM.map((belt, i) => (
-                      <li key={i} className="bg-white p-3 rounded-lg shadow-xs border border-slate-200 flex items-center space-x-3">
-                        <span className="w-2.5 h-2.5 rounded-full bg-[#dc2626] flex-shrink-0" />
-                        <span className="font-semibold">{belt}</span>
-                      </li>
-                    ))}
-                  </ul>
                 ),
               },
               {

@@ -104,9 +104,9 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
 
   const ageFilterOptions: { key: 'all' | AgeGroupFilter; label: string }[] = [
     { key: 'all', label: 'Visi' },
-    { key: '5-6', label: '5–6 gadi' },
-    { key: '7-9', label: '7–9 gadi' },
-    { key: '10+', label: '10+ gadi' },
+    { key: '5-7', label: '5–7 gadi' },
+    { key: '7-11', label: '7–11 gadi' },
+    { key: '12-17', label: '12–17 gadi' },
   ];
 
   const dayFilterOptions: { key: 'all' | 'mwf' | 'tt'; label: string }[] = [
@@ -300,7 +300,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
                           {group.title}
                         </div>
                         {group.ageLabel && (
-                          <div className="absolute bottom-3 left-4 bg-[#0a0a0c]/88 text-white text-xs font-sans font-semibold px-3 py-1 rounded-full border border-white/25">
+                          <div className="absolute bottom-3 left-3 max-w-[calc(100%-1.5rem)] w-fit bg-[#0a0a0c]/90 text-white text-xs leading-snug font-sans font-semibold px-3 py-1.5 rounded-xl border border-white/25 shadow-sm">
                             {group.ageLabel}
                           </div>
                         )}

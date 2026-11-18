@@ -5,8 +5,8 @@ export const SCHEDULE_GROUPS: ScheduleGroup[] = [
     id: 1,
     title: '1. GRUPA',
     image: '/assets_gallery/trenini/karate-web-1-400x284.webp',
-    ageGroups: ['5-6', '7-9'],
-    ageLabel: '5–9 gadi • Pēcpusdienas grupa',
+    ageGroups: ['7-11'],
+    ageLabel: '7–11 gadi',
     dayPattern: 'mwf',
     schedule: [
       'PIRMDIENA : 15:30 – 16:45',
@@ -18,8 +18,8 @@ export const SCHEDULE_GROUPS: ScheduleGroup[] = [
     id: 2,
     title: '2. GRUPA',
     image: '/assets_gallery/trenini/karate-web-2-400x284.webp',
-    ageGroups: ['7-9'],
-    ageLabel: '7–9 gadi • Pamatskola',
+    ageGroups: ['7-11', '12-17'],
+    ageLabel: '9–12 gadi (ar pieredzi)',
     dayPattern: 'mwf',
     schedule: [
       'PIRMDIENA : 16:45 – 18:00',
@@ -31,8 +31,8 @@ export const SCHEDULE_GROUPS: ScheduleGroup[] = [
     id: 3,
     title: '3. GRUPA',
     image: '/assets_gallery/trenini/karate-web-3-400x284.webp',
-    ageGroups: ['7-9', '10+'],
-    ageLabel: '7–12 gadi • Vakara grupa',
+    ageGroups: ['12-17'],
+    ageLabel: '12–17 gadi (ar pieredzi)',
     dayPattern: 'mwf',
     schedule: [
       'PIRMDIENA : 18:00 – 19:15',
@@ -44,8 +44,8 @@ export const SCHEDULE_GROUPS: ScheduleGroup[] = [
     id: 4,
     title: '4. GRUPA',
     image: '/assets_gallery/trenini/karate-web-4-400x284.webp',
-    ageGroups: ['10+'],
-    ageLabel: '10+ gadi • Vecākā grupa',
+    ageGroups: ['7-11', '12-17'],
+    ageLabel: '8–13 gadi',
     dayPattern: 'mwf',
     schedule: [
       'PIRMDIENA : 19:15 – 20:30',
@@ -57,8 +57,8 @@ export const SCHEDULE_GROUPS: ScheduleGroup[] = [
     id: 5,
     title: '5. GRUPA',
     image: '/assets_gallery/trenini/karate-web-6-400x284.webp',
-    ageGroups: ['5-6'],
-    ageLabel: '5–6 gadi • Mazie iesācēji',
+    ageGroups: ['5-7'],
+    ageLabel: '5–7 gadi',
     dayPattern: 'tt',
     schedule: [
       'OTRDIENA : 18:00 – 19:00',
@@ -69,8 +69,8 @@ export const SCHEDULE_GROUPS: ScheduleGroup[] = [
     id: 6,
     title: '6. GRUPA',
     image: '/assets_gallery/trenini/karate-web-10-1-400x284.webp',
-    ageGroups: ['10+'],
-    ageLabel: '10+ gadi • Iesācēji un jaunieši',
+    ageGroups: ['7-11'],
+    ageLabel: '7–11 gadi (ar pieredzi un bez pieredzes)',
     dayPattern: 'tt',
     schedule: [
       'OTRDIENA : 19:00 – 20:15',
@@ -186,12 +186,12 @@ export const FAQ_ITEMS: FaqItem[] = [
   },
   {
     question: 'Vai pie zāles var novietot auto?',
-    answer: 'Jā, automašīnu var novietot bezmaksas.'
+    answer: 'Jā, pie zāles automašīnu var novietot bez maksas (līdz 3 stundām).'
   }
 ];
 
 export const BELT_SYSTEM = [
-  '11 kyu - Karatē krekls (mazākajiem karatistiem)',
+  '11 kyu – Karatē krekls (mazākajiem karatistiem)',
   '10 kyu – Kimono',
   '10 kyu – Emblēma',
   '9 kyu – Balta – Sarkana',

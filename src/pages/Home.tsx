@@ -198,7 +198,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
 
   const ageGroupCards = [
     {
-      age: '5 – 6 gadi',
+      age: '5 – 7 gadi',
       title: 'Jaunākā grupa',
       desc: 'Pamati, lokanība, koordinācija un rotaļu elementi drošā un draudzīgā vidē.',
       borderClass: 'border-t-[#dc2626]',
@@ -206,7 +206,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
       ctaClass: 'text-[#dc2626] hover:text-[#b91c1c]',
     },
     {
-      age: '7 – 9 gadi',
+      age: '7 – 11 gadi',
       title: 'Vidējā grupa',
       desc: 'Tehnikas pamati, disciplīna, fiziskā sagatavotība un pirmie sasniegumi uz tatami.',
       borderClass: 'border-t-[#2563eb]',
@@ -214,7 +214,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
       ctaClass: 'text-[#2563eb] hover:text-[#1d4ed8]',
     },
     {
-      age: '10+ gadi',
+      age: '12 – 17 gadi',
       title: 'Vecākā grupa',
       desc: 'Padziļināta karatē tehnika, kumite sparingi un sagatavošanās sacensībām.',
       borderClass: 'border-t-[#0f172a]',
@@ -439,7 +439,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                     Pirmā tikšanās bez stresa
                   </h3>
                   <p className="text-slate-600 text-sm sm:text-base leading-relaxed font-sans mb-4">
-                    Treneris Nikolajs personīgi sagaidīs audzēkni, iepazīstinās ar zāli un bērnu grupu. Nodarbība rit caur spēlēm, koordināciju un drošiem bāzes elementiem.
+                    Treneris personīgi sagaidīs audzēkni, iepazīstinās ar zāli un bērnu grupu. Nodarbība rit caur spēlēm, koordināciju un drošiem bāzes elementiem.
                   </p>
                   <div className="bg-white p-3 rounded-xl border border-slate-200 text-xs text-slate-700 font-sans flex items-center gap-2">
                     <ShieldCheck className="w-5 h-5 text-[#2563eb] flex-shrink-0" aria-hidden="true" />
@@ -447,7 +447,7 @@ export default function Home({ setCurrentTab, openTrialModal, openReviewModal }:
                   </div>
                 </div>
                 <div className="pt-4 border-t border-slate-200/80 text-xs font-heading uppercase tracking-wider text-slate-600 font-bold">
-                  Bezmaksas auto stāvvieta pie zāles
+                  Bezmaksas auto stāvvieta pie zāles (3 stundas)
                 </div>
               </div>
             </InteractiveRepelCard>
