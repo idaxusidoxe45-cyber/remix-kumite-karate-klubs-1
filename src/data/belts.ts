@@ -155,6 +155,16 @@ export const BELT_SYSTEM_DETAILS: BeltDetail[] = [
   },
   {
     id: 14,
+    label: '4 kyu – Brūna',
+    rank: '4. kyu',
+    name: 'Brūna josta (4. kyu)',
+    primaryColor: '#78350f',
+    focus: 'Pirmā pilnā brūnā josta: nostiprināta bāzes tehnika, stabila cīņas stāja un sagatavošanās vecākās grupas atbildībai.',
+    kihon: 'Ushiro-geri kombinācijas ar Gyaku-zuki, pārejas starp Zenkutsu-dachi, Kokutsu-dachi un Kiba-dachi.',
+    kumite: 'Jiyu Ippon Kumite un aizsardzības-pretuzbrukuma sērijas',
+  },
+  {
+    id: 15,
     label: '3 kyu – Brūna',
     rank: '3. kyu',
     name: 'Brūna josta (3. kyu)',
@@ -164,7 +174,7 @@ export const BELT_SYSTEM_DETAILS: BeltDetail[] = [
     kumite: 'Jiyu Ippon Kumite (Jodan, Chudan, Mae-geri, Yoko-geri, Mawashi-geri)',
   },
   {
-    id: 15,
+    id: 16,
     label: '2 kyu – Brūna',
     rank: '2. kyu',
     name: 'Brūna josta (2. kyu)',
@@ -174,7 +184,7 @@ export const BELT_SYSTEM_DETAILS: BeltDetail[] = [
     kumite: 'Jiyu Ippon Kumite un Jiyu Kumite (brīvais sparings)',
   },
   {
-    id: 16,
+    id: 17,
     label: '1 kyu – Brūna',
     rank: '1. kyu',
     name: 'Brūna josta (1. kyu)',
@@ -184,7 +194,7 @@ export const BELT_SYSTEM_DETAILS: BeltDetail[] = [
     kumite: 'Jiyu Kumite (brīvais cīņas duelis pret vairākiem partneriem)',
   },
   {
-    id: 17,
+    id: 18,
     label: '1 DAN – Melna',
     rank: '1. DAN',
     name: 'Melnā josta (Shodan)',

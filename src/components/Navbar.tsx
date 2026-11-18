@@ -113,7 +113,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Kumite Karate Klubs Facebook profils"
-                    className="w-9 h-9 rounded-xl bg-[#1e293b] hover:bg-[#2563eb] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.96]"
+                    className="w-9 h-9 rounded-xl bg-[#1e293b] hover:bg-[#1877F2] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.96]"
                     title="Facebook"
                   >
                     <Facebook className="w-4 h-4" aria-hidden="true" />
@@ -123,7 +123,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Kumite Karate Klubs Instagram profils"
-                    className="w-9 h-9 rounded-xl bg-[#1e293b] hover:bg-[#dc2626] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.96]"
+                    className="w-9 h-9 rounded-xl bg-[#1e293b] hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.96]"
                     title="Instagram"
                   >
                     <Instagram className="w-4 h-4" aria-hidden="true" />
@@ -133,7 +133,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Kumite Karate Klubs YouTube kanāls"
-                    className="w-9 h-9 rounded-xl bg-[#1e293b] hover:bg-[#dc2626] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.96]"
+                    className="w-9 h-9 rounded-xl bg-[#1e293b] hover:bg-[#FF0000] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.96]"
                     title="YouTube"
                   >
                     <Youtube className="w-4 h-4" aria-hidden="true" />
@@ -231,7 +231,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Kumite Karate Klubs Facebook profils"
-                    className="w-11 h-11 inline-flex items-center justify-center bg-[#1e293b] hover:bg-[#2563eb] text-white rounded-xl transition-all hover:scale-[1.05] active:scale-[0.95]"
+                    className="w-11 h-11 inline-flex items-center justify-center bg-[#1e293b] hover:bg-[#1877F2] text-white rounded-xl transition-all hover:scale-[1.05] active:scale-[0.95]"
                   >
                     <Facebook className="w-5 h-5" aria-hidden="true" />
                   </a>
@@ -240,7 +240,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Kumite Karate Klubs Instagram profils"
-                    className="w-11 h-11 inline-flex items-center justify-center bg-[#1e293b] hover:bg-[#dc2626] text-white rounded-xl transition-all hover:scale-[1.05] active:scale-[0.95]"
+                    className="w-11 h-11 inline-flex items-center justify-center bg-[#1e293b] hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] text-white rounded-xl transition-all hover:scale-[1.05] active:scale-[0.95]"
                   >
                     <Instagram className="w-5 h-5" aria-hidden="true" />
                   </a>
@@ -249,7 +249,7 @@ export default function Navbar({ currentTab, openTrialModal }: NavbarProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Kumite Karate Klubs YouTube kanāls"
-                    className="w-11 h-11 inline-flex items-center justify-center bg-[#1e293b] hover:bg-[#dc2626] text-white rounded-xl transition-all hover:scale-[1.05] active:scale-[0.95]"
+                    className="w-11 h-11 inline-flex items-center justify-center bg-[#1e293b] hover:bg-[#FF0000] text-white rounded-xl transition-all hover:scale-[1.05] active:scale-[0.95]"
                   >
                     <Youtube className="w-5 h-5" aria-hidden="true" />
                   </a>

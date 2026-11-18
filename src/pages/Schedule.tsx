@@ -384,7 +384,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Kumite Karate Klubs Facebook profils"
-              className="w-12 h-12 rounded-xl bg-[#1e293b] hover:bg-[#2563eb] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
+              className="w-12 h-12 rounded-xl bg-[#1e293b] hover:bg-[#1877F2] hover:border-[#1877F2] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
               title="Facebook"
             >
               <Facebook className="w-6 h-6" aria-hidden="true" />
@@ -394,7 +394,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Kumite Karate Klubs Instagram profils"
-              className="w-12 h-12 rounded-xl bg-[#1e293b] hover:bg-[#dc2626] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
+              className="w-12 h-12 rounded-xl bg-[#1e293b] hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] hover:border-transparent text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
               title="Instagram"
             >
               <Instagram className="w-6 h-6" aria-hidden="true" />
@@ -404,7 +404,7 @@ export default function Schedule({ openTrialModal }: ScheduleProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Kumite Karate Klubs YouTube kanāls"
-              className="w-12 h-12 rounded-xl bg-[#1e293b] hover:bg-[#dc2626] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
+              className="w-12 h-12 rounded-xl bg-[#1e293b] hover:bg-[#FF0000] hover:border-[#FF0000] text-white flex items-center justify-center transition-all hover:scale-[1.06] active:scale-[0.95] shadow-lg border border-slate-700"
               title="YouTube"
             >
               <Youtube className="w-6 h-6" aria-hidden="true" />
