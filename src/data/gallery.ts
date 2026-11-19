@@ -1,6 +1,334 @@
 import { GalleryItem } from '../types';
 
 export const GALLERY_ITEMS: GalleryItem[] = [
+{
+    "id": 118,
+    "category": "zale",
+    "title": "Zāle",
+    "caption": "Mūsu karatē dojo zāle ar tatami un karogiem",
+    "image": "/assets_gallery/zale/dojo-tatami-karogi-400x284.webp",
+    "fullImage": "/assets_gallery/zale/dojo-tatami-karogi.webp"
+  },
+  {
+    "id": 119,
+    "category": "zale",
+    "title": "Zāle",
+    "caption": "Fiziskās sagatavotības un spēka treniņu aprīkojums",
+    "image": "/assets_gallery/zale/zale-treninu-aprikojums-400x284.webp",
+    "fullImage": "/assets_gallery/zale/zale-treninu-aprikojums.webp"
+  },
+  {
+    "id": 120,
+    "category": "zale",
+    "title": "Zāle",
+    "caption": "Samuraja un sakuras sienas gleznojums dojo zālē",
+    "image": "/assets_gallery/zale/samuraja-sakuras-sienas-gleznojums-400x284.webp",
+    "fullImage": "/assets_gallery/zale/samuraja-sakuras-sienas-gleznojums.webp"
+  },
+  {
+    "id": 121,
+    "category": "zale",
+    "title": "Zāle",
+    "caption": "Kluba pamatvērtības: Cieņa, Disciplīna, Fokuss, Gars, Spēks",
+    "image": "/assets_gallery/zale/kluba-vertibas-siena-400x284.webp",
+    "fullImage": "/assets_gallery/zale/kluba-vertibas-siena.webp"
+  },
+  {
+    "id": 122,
+    "category": "pasakumi",
+    "title": "Pasākumi",
+    "caption": "Mārupes novada sporta laureāta apbalvošanas ceremonija",
+    "image": "/assets_gallery/pasakumi/marupes-sporta-laureats-400x284.webp",
+    "fullImage": "/assets_gallery/pasakumi/marupes-sporta-laureats.webp"
+  },
+  {
+    "id": 123,
+    "category": "pasakumi",
+    "title": "Pasākumi",
+    "caption": "Karatē meistarklase ar olimpisko vicečempionu Rafael Aghayev",
+    "image": "/assets_gallery/pasakumi/meistarklase-rafael-aghayev-400x284.webp",
+    "fullImage": "/assets_gallery/pasakumi/meistarklase-rafael-aghayev.webp"
+  },
+  {
+    "id": 124,
+    "category": "sacensibas",
+    "title": "Sacensības",
+    "caption": "Kumite cīņa sacensībās WKF aizsargekipējumā",
+    "image": "/assets_gallery/sacensibas/kumite-cina-aizsargkivere-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/kumite-cina-aizsargkivere.webp"
+  },
+  {
+    "id": 125,
+    "category": "sacensibas",
+    "title": "Sacensības",
+    "caption": "Polish Open Grand Prix starptautiskās kumite sacensības",
+    "image": "/assets_gallery/sacensibas/polish-open-kumite-duelis-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/polish-open-kumite-duelis.webp"
+  },
+  {
+    "id": 126,
+    "category": "sacensibas",
+    "title": "Sacensības",
+    "caption": "Latvijas Karatē Federācijas sacensību medaļnieks ar treneri Nikolaju",
+    "image": "/assets_gallery/sacensibas/lkf-medalnieks-treneris-nikolajs-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/lkf-medalnieks-treneris-nikolajs.webp"
+  },
+  {
+    "id": 127,
+    "category": "sacensibas",
+    "title": "Sacensības",
+    "caption": "Dinamiska kumite cīņa Polish Open turnīrā",
+    "image": "/assets_gallery/sacensibas/polish-open-cina-tatami-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/polish-open-cina-tatami.webp"
+  },
+  {
+    "id": 128,
+    "category": "sacensibas",
+    "title": "Sacensības",
+    "caption": "Grand Prix Latvia starptautiskā turnīra kumite cīņa",
+    "image": "/assets_gallery/sacensibas/grand-prix-latvia-kumite-uzbrukums-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/grand-prix-latvia-kumite-uzbrukums.webp"
+  },
+  {
+    "id": 129,
+    "category": "sacensibas",
+    "title": "Sacensības",
+    "caption": "Grand Prix Slovakia turnīrs ar kluba komandu un treneri",
+    "image": "/assets_gallery/sacensibas/grand-prix-slovakia-kluba-komanda-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/grand-prix-slovakia-kluba-komanda.webp"
+  },
+  {
+    "id": 130,
+    "category": "sacensibas",
+    "title": "Sacensības",
+    "caption": "Treneris Nikolajs instruē jauno sportisti pirms izšķirošās cīņas",
+    "image": "/assets_gallery/sacensibas/treneris-instre-sportisti-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/treneris-instre-sportisti.webp"
+  },
+  {
+    "id": 131,
+    "category": "sacensibas",
+    "title": "Sacensības",
+    "caption": "Grand Prix Latvia 2026 medaļnieku apbalvošana uz pjedestāla",
+    "image": "/assets_gallery/sacensibas/grand-prix-latvia-znu-pjedestals-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/grand-prix-latvia-znu-pjedestals.webp"
+  },
+  {
+    "id": 132,
+    "category": "sacensibas",
+    "title": "Sacensības",
+    "caption": "Grand Prix Latvia 2026 meiteņu kumite pjedestāls",
+    "image": "/assets_gallery/sacensibas/grand-prix-latvia-meitenu-pjedestals-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/grand-prix-latvia-meitenu-pjedestals.webp"
+  },
+  {
+    "id": 133,
+    "category": "sacensibas",
+    "title": "Sacensības",
+    "caption": "Polish Open WKF sacensību dalībnieki ar turnīra akreditācijām",
+    "image": "/assets_gallery/sacensibas/polish-open-komandas-sportisti-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/polish-open-komandas-sportisti.webp"
+  },
+  {
+    "id": 134,
+    "category": "sacensibas",
+    "title": "Sacensības",
+    "caption": "Yoshukan Cup 2026 1. vietas ieguvējs ar kausu un diplomu",
+    "image": "/assets_gallery/sacensibas/yoshukan-cup-1-vieta-kauss-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/yoshukan-cup-1-vieta-kauss.webp"
+  },
+  {
+    "id": 135,
+    "category": "sacensibas",
+    "title": "Sacensības",
+    "caption": "Kumite Karate Kluba komanda ar treneri un izcīnītajām medaļām",
+    "image": "/assets_gallery/sacensibas/kluba-komanda-medalas-ar-treneri-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/kluba-komanda-medalas-ar-treneri.webp"
+  },
+  {
+    "id": 136,
+    "category": "sacensibas",
+    "title": "Sacensības",
+    "caption": "Edu-Do Cup starptautiskā čempionāta 1. vietas uzvarētāja ar kausu",
+    "image": "/assets_gallery/sacensibas/edudo-cup-1-vieta-kauss-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/edudo-cup-1-vieta-kauss.webp"
+  },
+  {
+    "id": 137,
+    "category": "sacensibas",
+    "title": "Sacensības",
+    "caption": "14. Pasaules karatē čempionāts kadetiem un junioriem",
+    "image": "/assets_gallery/sacensibas/karate-world-championships-kadeti-juniori-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/karate-world-championships-kadeti-juniori.webp"
+  },
+  {
+    "id": 138,
+    "category": "sacensibas",
+    "title": "Sacensības",
+    "caption": "Daedo K-Mastery Open 2025 pjedestāls ar treneri Nikolaju Bodrovu",
+    "image": "/assets_gallery/sacensibas/daedo-kmastery-open-pjedestals-treneris-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/daedo-kmastery-open-pjedestals-treneris.webp"
+  },
+  {
+    "id": 139,
+    "category": "sacensibas",
+    "title": "Sacensības",
+    "caption": "Salaspils Karate Cup 1. vietas ieguvējs uz pjedestāla augstākā pakāpiena",
+    "image": "/assets_gallery/sacensibas/salaspils-karate-cup-1-vieta-pjedestals-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/salaspils-karate-cup-1-vieta-pjedestals.webp"
+  },
+  {
+    "id": 140,
+    "category": "sacensibas",
+    "title": "Sacensības",
+    "caption": "Daedo K-Mastery Open kluba jaunie sportisti ar treneri",
+    "image": "/assets_gallery/sacensibas/daedo-kmastery-open-komandas-foto-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/daedo-kmastery-open-komandas-foto.webp"
+  },
+  {
+    "id": 141,
+    "category": "sacensibas",
+    "title": "Sacensības",
+    "caption": "Baltic States Open Karate Championship 1. vietas ieguvējs ar kausu",
+    "image": "/assets_gallery/sacensibas/baltic-states-open-1-vieta-kauss-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/baltic-states-open-1-vieta-kauss.webp"
+  },
+  {
+    "id": 142,
+    "category": "sacensibas",
+    "title": "Sacensības",
+    "caption": "Baltic States Open karatē čempionāta pjedestāls un uzvara",
+    "image": "/assets_gallery/sacensibas/baltic-states-open-pjedestals-uzvara-400x284.webp",
+    "fullImage": "/assets_gallery/sacensibas/baltic-states-open-pjedestals-uzvara.webp"
+  },
+  {
+    "id": 143,
+    "category": "trenini",
+    "title": "Treniņi",
+    "caption": "Jaunākā treniņu grupa dojo zālē uz tatami",
+    "image": "/assets_gallery/trenini/jaunaka-treninu-grupa-zale-400x284.webp",
+    "fullImage": "/assets_gallery/trenini/jaunaka-treninu-grupa-zale.webp"
+  },
+  {
+    "id": 144,
+    "category": "trenini",
+    "title": "Treniņi",
+    "caption": "Jaunais karatists baltajā jostā gatavojas treniņam",
+    "image": "/assets_gallery/trenini/jaunais-karatists-balta-josta-400x284.webp",
+    "fullImage": "/assets_gallery/trenini/jaunais-karatists-balta-josta.webp"
+  },
+  {
+    "id": 145,
+    "category": "trenini",
+    "title": "Treniņi",
+    "caption": "Vidējā un vecākā treniņu grupa dojo zālē",
+    "image": "/assets_gallery/trenini/videja-un-vecaka-grupa-zale-400x284.webp",
+    "fullImage": "/assets_gallery/trenini/videja-un-vecaka-grupa-zale.webp"
+  },
+  {
+    "id": 146,
+    "category": "trenini",
+    "title": "Treniņi",
+    "caption": "Draudzība, savstarpējs atbalsts un komandas gars klubā",
+    "image": "/assets_gallery/trenini/kluba-draudziba-komandas-gars-400x284.webp",
+    "fullImage": "/assets_gallery/trenini/kluba-draudziba-komandas-gars.webp"
+  },
+  {
+    "id": 147,
+    "category": "trenini",
+    "title": "Treniņi",
+    "caption": "Karatistes treniņā sinhronā sitiena tehnikā",
+    "image": "/assets_gallery/trenini/karatistes-sinhrona-tehnika-400x284.webp",
+    "fullImage": "/assets_gallery/trenini/karatistes-sinhrona-tehnika.webp"
+  },
+  {
+    "id": 148,
+    "category": "trenini",
+    "title": "Treniņi",
+    "caption": "Jauno sportistu treniņu sparings cīņas stājās",
+    "image": "/assets_gallery/trenini/jauno-sportistu-treninu-sparings-400x284.webp",
+    "fullImage": "/assets_gallery/trenini/jauno-sportistu-treninu-sparings.webp"
+  },
+  {
+    "id": 149,
+    "category": "trenini",
+    "title": "Treniņi",
+    "caption": "Treneris Nikolajs Bodrovs ar audzēkņiem dojo zālē",
+    "image": "/assets_gallery/trenini/treneris-nikolajs-ar-audzekniem-400x284.webp",
+    "fullImage": "/assets_gallery/trenini/treneris-nikolajs-ar-audzekniem.webp"
+  },
+  {
+    "id": 150,
+    "category": "trenini",
+    "title": "Treniņi",
+    "caption": "Treneris Nikolajs individuāli apmāca jauno karatistu sitiena precizitātei",
+    "image": "/assets_gallery/trenini/treneris-nikolajs-apmaciba-400x284.webp",
+    "fullImage": "/assets_gallery/trenini/treneris-nikolajs-apmaciba.webp"
+  },
+  {
+    "id": 151,
+    "category": "trenini",
+    "title": "Treniņi",
+    "caption": "Mawashi-geri sitiena izpilde ar izcilu lokanību un kontroli",
+    "image": "/assets_gallery/trenini/mawashi-geri-sitiena-tehnika-400x284.webp",
+    "fullImage": "/assets_gallery/trenini/mawashi-geri-sitiena-tehnika.webp"
+  },
+  {
+    "id": 152,
+    "category": "trenini",
+    "title": "Treniņi",
+    "caption": "Treneris Nikolajs vada bāzes tehnikas izpildi un stājas kontroli",
+    "image": "/assets_gallery/trenini/treneris-nikolajs-vada-tehniku-400x284.webp",
+    "fullImage": "/assets_gallery/trenini/treneris-nikolajs-vada-tehniku.webp"
+  },
+  {
+    "id": 153,
+    "category": "trenini",
+    "title": "Treniņi",
+    "caption": "Treneris Nikolajs Bodrovs (3 DAN) demonstrē sitiena tehniku",
+    "image": "/assets_gallery/trenini/treneris-nikolajs-bodrovs-sitiens-400x284.webp",
+    "fullImage": "/assets_gallery/trenini/treneris-nikolajs-bodrovs-sitiens.webp"
+  },
+  {
+    "id": 154,
+    "category": "trenini",
+    "title": "Treniņi",
+    "caption": "Treneris Nikolajs Bodrovs kaujas stājā uz dojo tatami",
+    "image": "/assets_gallery/trenini/treneris-nikolajs-bodrovs-staja-400x284.webp",
+    "fullImage": "/assets_gallery/trenini/treneris-nikolajs-bodrovs-staja.webp"
+  },
+  {
+    "id": 155,
+    "category": "trenini",
+    "title": "Treniņi",
+    "caption": "Karatists oranžajā jostā kiba-dachi stājā ar aizsardzības bloku",
+    "image": "/assets_gallery/trenini/karatists-oranza-josta-staja-400x284.webp",
+    "fullImage": "/assets_gallery/trenini/karatists-oranza-josta-staja.webp"
+  },
+  {
+    "id": 156,
+    "category": "trenini",
+    "title": "Treniņi",
+    "caption": "Yoko-geri sānu sitiena tehnika un līdzsvara kontrole",
+    "image": "/assets_gallery/trenini/yoko-geri-sanu-sitiens-400x284.webp",
+    "fullImage": "/assets_gallery/trenini/yoko-geri-sanu-sitiens.webp"
+  },
+  {
+    "id": 157,
+    "category": "trenini",
+    "title": "Treniņi",
+    "caption": "Kluba audzēknis zilā-brūnā jostā (4. kyu) pirms treniņa",
+    "image": "/assets_gallery/trenini/audzeknis-zila-bruna-josta-4-kyu-400x284.webp",
+    "fullImage": "/assets_gallery/trenini/audzeknis-zila-bruna-josta-4-kyu.webp"
+  },
+  {
+    "id": 158,
+    "category": "trenini",
+    "title": "Treniņi",
+    "caption": "Karatists uzbrukuma stājā un tiešā sitiena tehnikas izpildē",
+    "image": "/assets_gallery/trenini/karatists-uzbrukuma-staja-sitiena-tehnika-400x284.webp",
+    "fullImage": "/assets_gallery/trenini/karatists-uzbrukuma-staja-sitiena-tehnika.webp"
+  },
   {
     "id": 1,
     "category": "eksameni",
