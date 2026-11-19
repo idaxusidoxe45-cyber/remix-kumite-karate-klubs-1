@@ -48,6 +48,21 @@ const COACH_GALLERY_PHOTOS = [
     thumb: '/assets_coaches/img_5438.webp',
     full: '/assets_coaches/img_5438.webp',
   },
+  {
+    id: 9,
+    thumb: '/assets_coaches/treneris-nikolajs-apmaciba-400x284.webp',
+    full: '/assets_coaches/treneris-nikolajs-apmaciba.webp',
+  },
+  {
+    id: 10,
+    thumb: '/assets_coaches/treneris-nikolajs-bodrovs-sitiens-400x284.webp',
+    full: '/assets_coaches/treneris-nikolajs-bodrovs-sitiens.webp',
+  },
+  {
+    id: 11,
+    thumb: '/assets_coaches/treneris-nikolajs-bodrovs-staja-400x284.webp',
+    full: '/assets_coaches/treneris-nikolajs-bodrovs-staja.webp',
+  },
 ];
 
 export default function Coaches({ openTrialModal }: CoachesProps) {

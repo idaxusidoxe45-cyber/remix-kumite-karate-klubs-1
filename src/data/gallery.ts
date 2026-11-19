@@ -258,14 +258,6 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "fullImage": "/assets_gallery/trenini/treneris-nikolajs-ar-audzekniem.webp"
   },
   {
-    "id": 150,
-    "category": "trenini",
-    "title": "Treniņi",
-    "caption": "Treniņa fotogrāfija",
-    "image": "/assets_gallery/trenini/treneris-nikolajs-apmaciba-400x284.webp",
-    "fullImage": "/assets_gallery/trenini/treneris-nikolajs-apmaciba.webp"
-  },
-  {
     "id": 151,
     "category": "trenini",
     "title": "Treniņi",
@@ -280,22 +272,6 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "caption": "Treniņa fotogrāfija",
     "image": "/assets_gallery/trenini/treneris-nikolajs-vada-tehniku-400x284.webp",
     "fullImage": "/assets_gallery/trenini/treneris-nikolajs-vada-tehniku.webp"
-  },
-  {
-    "id": 153,
-    "category": "trenini",
-    "title": "Treniņi",
-    "caption": "Treniņa fotogrāfija",
-    "image": "/assets_gallery/trenini/treneris-nikolajs-bodrovs-sitiens-400x284.webp",
-    "fullImage": "/assets_gallery/trenini/treneris-nikolajs-bodrovs-sitiens.webp"
-  },
-  {
-    "id": 154,
-    "category": "trenini",
-    "title": "Treniņi",
-    "caption": "Treniņa fotogrāfija",
-    "image": "/assets_gallery/trenini/treneris-nikolajs-bodrovs-staja-400x284.webp",
-    "fullImage": "/assets_gallery/trenini/treneris-nikolajs-bodrovs-staja.webp"
   },
   {
     "id": 155,
