@@ -5,7 +5,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 118,
     "category": "zale",
     "title": "Zāle",
-    "caption": "Mūsu karatē dojo zāle ar tatami un karogiem",
+    "caption": "Zāles fotogrāfija",
     "image": "/assets_gallery/zale/dojo-tatami-karogi-400x284.webp",
     "fullImage": "/assets_gallery/zale/dojo-tatami-karogi.webp"
   },
@@ -13,7 +13,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 119,
     "category": "zale",
     "title": "Zāle",
-    "caption": "Fiziskās sagatavotības un spēka treniņu aprīkojums",
+    "caption": "Zāles fotogrāfija",
     "image": "/assets_gallery/zale/zale-treninu-aprikojums-400x284.webp",
     "fullImage": "/assets_gallery/zale/zale-treninu-aprikojums.webp"
   },
@@ -21,7 +21,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 120,
     "category": "zale",
     "title": "Zāle",
-    "caption": "Samuraja un sakuras sienas gleznojums dojo zālē",
+    "caption": "Zāles fotogrāfija",
     "image": "/assets_gallery/zale/samuraja-sakuras-sienas-gleznojums-400x284.webp",
     "fullImage": "/assets_gallery/zale/samuraja-sakuras-sienas-gleznojums.webp"
   },
@@ -29,7 +29,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 121,
     "category": "zale",
     "title": "Zāle",
-    "caption": "Kluba pamatvērtības: Cieņa, Disciplīna, Fokuss, Gars, Spēks",
+    "caption": "Zāles fotogrāfija",
     "image": "/assets_gallery/zale/kluba-vertibas-siena-400x284.webp",
     "fullImage": "/assets_gallery/zale/kluba-vertibas-siena.webp"
   },
@@ -37,7 +37,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 122,
     "category": "pasakumi",
     "title": "Pasākumi",
-    "caption": "Mārupes novada sporta laureāta apbalvošanas ceremonija",
+    "caption": "Pasākuma fotogrāfija",
     "image": "/assets_gallery/pasakumi/marupes-sporta-laureats-400x284.webp",
     "fullImage": "/assets_gallery/pasakumi/marupes-sporta-laureats.webp"
   },
@@ -45,15 +45,15 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 123,
     "category": "pasakumi",
     "title": "Pasākumi",
-    "caption": "Karatē meistarklase ar olimpisko vicečempionu Rafael Aghayev",
-    "image": "/assets_gallery/pasakumi/meistarklase-rafael-aghayev-400x284.webp",
-    "fullImage": "/assets_gallery/pasakumi/meistarklase-rafael-aghayev.webp"
+    "caption": "Pasākuma fotogrāfija",
+    "image": "/assets_gallery/pasakumi/meistarklase-karate-400x284.webp",
+    "fullImage": "/assets_gallery/pasakumi/meistarklase-karate.webp"
   },
   {
     "id": 124,
     "category": "sacensibas",
     "title": "Sacensības",
-    "caption": "Kumite cīņa sacensībās WKF aizsargekipējumā",
+    "caption": "Sacensību fotogrāfija",
     "image": "/assets_gallery/sacensibas/kumite-cina-aizsargkivere-400x284.webp",
     "fullImage": "/assets_gallery/sacensibas/kumite-cina-aizsargkivere.webp"
   },
@@ -61,7 +61,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 125,
     "category": "sacensibas",
     "title": "Sacensības",
-    "caption": "Polish Open Grand Prix starptautiskās kumite sacensības",
+    "caption": "Sacensību fotogrāfija",
     "image": "/assets_gallery/sacensibas/polish-open-kumite-duelis-400x284.webp",
     "fullImage": "/assets_gallery/sacensibas/polish-open-kumite-duelis.webp"
   },
@@ -69,7 +69,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 126,
     "category": "sacensibas",
     "title": "Sacensības",
-    "caption": "Latvijas Karatē Federācijas sacensību medaļnieks ar treneri Nikolaju",
+    "caption": "Sacensību fotogrāfija",
     "image": "/assets_gallery/sacensibas/lkf-medalnieks-treneris-nikolajs-400x284.webp",
     "fullImage": "/assets_gallery/sacensibas/lkf-medalnieks-treneris-nikolajs.webp"
   },
@@ -77,7 +77,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 127,
     "category": "sacensibas",
     "title": "Sacensības",
-    "caption": "Dinamiska kumite cīņa Polish Open turnīrā",
+    "caption": "Sacensību fotogrāfija",
     "image": "/assets_gallery/sacensibas/polish-open-cina-tatami-400x284.webp",
     "fullImage": "/assets_gallery/sacensibas/polish-open-cina-tatami.webp"
   },
@@ -85,7 +85,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 128,
     "category": "sacensibas",
     "title": "Sacensības",
-    "caption": "Grand Prix Latvia starptautiskā turnīra kumite cīņa",
+    "caption": "Sacensību fotogrāfija",
     "image": "/assets_gallery/sacensibas/grand-prix-latvia-kumite-uzbrukums-400x284.webp",
     "fullImage": "/assets_gallery/sacensibas/grand-prix-latvia-kumite-uzbrukums.webp"
   },
@@ -93,7 +93,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 129,
     "category": "sacensibas",
     "title": "Sacensības",
-    "caption": "Grand Prix Slovakia turnīrs ar kluba komandu un treneri",
+    "caption": "Sacensību fotogrāfija",
     "image": "/assets_gallery/sacensibas/grand-prix-slovakia-kluba-komanda-400x284.webp",
     "fullImage": "/assets_gallery/sacensibas/grand-prix-slovakia-kluba-komanda.webp"
   },
@@ -101,7 +101,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 130,
     "category": "sacensibas",
     "title": "Sacensības",
-    "caption": "Treneris Nikolajs instruē jauno sportisti pirms izšķirošās cīņas",
+    "caption": "Sacensību fotogrāfija",
     "image": "/assets_gallery/sacensibas/treneris-instre-sportisti-400x284.webp",
     "fullImage": "/assets_gallery/sacensibas/treneris-instre-sportisti.webp"
   },
@@ -109,7 +109,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 131,
     "category": "sacensibas",
     "title": "Sacensības",
-    "caption": "Grand Prix Latvia 2026 medaļnieku apbalvošana uz pjedestāla",
+    "caption": "Sacensību fotogrāfija",
     "image": "/assets_gallery/sacensibas/grand-prix-latvia-znu-pjedestals-400x284.webp",
     "fullImage": "/assets_gallery/sacensibas/grand-prix-latvia-znu-pjedestals.webp"
   },
@@ -117,7 +117,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 132,
     "category": "sacensibas",
     "title": "Sacensības",
-    "caption": "Grand Prix Latvia 2026 meiteņu kumite pjedestāls",
+    "caption": "Sacensību fotogrāfija",
     "image": "/assets_gallery/sacensibas/grand-prix-latvia-meitenu-pjedestals-400x284.webp",
     "fullImage": "/assets_gallery/sacensibas/grand-prix-latvia-meitenu-pjedestals.webp"
   },
@@ -125,7 +125,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 133,
     "category": "sacensibas",
     "title": "Sacensības",
-    "caption": "Polish Open WKF sacensību dalībnieki ar turnīra akreditācijām",
+    "caption": "Sacensību fotogrāfija",
     "image": "/assets_gallery/sacensibas/polish-open-komandas-sportisti-400x284.webp",
     "fullImage": "/assets_gallery/sacensibas/polish-open-komandas-sportisti.webp"
   },
@@ -133,7 +133,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 134,
     "category": "sacensibas",
     "title": "Sacensības",
-    "caption": "Yoshukan Cup 2026 1. vietas ieguvējs ar kausu un diplomu",
+    "caption": "Sacensību fotogrāfija",
     "image": "/assets_gallery/sacensibas/yoshukan-cup-1-vieta-kauss-400x284.webp",
     "fullImage": "/assets_gallery/sacensibas/yoshukan-cup-1-vieta-kauss.webp"
   },
@@ -141,7 +141,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 135,
     "category": "sacensibas",
     "title": "Sacensības",
-    "caption": "Kumite Karate Kluba komanda ar treneri un izcīnītajām medaļām",
+    "caption": "Sacensību fotogrāfija",
     "image": "/assets_gallery/sacensibas/kluba-komanda-medalas-ar-treneri-400x284.webp",
     "fullImage": "/assets_gallery/sacensibas/kluba-komanda-medalas-ar-treneri.webp"
   },
@@ -149,7 +149,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 136,
     "category": "sacensibas",
     "title": "Sacensības",
-    "caption": "Edu-Do Cup starptautiskā čempionāta 1. vietas uzvarētāja ar kausu",
+    "caption": "Sacensību fotogrāfija",
     "image": "/assets_gallery/sacensibas/edudo-cup-1-vieta-kauss-400x284.webp",
     "fullImage": "/assets_gallery/sacensibas/edudo-cup-1-vieta-kauss.webp"
   },
@@ -157,7 +157,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 137,
     "category": "sacensibas",
     "title": "Sacensības",
-    "caption": "14. Pasaules karatē čempionāts kadetiem un junioriem",
+    "caption": "Sacensību fotogrāfija",
     "image": "/assets_gallery/sacensibas/karate-world-championships-kadeti-juniori-400x284.webp",
     "fullImage": "/assets_gallery/sacensibas/karate-world-championships-kadeti-juniori.webp"
   },
@@ -165,7 +165,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 138,
     "category": "sacensibas",
     "title": "Sacensības",
-    "caption": "Daedo K-Mastery Open 2025 pjedestāls ar treneri Nikolaju Bodrovu",
+    "caption": "Sacensību fotogrāfija",
     "image": "/assets_gallery/sacensibas/daedo-kmastery-open-pjedestals-treneris-400x284.webp",
     "fullImage": "/assets_gallery/sacensibas/daedo-kmastery-open-pjedestals-treneris.webp"
   },
@@ -173,7 +173,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 139,
     "category": "sacensibas",
     "title": "Sacensības",
-    "caption": "Salaspils Karate Cup 1. vietas ieguvējs uz pjedestāla augstākā pakāpiena",
+    "caption": "Sacensību fotogrāfija",
     "image": "/assets_gallery/sacensibas/salaspils-karate-cup-1-vieta-pjedestals-400x284.webp",
     "fullImage": "/assets_gallery/sacensibas/salaspils-karate-cup-1-vieta-pjedestals.webp"
   },
@@ -181,7 +181,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 140,
     "category": "sacensibas",
     "title": "Sacensības",
-    "caption": "Daedo K-Mastery Open kluba jaunie sportisti ar treneri",
+    "caption": "Sacensību fotogrāfija",
     "image": "/assets_gallery/sacensibas/daedo-kmastery-open-komandas-foto-400x284.webp",
     "fullImage": "/assets_gallery/sacensibas/daedo-kmastery-open-komandas-foto.webp"
   },
@@ -189,7 +189,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 141,
     "category": "sacensibas",
     "title": "Sacensības",
-    "caption": "Baltic States Open Karate Championship 1. vietas ieguvējs ar kausu",
+    "caption": "Sacensību fotogrāfija",
     "image": "/assets_gallery/sacensibas/baltic-states-open-1-vieta-kauss-400x284.webp",
     "fullImage": "/assets_gallery/sacensibas/baltic-states-open-1-vieta-kauss.webp"
   },
@@ -197,7 +197,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 142,
     "category": "sacensibas",
     "title": "Sacensības",
-    "caption": "Baltic States Open karatē čempionāta pjedestāls un uzvara",
+    "caption": "Sacensību fotogrāfija",
     "image": "/assets_gallery/sacensibas/baltic-states-open-pjedestals-uzvara-400x284.webp",
     "fullImage": "/assets_gallery/sacensibas/baltic-states-open-pjedestals-uzvara.webp"
   },
@@ -205,7 +205,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 143,
     "category": "trenini",
     "title": "Treniņi",
-    "caption": "Jaunākā treniņu grupa dojo zālē uz tatami",
+    "caption": "Treniņa fotogrāfija",
     "image": "/assets_gallery/trenini/jaunaka-treninu-grupa-zale-400x284.webp",
     "fullImage": "/assets_gallery/trenini/jaunaka-treninu-grupa-zale.webp"
   },
@@ -213,7 +213,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 144,
     "category": "trenini",
     "title": "Treniņi",
-    "caption": "Jaunais karatists baltajā jostā gatavojas treniņam",
+    "caption": "Treniņa fotogrāfija",
     "image": "/assets_gallery/trenini/jaunais-karatists-balta-josta-400x284.webp",
     "fullImage": "/assets_gallery/trenini/jaunais-karatists-balta-josta.webp"
   },
@@ -221,7 +221,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 145,
     "category": "trenini",
     "title": "Treniņi",
-    "caption": "Vidējā un vecākā treniņu grupa dojo zālē",
+    "caption": "Treniņa fotogrāfija",
     "image": "/assets_gallery/trenini/videja-un-vecaka-grupa-zale-400x284.webp",
     "fullImage": "/assets_gallery/trenini/videja-un-vecaka-grupa-zale.webp"
   },
@@ -229,7 +229,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 146,
     "category": "trenini",
     "title": "Treniņi",
-    "caption": "Draudzība, savstarpējs atbalsts un komandas gars klubā",
+    "caption": "Treniņa fotogrāfija",
     "image": "/assets_gallery/trenini/kluba-draudziba-komandas-gars-400x284.webp",
     "fullImage": "/assets_gallery/trenini/kluba-draudziba-komandas-gars.webp"
   },
@@ -237,7 +237,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 147,
     "category": "trenini",
     "title": "Treniņi",
-    "caption": "Karatistes treniņā sinhronā sitiena tehnikā",
+    "caption": "Treniņa fotogrāfija",
     "image": "/assets_gallery/trenini/karatistes-sinhrona-tehnika-400x284.webp",
     "fullImage": "/assets_gallery/trenini/karatistes-sinhrona-tehnika.webp"
   },
@@ -245,7 +245,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 148,
     "category": "trenini",
     "title": "Treniņi",
-    "caption": "Jauno sportistu treniņu sparings cīņas stājās",
+    "caption": "Treniņa fotogrāfija",
     "image": "/assets_gallery/trenini/jauno-sportistu-treninu-sparings-400x284.webp",
     "fullImage": "/assets_gallery/trenini/jauno-sportistu-treninu-sparings.webp"
   },
@@ -253,7 +253,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 149,
     "category": "trenini",
     "title": "Treniņi",
-    "caption": "Treneris Nikolajs Bodrovs ar audzēkņiem dojo zālē",
+    "caption": "Treniņa fotogrāfija",
     "image": "/assets_gallery/trenini/treneris-nikolajs-ar-audzekniem-400x284.webp",
     "fullImage": "/assets_gallery/trenini/treneris-nikolajs-ar-audzekniem.webp"
   },
@@ -261,7 +261,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 150,
     "category": "trenini",
     "title": "Treniņi",
-    "caption": "Treneris Nikolajs individuāli apmāca jauno karatistu sitiena precizitātei",
+    "caption": "Treniņa fotogrāfija",
     "image": "/assets_gallery/trenini/treneris-nikolajs-apmaciba-400x284.webp",
     "fullImage": "/assets_gallery/trenini/treneris-nikolajs-apmaciba.webp"
   },
@@ -269,7 +269,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 151,
     "category": "trenini",
     "title": "Treniņi",
-    "caption": "Mawashi-geri sitiena izpilde ar izcilu lokanību un kontroli",
+    "caption": "Treniņa fotogrāfija",
     "image": "/assets_gallery/trenini/mawashi-geri-sitiena-tehnika-400x284.webp",
     "fullImage": "/assets_gallery/trenini/mawashi-geri-sitiena-tehnika.webp"
   },
@@ -277,7 +277,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 152,
     "category": "trenini",
     "title": "Treniņi",
-    "caption": "Treneris Nikolajs vada bāzes tehnikas izpildi un stājas kontroli",
+    "caption": "Treniņa fotogrāfija",
     "image": "/assets_gallery/trenini/treneris-nikolajs-vada-tehniku-400x284.webp",
     "fullImage": "/assets_gallery/trenini/treneris-nikolajs-vada-tehniku.webp"
   },
@@ -285,7 +285,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 153,
     "category": "trenini",
     "title": "Treniņi",
-    "caption": "Treneris Nikolajs Bodrovs (3 DAN) demonstrē sitiena tehniku",
+    "caption": "Treniņa fotogrāfija",
     "image": "/assets_gallery/trenini/treneris-nikolajs-bodrovs-sitiens-400x284.webp",
     "fullImage": "/assets_gallery/trenini/treneris-nikolajs-bodrovs-sitiens.webp"
   },
@@ -293,7 +293,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 154,
     "category": "trenini",
     "title": "Treniņi",
-    "caption": "Treneris Nikolajs Bodrovs kaujas stājā uz dojo tatami",
+    "caption": "Treniņa fotogrāfija",
     "image": "/assets_gallery/trenini/treneris-nikolajs-bodrovs-staja-400x284.webp",
     "fullImage": "/assets_gallery/trenini/treneris-nikolajs-bodrovs-staja.webp"
   },
@@ -301,7 +301,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 155,
     "category": "trenini",
     "title": "Treniņi",
-    "caption": "Karatists oranžajā jostā kiba-dachi stājā ar aizsardzības bloku",
+    "caption": "Treniņa fotogrāfija",
     "image": "/assets_gallery/trenini/karatists-oranza-josta-staja-400x284.webp",
     "fullImage": "/assets_gallery/trenini/karatists-oranza-josta-staja.webp"
   },
@@ -309,7 +309,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 156,
     "category": "trenini",
     "title": "Treniņi",
-    "caption": "Yoko-geri sānu sitiena tehnika un līdzsvara kontrole",
+    "caption": "Treniņa fotogrāfija",
     "image": "/assets_gallery/trenini/yoko-geri-sanu-sitiens-400x284.webp",
     "fullImage": "/assets_gallery/trenini/yoko-geri-sanu-sitiens.webp"
   },
@@ -317,7 +317,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 157,
     "category": "trenini",
     "title": "Treniņi",
-    "caption": "Kluba audzēknis zilā-brūnā jostā (4. kyu) pirms treniņa",
+    "caption": "Treniņa fotogrāfija",
     "image": "/assets_gallery/trenini/audzeknis-zila-bruna-josta-4-kyu-400x284.webp",
     "fullImage": "/assets_gallery/trenini/audzeknis-zila-bruna-josta-4-kyu.webp"
   },
@@ -325,7 +325,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     "id": 158,
     "category": "trenini",
     "title": "Treniņi",
-    "caption": "Karatists uzbrukuma stājā un tiešā sitiena tehnikas izpildē",
+    "caption": "Treniņa fotogrāfija",
     "image": "/assets_gallery/trenini/karatists-uzbrukuma-staja-sitiena-tehnika-400x284.webp",
     "fullImage": "/assets_gallery/trenini/karatists-uzbrukuma-staja-sitiena-tehnika.webp"
   },
